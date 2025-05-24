@@ -1,0 +1,32 @@
+﻿<Project>
+	<PropertyGroup>
+		<NoWarn>$(NoWarn);IDE0045</NoWarn>
+		<NoWarn>$(NoWarn);CA1031</NoWarn>
+		<NoWarn>$(NoWarn);CA1304</NoWarn>
+		<NoWarn>$(NoWarn);CA1305</NoWarn>
+		<NoWarn>$(NoWarn);CA1307</NoWarn>
+		<NoWarn>$(NoWarn);CA1310</NoWarn>
+		<NoWarn>$(NoWarn);CA1311</NoWarn>
+		<NoWarn>$(NoWarn);CA2007</NoWarn>
+		<NoWarn>$(NoWarn);CA2225</NoWarn>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<Version>3.0</Version>
+		<TargetFramework>net10.0</TargetFramework>
+		<LangVersion>preview</LangVersion>
+		<EnablePreviewFeatures>true</EnablePreviewFeatures>
+		<GenerateRequiresPreviewFeaturesAttribute>true</GenerateRequiresPreviewFeaturesAttribute>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+	<PropertyGroup>
+		<AnalysisLevel>Preview</AnalysisLevel>
+		<AnalysisMode>AllEnabledByDefault</AnalysisMode>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
+		<CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
+		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+		<RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+	</PropertyGroup>
+</Project>

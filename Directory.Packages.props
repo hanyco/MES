@@ -1,0 +1,30 @@
+﻿<Project>
+	<ItemGroup>
+		<!-- Managing package versions globally -->
+		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+		<PackageVersion Include="xunit" Version="2.9.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Managing assets for specific packages -->
+		<PackageReference Include="coverlet.collector" Version="6.0.4">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+
+		<PackageReference Include="xunit.runner.visualstudio" Version="3.1.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Global package versions for CodeGenLib -->
+		<PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
+		<PackageVersion Include="Microsoft.Data.SqlClient" Version="6.0.2" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
+		<PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+		<PackageVersion Include="Microsoft.Extensions.Identity.Core" Version="9.0.5" />
+		<PackageVersion Include="System.CodeDom" Version="8.0.0" />
+	</ItemGroup>
+</Project>
