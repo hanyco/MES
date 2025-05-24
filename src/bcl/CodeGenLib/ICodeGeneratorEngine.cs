@@ -1,10 +1,4 @@
-﻿using Library.CodeGenLib.Back;
-using Library.CodeGenLib.Extensions;
-using Library.CodeGenLib.Models;
-using Library.Resulting;
-using Library.Validations;
-
-namespace Library.CodeGenLib;
+﻿namespace Library.CodeGenLib;
 
 /// <summary>
 /// Represents the engine that generates code.
@@ -40,9 +34,8 @@ public static class CodeGeneratorExtensions
         string? fileName = null)
     {
         Check.MustBeArgumentNotNull(codeGenerator);
-
         var statement = codeGenerator.Generate(nameSpace);
-        var code = new Code(name, language, RoslynHelper.ReformatCode(statement), isPartial, fileName);
+        var code = new Code(name, language, RoslynHelper.ReformatCode(statement.GetValue()), isPartial, fileName);
         return IResult.From<Code>(statement, code);
     }
 }

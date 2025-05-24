@@ -1,5 +1,4 @@
-﻿using Library.DesignPatterns.Markers;
-
+﻿
 namespace Library.CodeGenLib.Back;
 
 public interface IField : IMember
@@ -15,7 +14,6 @@ public interface IField : IMember
         => new Field(name, type, accessModifier);
 }
 
-[Immutable]
 public sealed class Field : Member, IField
 {
     public Field(string name, TypePath type, AccessModifier accessModifier = IField.DefaultAccessModifier)

@@ -2,7 +2,7 @@
 
 namespace Library.Extensions;
 
-public static class ObjectExtensions
+public static class ObjectExtension
 {
     /// <summary>
     /// The entry of casting operations.

@@ -1,6 +1,4 @@
-﻿using Library.DesignPatterns.Markers;
-
-namespace Library.CodeGenLib.Back;
+﻿namespace Library.CodeGenLib.Back;
 
 public interface IClass : IType, IHasGenericTypes
 {
@@ -10,7 +8,6 @@ public interface IClass : IType, IHasGenericTypes
         new Class(name);
 }
 
-[Immutable]
 public sealed class Class(string name) : TypeBase(name), IClass
 {
     public ISet<IGenericType> GenericTypes { get; } = new HashSet<IGenericType>();

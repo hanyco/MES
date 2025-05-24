@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 
 using Library.Extensions;
 using Library.Validations;
@@ -82,5 +83,32 @@ public static class EnumerableExtension
     public static IEnumerable<T> AsEnumerable<T>(T item)
     {
         yield return item;
+    }
+
+    /// <summary>
+    /// Adds a range of items to the specified collection.
+    /// </summary>
+    /// <typeparam name="TList">The type of the collection to which items will be added.</typeparam>
+    /// <typeparam name="TItem">The type of the items to be added.</typeparam>
+    /// <param name="list">The collection to which the items will be added.</param>
+    /// <param name="items">The items to be added to the collection.</param>
+    /// <returns>The updated collection with added items.</returns>
+    /// <remarks>
+    /// This extension method allows adding a range of items to a collection that implements
+    /// ICollection. The method checks if the 'items' enumerable is not null and contains items
+    /// before performing the addition.
+    /// </remarks>
+    public static TList AddRange<TList, TItem>([DisallowNull] this TList list, in IEnumerable<TItem> items)
+        where TList : ICollection<TItem>
+    {
+        if (items?.Any() is true)
+        {
+            // Iterate through each item in the 'items' enumerable and add it to the collection.
+            foreach (var item in items)
+            {
+                list.Add(item);
+            }
+        }
+        return list; // Return the updated collection with added items.
     }
 }

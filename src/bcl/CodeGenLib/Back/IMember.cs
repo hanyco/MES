@@ -1,6 +1,4 @@
-﻿using Library.DesignPatterns.Markers;
-using Library.Results;
-using Library.Validations;
+﻿using Library.Validations;
 
 namespace Library.CodeGenLib.Back;
 
@@ -11,7 +9,6 @@ public interface IMember : IValidatable, IHasAttributes
     string Name { get; }
 }
 
-[Immutable]
 public abstract class Member : IMember
 {
     protected Member([DisallowNull] string name) =>
@@ -22,9 +19,9 @@ public abstract class Member : IMember
     public virtual InheritanceModifier InheritanceModifier { get; init; }
     public virtual string Name { get; }
 
-    public Result Validate() =>
+    public IResult Validate() =>
         this.OnValidate();
 
-    protected virtual Result OnValidate() =>
-        Result.Succeed;
+    protected virtual IResult OnValidate() =>
+        IResult.Succeed;
 }

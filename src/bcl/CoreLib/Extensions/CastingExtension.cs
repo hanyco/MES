@@ -13,7 +13,7 @@ namespace Library.Extensions;
 /// </summary>
 [DebuggerStepThrough]
 [StackTraceHidden]
-public static class CastingExtensions
+public static class CastingExtension
 {
     extension([DisallowNull] ICastable o)
     {
