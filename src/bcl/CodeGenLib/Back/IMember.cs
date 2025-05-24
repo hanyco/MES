@@ -1,6 +1,4 @@
-﻿using Library.Validations;
-
-namespace Library.CodeGenLib.Back;
+﻿namespace Library.CodeGenLib.Back;
 
 public interface IMember : IValidatable, IHasAttributes
 {
@@ -9,19 +7,16 @@ public interface IMember : IValidatable, IHasAttributes
     string Name { get; }
 }
 
-public abstract class Member : IMember
+public abstract class Member([DisallowNull] string name) : IMember
 {
-    protected Member([DisallowNull] string name) =>
-        this.Name = name.ArgumentNotNull();
-
     public virtual AccessModifier AccessModifier { get; init; } = AccessModifier.Public;
     public ISet<ICodeGenAttribute> Attributes { get; } = new HashSet<ICodeGenAttribute>();
     public virtual InheritanceModifier InheritanceModifier { get; init; }
-    public virtual string Name { get; }
+    public virtual string Name { get; } = name.ArgumentNotNull();
 
-    public IResult Validate() =>
+    public Result Validate() =>
         this.OnValidate();
 
-    protected virtual IResult OnValidate() =>
-        IResult.Succeed;
+    protected virtual Result OnValidate() =>
+        Result.Succeed;
 }

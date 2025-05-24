@@ -36,6 +36,6 @@ public static class CodeGeneratorExtensions
         Check.MustBeArgumentNotNull(codeGenerator);
         var statement = codeGenerator.Generate(nameSpace);
         var code = new Code(name, language, RoslynHelper.ReformatCode(statement.GetValue()), isPartial, fileName);
-        return IResult.From<Code>(statement, code);
+        return Result.From<Code>(statement, code);
     }
 }
