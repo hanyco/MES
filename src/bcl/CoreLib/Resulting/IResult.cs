@@ -2,6 +2,7 @@
 
 public interface IResult
 {
+    bool IsFailure => !this.IsSucceed;
     bool IsSucceed { get; init; }
     string? Message { get; init; }
 }

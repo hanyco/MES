@@ -3,9 +3,7 @@
 using Library.Extensions;
 
 using NullableStrings = System.Collections.Generic.IEnumerable<string?>;
-using SpanString = System.ReadOnlySpan<char>;
 using Strings = System.Collections.Generic.IEnumerable<string>;
-
 
 namespace Library.Extensions;
 

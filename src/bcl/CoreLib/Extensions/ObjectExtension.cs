@@ -1,17 +1,31 @@
-﻿using Library.Casting;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+
+using Library.Casting;
 
 namespace Library.Extensions;
 
-public static class ObjectExtension
+[DebuggerStepThrough]
+[StackTraceHidden]
+public static class ObjectExtensions
 {
-    /// <summary>
-    /// The entry of casting operations.
-    /// </summary>
-    /// <param name="obj">The object to cast.</param>
-    /// <returns>A new Castable object.</returns>
-    public static ICastable Cast(this object? obj) =>
-        new Castable(obj);
+    extension([DisallowNull] object? obj)
+    {
+        /// <summary>
+        /// Creates a new instance of <see cref="ICastable"/> wrapping the current object.
+        /// </summary>
+        /// <returns>A castable wrapper for the object.</returns>
+        [return: NotNull]
+        public ICastable Cast() => new Castable(obj);
+    }
 
-    public static ICastable<T> CastSafe<T>(this T? obj) =>
-        new Castable<T>(obj);
+    extension<T>([DisallowNull] T? obj)
+    {
+        /// <summary>
+        /// Safely wraps the object in an <see cref="ICastable{T}"/> to enable generic conversions.
+        /// </summary>
+        /// <returns>A castable wrapper of type <typeparamref name="T"/>.</returns>
+        [return: NotNull]
+        public ICastable<T> CastSafe() => new Castable<T>(obj);
+    }
 }

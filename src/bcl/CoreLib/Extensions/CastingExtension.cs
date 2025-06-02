@@ -126,6 +126,7 @@ public static class CastingExtension
     /// </summary>
     public static IEnumerable<T> OfType<T>(IEnumerable items) =>
         items.OfType<T>();
+
     /// <summary>
     /// Filters a sequence of items to return only those of type T.
     /// </summary>

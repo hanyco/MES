@@ -1,5 +1,6 @@
-﻿using Library.CodeGenLib;
-using Library.CodeGenLib.CodeGen;
+﻿using Library.CodeGeneration;
+using Library.DesignPatterns.Markers;
+using Library.Validations;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -7,7 +8,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-using MethodParameterInfo = (Library.CodeGenLib.TypePath Type, string Name);
+using MethodParameterInfo = (Library.CodeGeneration.TypePath Type, string Name);
 using PropertyAccessorInfo = (bool Has, System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.CSharp.SyntaxKind>? AccessModifiers);
 using RosClass = Microsoft.CodeAnalysis.CSharp.Syntax.ClassDeclarationSyntax;
 using RosFld = Microsoft.CodeAnalysis.CSharp.Syntax.FieldDeclarationSyntax;
@@ -15,7 +16,7 @@ using RosMember = Microsoft.CodeAnalysis.CSharp.Syntax.MemberDeclarationSyntax;
 using RosMethod = Microsoft.CodeAnalysis.CSharp.Syntax.BaseMethodDeclarationSyntax;
 using RosProp = Microsoft.CodeAnalysis.CSharp.Syntax.PropertyDeclarationSyntax;
 
-namespace Library.Extensions;
+namespace Library.Helpers.CodeGen;
 
 public static class RoslynHelper
 {
@@ -66,7 +67,7 @@ public static class RoslynHelper
 
     public static RosClass AddBase(this RosClass type, string baseClassName)
     {
-        Check.MustBeArgumentNotNull(type);
+        Checker.MustBeArgumentNotNull(type);
 
         return type.WithBaseList(BaseList([SimpleBaseType(ParseTypeName(baseClassName))]));
     }
@@ -76,7 +77,7 @@ public static class RoslynHelper
 
     public static RosClass AddConstructor(this RosClass type, out RosMethod ctor, IEnumerable<MethodParameterInfo>? parameters = null, string? body = null, IEnumerable<SyntaxKind>? modifiers = null)
     {
-        Check.MustBeArgumentNotNull(type);
+        Checker.MustBeArgumentNotNull(type);
 
         ctor = CreateConstructor(type.GetName(), modifiers, parameters, body);
         return type.AddMethod(ctor);
@@ -87,7 +88,7 @@ public static class RoslynHelper
 
     public static RosClass AddField(this RosClass type, RosFieldInfo fieldInfo, out RosFld field)
     {
-        Check.MustBeArgumentNotNull(type);
+        Checker.MustBeArgumentNotNull(type);
 
         field = CreateField(fieldInfo);
         return type.AddMembers(field);
@@ -95,7 +96,7 @@ public static class RoslynHelper
 
     public static RosClass AddMethod(this RosClass type, RosMethodInfo methodInfo, out RosMethod method)
     {
-        Check.MustBeArgumentNotNull(type);
+        Checker.MustBeArgumentNotNull(type);
 
         method = CreateMethod(methodInfo);
         return type.AddMethod(method);
@@ -106,7 +107,7 @@ public static class RoslynHelper
 
     public static RosClass AddMethod(this RosClass type, RosMethod method)
     {
-        Check.MustBeArgumentNotNull(type);
+        Checker.MustBeArgumentNotNull(type);
 
         return type.AddMembers(method);
     }
@@ -128,7 +129,7 @@ public static class RoslynHelper
 
     public static RosClass AddProperty(this RosClass type, string name, TypePath typePath, out RosProp prop, bool hasSetAccessor = true, bool hasGetAccessor = true)
     {
-        Check.MustBeArgumentNotNull(type);
+        Checker.MustBeArgumentNotNull(type);
 
         prop = CreateProperty(new(name, typePath, getAccessor: (hasGetAccessor, null), setAccessor: (hasSetAccessor, null)));
         return type.AddMembers(prop);
@@ -142,7 +143,7 @@ public static class RoslynHelper
 
     public static RosClass AddProperty([DisallowNull] this RosClass type, [DisallowNull] RosPropertyInfo propertyInfo, [DisallowNull] out RosProp property)
     {
-        Check.MustBeArgumentNotNull(type);
+        Checker.MustBeArgumentNotNull(type);
 
         property = CreateProperty(propertyInfo);
         return type.AddMembers(property);
@@ -156,8 +157,8 @@ public static class RoslynHelper
 
     public static RosClass AddPropertyWithBackingField([DisallowNull] this RosClass type, [DisallowNull] RosPropertyInfo propertyInfo, out (RosProp Property, RosFld Field) fullProperty, RosFieldInfo? fieldInfo = null)
     {
-        Check.MustBeArgumentNotNull(type);
-        Check.MustBeArgumentNotNull(propertyInfo);
+        Checker.MustBeArgumentNotNull(type);
+        Checker.MustBeArgumentNotNull(propertyInfo);
 
         fieldInfo ??= new(TypeMemberNameHelper.ToFieldName(propertyInfo.Name), propertyInfo.Type);
         fullProperty = CreatePropertyWithBackingField(propertyInfo, fieldInfo);
@@ -169,7 +170,7 @@ public static class RoslynHelper
 
     public static RosClass AddPropertyWithBackingField([DisallowNull] this RosClass type, [DisallowNull] RosPropertyInfo propertyInfo, [DisallowNull] RosFld field, out RosProp property)
     {
-        Check.MustBeArgumentNotNull(type);
+        Checker.MustBeArgumentNotNull(type);
 
         property = CreatePropertyWithBackingField(propertyInfo, field);
         return type.AddMembers(property);
@@ -177,7 +178,7 @@ public static class RoslynHelper
 
     public static BaseNamespaceDeclarationSyntax AddType(this BaseNamespaceDeclarationSyntax nameSpace, RosClass type)
     {
-        Check.MustBeArgumentNotNull(nameSpace);
+        Checker.MustBeArgumentNotNull(nameSpace);
 
         return nameSpace.AddMembers(type);
     }
@@ -187,7 +188,7 @@ public static class RoslynHelper
 
     public static BaseNamespaceDeclarationSyntax AddType(this BaseNamespaceDeclarationSyntax nameSpace, string typeName, out RosClass type, IEnumerable<SyntaxKind>? modifiers = null)
     {
-        Check.MustBeArgumentNotNull(nameSpace);
+        Checker.MustBeArgumentNotNull(nameSpace);
 
         type = CreateType(typeName, modifiers);
         return nameSpace.AddType(type);
@@ -198,7 +199,7 @@ public static class RoslynHelper
 
     public static BaseNamespaceDeclarationSyntax AddUsingNameSpace(this BaseNamespaceDeclarationSyntax nameSpace, string usingNamespace)
     {
-        Check.MustBeArgumentNotNull(nameSpace);
+        Checker.MustBeArgumentNotNull(nameSpace);
 
         var usingDirective = UsingDirective(ParseName(usingNamespace));
         return nameSpace.AddUsings(usingDirective);
@@ -214,7 +215,7 @@ public static class RoslynHelper
 
     public static RosFld CreateField(RosFieldInfo fieldInfo)
     {
-        Check.MustBeArgumentNotNull(fieldInfo);
+        Checker.MustBeArgumentNotNull(fieldInfo);
 
         var result = FieldDeclaration(
             VariableDeclaration(
@@ -232,7 +233,7 @@ public static class RoslynHelper
     [return: NotNull]
     public static RosMethod CreateMethod(RosMethodInfo methodInfo)
     {
-        Check.MustBeArgumentNotNull(methodInfo);
+        Checker.MustBeArgumentNotNull(methodInfo);
 
         var modifiers = methodInfo.Modifiers;
         if (methodInfo.IsExtensionMethod)
@@ -261,7 +262,7 @@ public static class RoslynHelper
 
     public static RosProp CreateProperty(RosPropertyInfo propertyInfo)
     {
-        Check.MustBeArgumentNotNull(propertyInfo);
+        Checker.MustBeArgumentNotNull(propertyInfo);
         var result = InnerCreatePropertyBase(propertyInfo);
 
         if (propertyInfo.GetAccessor.Has || propertyInfo.SetAccessor.Has)
@@ -293,8 +294,8 @@ public static class RoslynHelper
 
     public static RosProp CreatePropertyWithBackingField([DisallowNull] RosPropertyInfo propertyInfo, [DisallowNull] RosFld field)
     {
-        Check.MustBeArgumentNotNull(propertyInfo);
-        Check.MustBeArgumentNotNull(field);
+        Checker.MustBeArgumentNotNull(propertyInfo);
+        Checker.MustBeArgumentNotNull(field);
         var result = InnerCreatePropertyBase(propertyInfo);
         if (propertyInfo.GetAccessor.Has || propertyInfo.SetAccessor.Has)
         {
@@ -340,7 +341,7 @@ public static class RoslynHelper
 
     public static RosClass CreateType(TypePath typeName, IEnumerable<SyntaxKind>? modifiers = null)
     {
-        Check.MustBeArgumentNotNull(typeName?.Name);
+        Checker.MustBeArgumentNotNull(typeName?.Name);
 
         modifiers ??= [SyntaxKind.PublicKeyword, SyntaxKind.SealedKeyword];
         return ClassDeclaration(typeName.Name).WithModifiers(modifiers.ToSyntaxTokenList());
@@ -369,13 +370,13 @@ public static class RoslynHelper
     [return: NotNull]
     private static RosMethod InnerCreateBaseMethod(RosMethodInfo methodInfo, RosMethod result)
     {
-        Check.MustBeArgumentNotNull(methodInfo);
-        Check.MustBeArgumentNotNull(result);
+        Checker.MustBeArgumentNotNull(methodInfo);
+        Checker.MustBeArgumentNotNull(result);
 
         if (methodInfo.Parameters?.Any() ?? false)
         {
             var paramArray = methodInfo.Parameters.ToArray();
-            var nodes = new SyntaxNodeOrToken[paramArray.Length * 2 - 1];
+            var nodes = new SyntaxNodeOrToken[(paramArray.Length * 2) - 1];
             var nodeIndex = 0;
             for (var paramIndex = 0; paramIndex < paramArray.Length; paramIndex++)
             {
@@ -441,6 +442,7 @@ public static class RoslynHelper
         => SyntaxFactory.AttributeList(attributes);
 }
 
+[Immutable]
 public sealed class RosFieldInfo(
     in string name,
     in TypePath type,
@@ -466,6 +468,7 @@ public sealed class RosFieldInfo(
         HashCode.Combine(this.Type, this.Name.GetHashCode(StringComparison.CurrentCulture));
 }
 
+[Immutable]
 public sealed class RosMethodInfo(
     [DisallowNull] in string name,
     in IEnumerable<SyntaxKind>? modifiers = null,
@@ -499,6 +502,7 @@ public sealed class RosMethodInfo(
         => HashCode.Combine(this.Name, this.Parameters?.GetHashCode(), this.Name.GetHashCode(StringComparison.CurrentCulture));
 }
 
+[Immutable]
 public sealed class RosPropertyInfo(
     in string name,
     in TypePath type,

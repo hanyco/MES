@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<AssemblyName>Library.$(MSBuildProjectName)</AssemblyName>
+		<RootNamespace>Library.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+	</PropertyGroup>
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\CoreLib\CoreLib.csproj" />
+	</ItemGroup>
+
+</Project>

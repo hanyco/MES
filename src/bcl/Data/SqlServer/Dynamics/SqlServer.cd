@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Library35.Data.SqlServer.Database" Collapsed="true">
+    <Position X="3.75" Y="2.5" Width="1.5" />
+    <Members>
+      <Field Name="_AllParams" Hidden="true" />
+      <Field Name="_StoredProcedures" Hidden="true" />
+      <Field Name="_Tables" Hidden="true" />
+      <Method Name="GetStoredProcedures" Hidden="true" />
+      <Method Name="GetTables" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>QEACAABAAAAAAAAAAVAA1AAAAAAAAAAAACABgBAAAAA=</HashCode>
+      <FileName>Data\SqlServer\Database.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="StoredProcedures" />
+      <Property Name="Tables" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Library35.Data.SqlServer.Table" Collapsed="true">
+    <Position X="6" Y="1.5" Width="1.75" />
+    <Members>
+      <Field Name="_Columns" Hidden="true" />
+      <Method Name="GetColumns" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAACQAAAAAAAAAAAAAAAgAAAAAAAAAABAIABAAgAAAA=</HashCode>
+      <FileName>Data\SqlServer\Table.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Library35.Data.SqlServer.Server" Collapsed="true">
+    <Position X="1" Y="2.5" Width="1.5" />
+    <Members>
+      <Field Name="_Databases" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAEAgAAAEAEAAAIQIBAAAAAAAADAAQAAAAAA=</HashCode>
+      <FileName>Data\SqlServer\Server.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Databases" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Library35.Data.SqlServer.StoredProcedure" Collapsed="true">
+    <Position X="6" Y="3.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>IAACAAIAAAAgAACAAAABAAIGAAAAAAAAAAABAAAAAAA=</HashCode>
+      <FileName>Data\SqlServer\StoredProcedure.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Params" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Library35.Data.SqlServer.StoredProcedureParam" Collapsed="true">
+    <Position X="9" Y="3.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AACCAAAgAAAAAAAAAAAAAABAAABAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\SqlServer\StoredProcedureParam.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Library35.Data.SqlServer.SqlObject&lt;TSqlObject, TOwner&gt;">
+    <Position X="11.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACBAAAAAAAEAAAAAIQAQAAAAgAAAAAAAAAAQCA=</HashCode>
+      <FileName>Data\SqlServer\SqlObject.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Library35.Data.SqlServer.Column" Collapsed="true">
+    <Position X="9" Y="1.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAIAAAAgAAAAgAAAAAAAAAAAAAAQAAAAMAA=</HashCode>
+      <FileName>Data\SqlServer\Column.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Tahoma" Size="8.25" />
+</ClassDiagram>

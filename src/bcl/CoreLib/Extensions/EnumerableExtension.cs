@@ -12,14 +12,17 @@ public static class EnumerableExtension
     extension(IEnumerable source)
     {
         // 'source' refers to receiver
-        public bool IsEmpty => !source.GetEnumerator().MoveNext();
+        public bool IsEmpty => source switch
+        {
+            null => true,
+            Array a => a.Length == 0,
+            ICollection list => list.Count == 0,
+            _ => source.GetEnumerator().MoveNext()
+        };
     }
 
     extension<TItem>(IEnumerable<TItem> source)
     {
-        // 'source' refers to receiver
-        public bool IsEmpty => !source.GetEnumerator().MoveNext();
-
         public void ForEach(Action<TItem> action)
         {
             var items = source.ToImmutableArray();
