@@ -1,9 +1,11 @@
 ﻿using Library.DesignPatterns.Markers;
 using Library.Globalization.DataTypes;
-using Library.Results;
+using Library.Helpers;
+using Library.Resulting;
 using Library.Validations;
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -61,7 +63,7 @@ public readonly struct PersianDateTime :
     /// Gets the day of week title.
     /// </summary>
     /// <value>The day of week title.</value>
-    public string DayOfWeekTitle => EnumHelper.GetItemDescription(this.DayOfWeek)!;
+    public string DayOfWeekTitle => EnumExtensions.GetItemDescription(this.DayOfWeek)!;
 
     /// <summary>
     /// Gets the hour.
@@ -207,13 +209,13 @@ public readonly struct PersianDateTime :
     /// Gets the days of week names.
     /// </summary>
     /// <value>The month names.</value>
-    public static IEnumerable<string> DaysOfWeek => EnumHelper.GetDescriptions(EnumHelper.GetItems<PersianDayOfWeek>())!;
+    public static IEnumerable<string> DaysOfWeek => EnumExtensions.GetDescriptions(EnumExtensions.GetItems<PersianDayOfWeek>())!;
 
     /// <summary>
     /// Gets the month names.
     /// </summary>
     /// <value>The month names.</value>
-    public static IEnumerable<string> MonthNames => EnumHelper.GetDescriptions(EnumHelper.GetItems<PersianMonth>())!;
+    public static IEnumerable<string> MonthNames => EnumExtensions.GetDescriptions(EnumExtensions.GetItems<PersianMonth>())!;
 
     /// <summary>
     /// Gets a PersianDateTime object that is set to the current date and time on this computer, expressed as the local time.

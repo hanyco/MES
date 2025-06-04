@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 using Library.CodeGeneration;
 using Library.Dynamic;
 using Library.Interfaces;
-using Library.Results;
+using Library.Resulting;
 using Library.Validations;
 
 using Microsoft.Data.SqlClient;
