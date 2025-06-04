@@ -30,7 +30,7 @@ public abstract class TypeBase(in string name) : IType
             ? vr1
             : Check.IfAnyNull(this.UsingNamesSpaces).TryParse(out var vr2)
                 ? vr2
-                : Result.Succeed;
+                : Result.Success();
 }
 
 public static class TypeExtensions

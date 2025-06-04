@@ -1,4 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
+
+using Library.Exceptions;
 
 namespace Library.Validations;
 
@@ -7,7 +10,7 @@ public static class Check
     /// <summary>
     /// Throws an exception if the specified boolean is false.
     /// </summary>
-    /// <param name="ok">The boolean to check.</param>
+    /// <param name="ok">                The boolean to check. </param>
     /// <param name="getExceptionIfNot">
     /// A function to get the exception to throw if the boolean is false.
     /// </param>
@@ -29,13 +32,22 @@ public static class Check
         MustBe(ok, () => string.Format(message, args));
 
     public static void MustBeArgumentNotNull([NotNull][AllowNull] object? obj, string? argumentName = null) =>
-        MustBe(obj != null, () => $"{argumentName} cannot be null.");
+        MustBe(obj != null, () => new ValidationException($"{argumentName} cannot be null"));
 
-    extension<T>([DoesNotReturnIf(false)] T obj)
+    public static void MustBeNotNull([NotNull][AllowNull] object? obj, string? argumentName = null) =>
+        MustBe(obj is not null, () => new ValidationException($"{argumentName} cannot be null"));
+
+    extension<T>([NotNull][AllowNull] T? obj)
     {
-        public T ArgumentNotNull(string? argumentName = null)
+        public T ArgumentNotNull([CallerMemberName] string? argumentName = null)
         {
             MustBeArgumentNotNull(obj, argumentName);
+            return obj;
+        }
+
+        public T NotNull([CallerMemberName] string? argumentName = null)
+        {
+            MustBe(obj is not null, () => new ValidationException($"{argumentName} cannot be null"));
             return obj;
         }
     }

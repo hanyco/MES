@@ -2,6 +2,8 @@
 
 public interface IResult
 {
+    object? Error { get; init; }
+    IResult? InnerResult { get; init; }
     bool IsFailure => !this.IsSucceed;
     bool IsSucceed { get; init; }
     string? Message { get; init; }

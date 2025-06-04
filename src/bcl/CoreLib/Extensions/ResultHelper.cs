@@ -1,9 +1,8 @@
-﻿using System.Collections.Immutable;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 
+using Library.Exceptions;
 using Library.Resulting;
 using Library.Validations;
 
@@ -16,9 +15,9 @@ public static class ResultHelper
     /// <summary>
     /// Breaks the execution if the given Result is not successful.
     /// </summary>
-    /// <typeparam name="TResult"></typeparam>
-    /// <param name="task"></param>
-    /// <returns></returns>
+    /// <typeparam name="TResult"> </typeparam>
+    /// <param name="task"> </param>
+    /// <returns> </returns>
     public static async Task<TResult> BreakOnFail<TResult>(this Task<TResult> task)
         where TResult : IResult
     {
@@ -29,32 +28,15 @@ public static class ResultHelper
     /// <summary>
     /// Breaks the execution if the given Result is not successful.
     /// </summary>
-    /// <typeparam name="TResult"></typeparam>
-    /// <param name="result"></param>
-    /// <returns></returns>
+    /// <typeparam name="TResult"> </typeparam>
+    /// <param name="result"> </param>
+    /// <returns> </returns>
     public static TResult BreakOnFail<TResult>(this TResult result)
         where TResult : IResult
     {
         if (result?.IsSucceed is not true)
         {
             Break();
-        }
-        return result;
-    }
-
-    [return: NotNullIfNotNull(nameof(results))]
-    public static TResult? Combine<TResult>(this IEnumerable<TResult> results)
-        where TResult : class, IResult, IFactory<TResult, TResult>, ICombinable<TResult>
-    {
-        if (results == null || !results.Any())
-        {
-            return null;
-        }
-        var buffer = results.ToImmutableArray();
-        var result = Result.Create(buffer.First());
-        foreach (var item in buffer.Skip(1))
-        {
-            result = result.Combine(item);
         }
         return result;
     }
@@ -70,17 +52,22 @@ public static class ResultHelper
 
     public static Task End(this Task<Result> _) =>
         _;
+
     public static Task End<T>(this Task<Result<T>> _) =>
         _;
-
-    [return: NotNull]
-    public static IEnumerable<Exception>? GetAllErrors(this IResult result) =>
-        result.IterateOnAll<IEnumerable<Exception>>(x => x.Errors).SelectAll();
 
     public static async Task<TValue> GetValueAsync<TValue>(this Task<Result<TValue>> taskResult)
     {
         var result = await taskResult;
         return result.Value;
+    }
+
+    public static TResult OnDone<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : IResult
+    {
+        Check.MustBeArgumentNotNull(action);
+
+        action(result);
+        return result;
     }
 
     [return: NotNullIfNotNull(nameof(Result))]
@@ -168,7 +155,7 @@ public static class ResultHelper
             action.ArgumentNotNull()(result);
         }
 
-        return result;
+        return result!;
     }
 
     public static async Task<TResult?> OnSucceedAsync<TResult>(this TResult? result, [DisallowNull] Func<TResult, CancellationToken, Task<TResult>> next, CancellationToken token = default) where TResult : IResult
@@ -182,56 +169,46 @@ public static class ResultHelper
         return r.IsSucceed ? await next.ArgumentNotNull()(r, token) : r;
     }
 
-    public static TResult OnDone<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : IResult
-    {
-        Check.MustBeArgumentNotNull(action);
-
-        action(result);
-        return result;
-    }
-
     /// <summary>
     /// Throws an exception if the given Result is not successful.
     /// </summary>
-    /// <param name="result">The Result to check.</param>
-    /// <param name="owner">The object that is throwing the exception.</param>
-    /// <param name="instruction">The instruction that is throwing the exception.</param>
-    /// <returns>The given Result.</returns>
+    /// <param name="result">      The Result to check. </param>
+    /// <param name="owner">       The object that is throwing the exception. </param>
+    /// <param name="instruction"> The instruction that is throwing the exception. </param>
+    /// <returns> The given Result. </returns>
     public static Result ThrowOnFail([DisallowNull] this Result result, object? owner = null, string? instruction = null) =>
         InnerThrowOnFail(result, owner, instruction);
 
     /// <summary>
     /// Throws an exception if the given result is not successful.
     /// </summary>
-    /// <typeparam name="TResult">The type of the result.</typeparam>
-    /// <param name="result">The result to check.</param>
-    /// <param name="owner">The owner of the result.</param>
-    /// <param name="instruction">The instruction associated with the result.</param>
-    /// <returns>The given result.</returns>
+    /// <typeparam name="TResult"> The type of the result. </typeparam>
+    /// <param name="result">      The result to check. </param>
+    /// <param name="owner">       The owner of the result. </param>
+    /// <param name="instruction"> The instruction associated with the result. </param>
+    /// <returns> The given result. </returns>
     public static TResult ThrowOnFail<TResult>([DisallowNull] this TResult result, object? owner = null, string? instruction = null) where TResult : IResult
         => InnerThrowOnFail(result, owner, instruction);
 
     /// <summary>
-    /// Throws an exception if the given <see cref="ResultTValue"/> is a failure.
+    /// Throws an exception if the given <see cref="ResultTValue" /> is a failure.
     /// </summary>
-    /// <typeparam name="TValue">The type of the value.</typeparam>
-    /// <param name="result">The <see cref="ResultTValue"/> to check.</param>
-    /// <param name="owner">The object that is responsible for the operation.</param>
-    /// <param name="instruction">The instruction that is responsible for the operation.</param>
-    /// <returns>The given <see cref="ResultTValue"/>.</returns>
+    /// <typeparam name="TValue"> The type of the value. </typeparam>
+    /// <param name="result">      The <see cref="ResultTValue" /> to check. </param>
+    /// <param name="owner">       The object that is responsible for the operation. </param>
+    /// <param name="instruction"> The instruction that is responsible for the operation. </param>
+    /// <returns> The given <see cref="ResultTValue" />. </returns>
     public static Result<TValue> ThrowOnFail<TValue>([DisallowNull] this Result<TValue> result, object? owner = null, string? instruction = null)
-        => InnerThrowOnFail(result, owner, instruction);
-    public static void ThrowOnFailOrEnd<TValue>([DisallowNull] this Result<TValue> result, object? owner = null, string? instruction = null)
         => InnerThrowOnFail(result, owner, instruction);
 
     /// <summary>
     /// Throws an exception if the result of the provided Task is a failure.
     /// </summary>
-    /// <typeparam name="TValue">The type of the value.</typeparam>
-    /// <param name="resultAsync">The result to check.</param>
-    /// <param name="owner">The owner of the result.</param>
-    /// <param name="instruction">The instruction associated with the result.</param>
-    /// <returns>The result of the provided Task.</returns>
+    /// <typeparam name="TValue"> The type of the value. </typeparam>
+    /// <param name="resultAsync"> The result to check. </param>
+    /// <param name="owner">       The owner of the result. </param>
+    /// <param name="instruction"> The instruction associated with the result. </param>
+    /// <returns> The result of the provided Task. </returns>
     public static async Task<Result<TValue>> ThrowOnFailAsync<TValue>(this Task<Result<TValue>> resultAsync, object? owner = null, string? instruction = null, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -239,20 +216,13 @@ public static class ResultHelper
         return InnerThrowOnFail(result, owner, instruction);
     }
 
-    public static async Task ThrowOnFailOrEndAsync<TValue>(this Task<Result<TValue>> resultAsync, object? owner = null, string? instruction = null, CancellationToken cancellationToken = default)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-        var result = await resultAsync;
-        InnerThrowOnFail(result, owner, instruction).End();
-    }
-
     /// <summary>
     /// Throws an exception if the result of the provided Task is a failure or the task is cancelled.
     /// </summary>
-    /// <typeparam name="TValue"></typeparam>
-    /// <param name="resultAsync"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <typeparam name="TValue"> </typeparam>
+    /// <param name="resultAsync">       </param>
+    /// <param name="cancellationToken"> </param>
+    /// <returns> </returns>
     public static async Task<Result<TValue>> ThrowOnFailAsync<TValue>(this Task<Result<TValue>> resultAsync, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -260,22 +230,15 @@ public static class ResultHelper
         return InnerThrowOnFail(result, null, null);
     }
 
-    public static async Task ThrowOnFailOrEndAsync<TValue>(this Task<Result<TValue>> resultAsync, CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-        var result = await resultAsync;
-        InnerThrowOnFail(result, null, null).End();
-    }
-
     /// <summary>
     /// Throws an exception if the result of the provided Task is a failure.
     /// </summary>
-    /// <typeparam name="TResult"></typeparam>
-    /// <param name="resultAsync"></param>
-    /// <param name="owner"></param>
-    /// <param name="instruction"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <typeparam name="TResult"> </typeparam>
+    /// <param name="resultAsync">       </param>
+    /// <param name="owner">             </param>
+    /// <param name="instruction">       </param>
+    /// <param name="cancellationToken"> </param>
+    /// <returns> </returns>
     public static async Task<TResult> ThrowOnFailAsync<TResult>(this Task<TResult> resultAsync, object? owner = null, string? instruction = null, CancellationToken cancellationToken = default)
         where TResult : IResult
     {
@@ -287,11 +250,11 @@ public static class ResultHelper
     /// <summary>
     /// Throws an exception if the result of the provided Task is a failure.
     /// </summary>
-    /// <param name="resultAsync"></param>
-    /// <param name="owner"></param>
-    /// <param name="instruction"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="resultAsync">       </param>
+    /// <param name="owner">             </param>
+    /// <param name="instruction">       </param>
+    /// <param name="cancellationToken"> </param>
+    /// <returns> </returns>
     public static async Task<Result> ThrowOnFailAsync(this Task<Result> resultAsync, object? owner = null, string? instruction = null, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -299,26 +262,31 @@ public static class ResultHelper
         return InnerThrowOnFail(result, owner, instruction);
     }
 
+    public static void ThrowOnFailOrEnd<TValue>([DisallowNull] this Result<TValue> result, object? owner = null, string? instruction = null)
+                        => InnerThrowOnFail(result, owner, instruction);
+
+    public static async Task ThrowOnFailOrEndAsync<TValue>(this Task<Result<TValue>> resultAsync, object? owner = null, string? instruction = null, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var result = await resultAsync;
+        InnerThrowOnFail(result, owner, instruction).End();
+    }
+
+    public static async Task ThrowOnFailOrEndAsync<TValue>(this Task<Result<TValue>> resultAsync, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var result = await resultAsync;
+        InnerThrowOnFail(result, null, null).End();
+    }
+
     public static Task<TResult> ToAsync<TResult>(this TResult result) where TResult : IResult
         => Task.FromResult(result);
-
-    public static NotificationMessage ToNotificationMessage(this IResult @this, string? title = null, object? owner = null, string? instruction = null)
-    {
-        Check.MustBeArgumentNotNull(@this);
-        return new NotificationMessage(
-            Text: @this.Message ?? string.Empty,
-            Instruction: instruction,
-            Title: title,
-            Details: @this.ToString().Remove(@this.Message).Trim(),
-            Level: @this.IsSucceed ? MessageLevel.Info : MessageLevel.Error,
-            Owner: owner);
-    }
 
     [return: NotNull]
     public static Result<TValue> ToNotNullValue<TValue>(this Result<TValue?> result)
         where TValue : class
     {
-        Check.MustBeNotNull(result?.Value);
+        Check.MustBeNotNull(result.Value);
         return result!;
     }
 
@@ -327,7 +295,7 @@ public static class ResultHelper
         where TValue : class
     {
         var r = await result;
-        Check.MustBeNotNull(r?.Value);
+        Check.MustBeNotNull(r.Value);
         return r!;
     }
 
@@ -336,7 +304,7 @@ public static class ResultHelper
         Check.MustBeArgumentNotNull(getNewValue);
 
         var result = await resultTask;
-        var value1 = getNewValue(result);
+        var value1 = getNewValue((TValue)result);
         return Result.From<TValue1>(result, value1);
     }
 
@@ -344,20 +312,23 @@ public static class ResultHelper
         => await resultTask;
 
     /// <summary>
-    /// Tries to parse the input object as a <typeparamref name="TResult"/> object and retrieves the result.
+    /// Tries to parse the input object as a <typeparamref name="TResult" /> object and retrieves
+    /// the result.
     /// </summary>
-    /// <typeparam name="TResult">The type of <see cref="IResult"/> to parse the input as.</typeparam>
-    /// <param name="input">The input object to parse.</param>
+    /// <typeparam name="TResult">
+    /// The type of <see cref="IResult" /> to parse the input as.
+    /// </typeparam>
+    /// <param name="input">  The input object to parse. </param>
     /// <param name="result">
-    /// When this method returns, contains the parsed <typeparamref name="TResult"/> object if
+    /// When this method returns, contains the parsed <typeparamref name="TResult" /> object if
     /// successful, or the default value if parsing fails.
     /// </param>
     /// <returns>
-    /// <c>true</c> if the parsing is successful and the result is a success, <c>false</c> otherwise.
+    /// <c> true </c> if the parsing is successful and the result is a success, <c> false </c> otherwise.
     /// </returns>
     /// <remarks>
-    /// The method sets the <paramref name="result"/> parameter to the parsed object and checks if
-    /// the parsing is successful by evaluating <see cref="IResult.IsSucceed"/>.
+    /// The method sets the <paramref name="result" /> parameter to the parsed object and checks if
+    /// the parsing is successful by evaluating <see cref="IResult.IsSucceed" />.
     /// </remarks>
     public static bool TryParse<TResult>([DisallowNull] this TResult input, [NotNull] out TResult result) where TResult : IResult =>
         (result = input).IsSucceed;
@@ -370,11 +341,11 @@ public static class ResultHelper
         new(result, newValue);
 
     /// <summary>
-    /// Creates a new instance of the <see cref="Result{TValue}"/> class with the specified value.
+    /// Creates a new instance of the <see cref="Result{TValue}" /> class with the specified value.
     /// </summary>
-    /// <param name="value">The value to set.</param>
+    /// <param name="value"> The value to set. </param>
     /// <returns>
-    /// A new instance of the <see cref="Result{TValue}"/> class with the specified value.
+    /// A new instance of the <see cref="Result{TValue}" /> class with the specified value.
     /// </returns>
     public static Result<TValue> WithValue<TValue>(this Result<TValue> result, in TValue value) =>
         new(result, value);
@@ -389,7 +360,7 @@ public static class ResultHelper
         }
 
         Exception exception;
-        var error = result.Errors.FirstOrDefault();
+        var error = result.Error;
 
         if (!result.Message.IsNullOrEmpty())
         {
@@ -401,19 +372,9 @@ public static class ResultHelper
         }
         else
         {
-            exception = new CommonException(result.ToNotificationMessage(owner: owner, instruction: instruction)).With(x => x.Source = owner?.ToString());
+            exception = new CommonException("An unknown error occurred.") { Instruction = instruction }.With(x => x.Source = owner?.ToString());
         }
         ExceptionDispatchInfo.Throw(exception);
         return result;
-    }
-
-    private static IEnumerable<T> IterateOnAll<T>(this IResult result, Func<IResult, T> selector)
-    {
-        var buffer = result;
-        while (buffer != null)
-        {
-            yield return selector(buffer);
-            buffer = buffer.InnerResult;
-        }
     }
 }

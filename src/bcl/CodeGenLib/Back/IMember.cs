@@ -18,5 +18,5 @@ public abstract class Member([DisallowNull] string name) : IMember
         this.OnValidate();
 
     protected virtual Result OnValidate() =>
-        Result.Succeed;
+        Result.Success();
 }

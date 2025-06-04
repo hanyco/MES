@@ -40,7 +40,7 @@ public sealed class Namespace(string name) : INamespace
                 return vr;
             }
         }
-        return Result.Succeed;
+        return Result.Success();
     }
 }
 
