@@ -8,5 +8,7 @@
   <Folder Name="/src/infra/">
     <Project Path="src/infra/CodeGenerator/CodeGenerator.csproj" Id="ffa23aa6-bfcd-464a-ba06-89ecb0960a33" />
   </Folder>
-  <Folder Name="/src/prj/" />
+  <Folder Name="/src/prj/">
+    <Project Path="src/prj/HanyCoMES/HanyCoMES.csproj" />
+  </Folder>
 </Solution>
