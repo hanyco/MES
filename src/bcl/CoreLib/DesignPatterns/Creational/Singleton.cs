@@ -1,4 +1,4 @@
-namespace Library.DesignPatterns.Creational;
+﻿namespace Library.DesignPatterns.Creational;
 
 /// <summary>
 /// A Singleton using an StaticAllocator used just to simplify the inheritance syntax.
@@ -6,7 +6,7 @@ namespace Library.DesignPatterns.Creational;
 public class Singleton<T> : ISingleton<T>
     where T : class, ISingleton<T>
 {
-    private static readonly Lazy<T> _instance = ObjectHelper.GenerateLazySingletonInstance(initializeInstance: InitializeInstance);
+    private static readonly Lazy<T> _instance = ObjectExtensions.GenerateLazySingletonInstance(initializeInstance: InitializeInstance);
 
     /// <summary>
     /// Gets the instance.

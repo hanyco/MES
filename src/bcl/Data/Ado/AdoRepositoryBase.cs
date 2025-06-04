@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 
 using Library.Data.SqlServer;
-using Library.Results;
+using Library.Resulting;
 using Library.Validations;
 
 using Microsoft.Data.SqlClient;
@@ -80,7 +80,7 @@ public abstract class AdoRepositoryBase(in Sql sql)
     protected virtual Task<TEntity?> OnGetByIdAsync<TEntity>(object idValue, [DisallowNull] Func<SqlDataReader, TEntity> mapper, CancellationToken cancellationToken = default)
     {
         var query = Select<TEntity>().Top(1).Where($"{Sql.FindIdColumn<TEntity>()} = {idValue}").WithNoLock().Build();
-        return this.ExecuteReaderAsync(query, mapper.ArgumentNotNull(), cancellationToken).FirstOrDefaultAsync();
+        return this.ExecuteReaderAsync(query, mapper.ArgumentNotNull(), cancellationToken).FirstOrDefaultAsync(cancellationToken: cancellationToken);
     }
 
     protected virtual Task<TEntity?> OnGetByIdAsync<TEntity>(object idValue, CancellationToken cancellationToken = default)

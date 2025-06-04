@@ -1,4 +1,6 @@
 ﻿
+using Library.Coding;
+
 namespace Library.CodeGenLib.Back;
 
 public interface IField : IMember

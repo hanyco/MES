@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using Library.Extensions;
 using Library.Validations;
 
-namespace Library.CodeGenLib;
+namespace Library.Coding;
 
 [DebuggerStepThrough, StackTraceHidden]
 public sealed class TypePath : IEquatable<TypePath>

@@ -34,6 +34,6 @@ public readonly record struct TryMethodResult<TValue>(TValue? Value,
     /// <summary>
     /// Creates a new TryMethodResult object with the specified value, success status, and optional message.
     /// </summary>
-    public static TryMethodResult<TValue> TryParseResult(bool isSucceed = true, TValue? value, string? message = null) =>
+    public static TryMethodResult<TValue> TryParseResult(bool isSucceed = true, TValue? value = default, string? message = null) =>
         new(value, isSucceed, Message: message);
 }

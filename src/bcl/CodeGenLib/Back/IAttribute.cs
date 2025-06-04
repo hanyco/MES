@@ -1,4 +1,6 @@
-﻿namespace Library.CodeGenLib.Back;
+﻿using Library.Coding;
+
+namespace Library.CodeGenLib.Back;
 
 public interface ICodeGenAttribute
 {

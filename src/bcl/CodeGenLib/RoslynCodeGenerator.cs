@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 using static Library.Extensions.RoslynHelper;
+using Library.Coding;
 
 namespace Library.CodeGenLib;
 

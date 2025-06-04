@@ -1,4 +1,5 @@
-﻿using Library.Extensions;
+﻿using Library.Coding;
+using Library.Extensions;
 using Library.Validations;
 
 using Microsoft.CodeAnalysis;
@@ -7,7 +8,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-using MethodParameterInfo = (Library.CodeGenLib.TypePath Type, string Name);
+using MethodParameterInfo = (Library.Coding.TypePath Type, string Name);
 using PropertyAccessorInfo = (bool Has, System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.CSharp.SyntaxKind>? AccessModifiers);
 using RosClass = Microsoft.CodeAnalysis.CSharp.Syntax.ClassDeclarationSyntax;
 using RosFld = Microsoft.CodeAnalysis.CSharp.Syntax.FieldDeclarationSyntax;
