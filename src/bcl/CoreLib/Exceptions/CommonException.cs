@@ -1,6 +1,6 @@
 ﻿namespace Library.Exceptions;
 
-public sealed class CommonException : LibraryException, ILibraryException
+public sealed class CommonException : LibraryExceptionBase, ILibraryException
 {
     public CommonException()
     {

@@ -1,6 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+using Library.Extensions;
+using Library.Validations;
+
 namespace Library.Data.SqlServer;
 
 public static class SqlEntity
@@ -15,14 +18,14 @@ public static class SqlEntity
             var props = entityType.GetProperties();
             foreach (var prop in props)
             {
-                var dbGen = ObjectHelper.GetAttribute<DatabaseGeneratedAttribute>(prop);
+                var dbGen = ObjectExtensions.GetAttribute<DatabaseGeneratedAttribute>(prop);
                 if (dbGen?.DatabaseGeneratedOption is DatabaseGeneratedOption.None or DatabaseGeneratedOption.Computed)
                 {
                     continue;
                 }
-                var colAttr = ObjectHelper.GetAttribute<ColumnAttribute>(prop);
-                var fkAttr = ObjectHelper.GetAttribute<ForeignKeyAttribute>(prop);
-                var keyAttr = ObjectHelper.GetAttribute<KeyAttribute>(prop);
+                var colAttr = ObjectExtensions.GetAttribute<ColumnAttribute>(prop);
+                var fkAttr = ObjectExtensions.GetAttribute<ForeignKeyAttribute>(prop);
+                var keyAttr = ObjectExtensions.GetAttribute<KeyAttribute>(prop);
                 var name = colAttr?.Name is not null ? colAttr.Name : prop.Name;
                 var isKey = keyAttr is not null || dbGen?.DatabaseGeneratedOption is DatabaseGeneratedOption.Identity;
                 var isFk = fkAttr is not null;
@@ -42,8 +45,8 @@ public static class SqlEntity
 
     public static string GetTableName(Type tableType)
     {
-        Checker.MustBeArgumentNotNull(tableType);
-        var tableAttr = ObjectHelper.GetAttribute<TableAttribute>(tableType);
+        Check.MustBeArgumentNotNull(tableType);
+        var tableAttr = ObjectExtensions.GetAttribute<TableAttribute>(tableType);
         return tableAttr is not null
             ? tableAttr.Schema.IsNullOrEmpty() ? tableAttr.Name : $"{tableAttr.Schema}.{tableAttr.Name}"
             : tableType.Name;

@@ -1,7 +1,7 @@
 ﻿
 namespace Library.Exceptions;
 
-public class ValidationException : LibraryException, IValidationException
+public class ValidationException : LibraryExceptionBase, IValidationException
 {
     public ValidationException()
     {
