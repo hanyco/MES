@@ -1,7 +1,8 @@
-﻿using Library.CodeGeneration;
+using Library.CodeGeneration;
 using Library.Interfaces;
 using Library.Results;
 using Library.Validations;
+using Library.Extensions;
 
 namespace Library.Data.SqlServer.Builders;
 
@@ -48,7 +49,7 @@ public static class WhereClauseCreator
             }
             if (operation.Field.Type == typeof(DateTime) || operation.Field.Type == typeof(DateOnly) || operation.Field.Type == typeof(TimeOnly))
             {
-                return SqlTypeHelper.FormatDate(operand);
+                return SqlTypeExtensions.FormatDate(operand);
             }
             if (ObjectHelper.IsDbNull(operand))
             {
