@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Globalization;
 
-using Library.DesignPatterns.Markers;
 using Library.Globalization.Attributes;
-using Library.Validations;
 
 namespace Library.Globalization.DataTypes;
 
@@ -12,31 +10,31 @@ public interface INumericFormat
     /// <summary>
     /// Gets or sets the decimal digits.
     /// </summary>
-    /// <value>The decimal digits.</value>
+    /// <value> The decimal digits. </value>
     int DecimalDigits { get; set; }
 
     /// <summary>
     /// Gets or sets the decimal separator.
     /// </summary>
-    /// <value>The decimal separator.</value>
+    /// <value> The decimal separator. </value>
     char DecimalSeparator { get; set; }
 
     /// <summary>
     /// Gets the format string.
     /// </summary>
-    /// <value>The format string.</value>
+    /// <value> The format string. </value>
     string FormatString { get; }
 
     /// <summary>
     /// Gets or sets the group separator.
     /// </summary>
-    /// <value>The group separator.</value>
+    /// <value> The group separator. </value>
     char GroupSeparator { get; set; }
 
     /// <summary>
     /// Gets or sets the negative pattern.
     /// </summary>
-    /// <value>The negative pattern.</value>
+    /// <value> The negative pattern. </value>
     int NegativePattern { get; set; }
 }
 
@@ -74,10 +72,10 @@ public sealed class CostFormat : NumericFormatBase
     public static readonly string DefaultSymbol = "Rls";
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="CostFormat"/> class.
+    /// Initializes a new instance of the <see cref="CostFormat" /> class.
     /// </summary>
-    /// <param name="symbol">The symbol.</param>
-    /// <param name="positivePattern">The positive pattern.</param>
+    /// <param name="symbol">          The symbol. </param>
+    /// <param name="positivePattern"> The positive pattern. </param>
     public CostFormat(string? symbol, int positivePattern)
     {
         this.Symbol = symbol ?? DefaultSymbol;
@@ -87,19 +85,19 @@ public sealed class CostFormat : NumericFormatBase
     /// <summary>
     /// Gets the format string.
     /// </summary>
-    /// <value>The format string.</value>
+    /// <value> The format string. </value>
     public override string FormatString => "Co";
 
     /// <summary>
     /// Gets or sets the positive pattern.
     /// </summary>
-    /// <value>The positive pattern.</value>
+    /// <value> The positive pattern. </value>
     public int PositivePattern { get; set; }
 
     /// <summary>
     /// Gets or sets the symbol.
     /// </summary>
-    /// <value>The symbol.</value>
+    /// <value> The symbol. </value>
     public string Symbol { get; set; }
 }
 
@@ -137,10 +135,10 @@ public sealed class CurrencyFormat : NumericFormatBase
     public static readonly string DefaultSymbol = "Rls";
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="CurrencyFormat"/> class.
+    /// Initializes a new instance of the <see cref="CurrencyFormat" /> class.
     /// </summary>
-    /// <param name="symbol">The symbol.</param>
-    /// <param name="positivePattern">The positive pattern.</param>
+    /// <param name="symbol">          The symbol. </param>
+    /// <param name="positivePattern"> The positive pattern. </param>
     public CurrencyFormat(string? symbol, int positivePattern)
     {
         this.Symbol = symbol ?? DefaultSymbol;
@@ -150,19 +148,19 @@ public sealed class CurrencyFormat : NumericFormatBase
     /// <summary>
     /// Gets the format string.
     /// </summary>
-    /// <value>The format string.</value>
+    /// <value> The format string. </value>
     public override string FormatString => "C";
 
     /// <summary>
     /// Gets or sets the positive pattern.
     /// </summary>
-    /// <value>The positive pattern.</value>
+    /// <value> The positive pattern. </value>
     public int PositivePattern { get; set; }
 
     /// <summary>
     /// Gets the symbol.
     /// </summary>
-    /// <value>The symbol.</value>
+    /// <value> The symbol. </value>
     public string Symbol { get; }
 }
 
@@ -202,56 +200,56 @@ public sealed class NumberFormat : NumericFormatBase
     /// <summary>
     /// Gets the format string.
     /// </summary>
-    /// <value>The format string.</value>
+    /// <value> The format string. </value>
     public override string FormatString => "N";
 
     /// <summary>
     /// Gets or sets the negative sign.
     /// </summary>
-    /// <value>The negative sign.</value>
+    /// <value> The negative sign. </value>
     public string? NegativeSign { get; set; }
 
     /// <summary>
     /// Gets or sets the positive sign.
     /// </summary>
-    /// <value>The positive sign.</value>
+    /// <value> The positive sign. </value>
     public string? PositiveSign { get; set; }
 }
 
 /// <summary>
 /// </summary>
-/// <seealso cref="HanyCo.Mes20.Infra.Globalization.DataTypes.INumericFormat"/>
+/// <seealso cref="HanyCo.Mes20.Infra.Globalization.DataTypes.INumericFormat" />
 [Serializable]
 public abstract class NumericFormatBase : INumericFormat
 {
     /// <summary>
     /// Gets or sets the decimal digits.
     /// </summary>
-    /// <value>The decimal digits.</value>
+    /// <value> The decimal digits. </value>
     public int DecimalDigits { get; set; }
 
     /// <summary>
     /// Gets or sets the decimal separator.
     /// </summary>
-    /// <value>The decimal separator.</value>
+    /// <value> The decimal separator. </value>
     public char DecimalSeparator { get; set; }
 
     /// <summary>
     /// Gets the format string.
     /// </summary>
-    /// <value>The format string.</value>
+    /// <value> The format string. </value>
     public abstract string FormatString { get; }
 
     /// <summary>
     /// Gets or sets the group separator.
     /// </summary>
-    /// <value>The group separator.</value>
+    /// <value> The group separator. </value>
     public char GroupSeparator { get; set; }
 
     /// <summary>
     /// Gets or sets the negative pattern.
     /// </summary>
-    /// <value>The negative pattern.</value>
+    /// <value> The negative pattern. </value>
     public int NegativePattern { get; set; }
 }
 
@@ -259,12 +257,12 @@ public abstract class NumericFormatBase : INumericFormat
 public sealed class NumericFormatInfo
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="NumericFormatInfo"/> class.
+    /// Initializes a new instance of the <see cref="NumericFormatInfo" /> class.
     /// </summary>
-    /// <param name="number">The number.</param>
-    /// <param name="percent">The percent.</param>
-    /// <param name="currency">The currency.</param>
-    /// <param name="cost">The cost.</param>
+    /// <param name="number">   The number. </param>
+    /// <param name="percent">  The percent. </param>
+    /// <param name="currency"> The currency. </param>
+    /// <param name="cost">     The cost. </param>
     public NumericFormatInfo(NumberFormat number, PercentFormat percent, CurrencyFormat currency, CostFormat cost)
     {
         this.Number = number;
@@ -276,32 +274,32 @@ public sealed class NumericFormatInfo
     /// <summary>
     /// Gets or sets the cost.
     /// </summary>
-    /// <value>The cost.</value>
+    /// <value> The cost. </value>
     public CostFormat Cost { get; set; }
 
     /// <summary>
     /// Gets the currency.
     /// </summary>
-    /// <value>The currency.</value>
+    /// <value> The currency. </value>
     public CurrencyFormat Currency { get; }
 
     /// <summary>
     /// Gets the number.
     /// </summary>
-    /// <value>The number.</value>
+    /// <value> The number. </value>
     public NumberFormat Number { get; }
 
     /// <summary>
     /// Gets the percent.
     /// </summary>
-    /// <value>The percent.</value>
+    /// <value> The percent. </value>
     public PercentFormat Percent { get; }
 
     /// <summary>
     /// Maps to number format information.
     /// </summary>
-    /// <param name="numericFormatInfo">The numeric format information.</param>
-    /// <returns></returns>
+    /// <param name="numericFormatInfo"> The numeric format information. </param>
+    /// <returns> </returns>
     public static NumberFormatInfo MapToNumberFormatInfo(NumericFormatInfo numericFormatInfo)
     {
         var result = new NumberFormatInfo();
@@ -312,9 +310,9 @@ public sealed class NumericFormatInfo
     /// <summary>
     /// Maps to number format information.
     /// </summary>
-    /// <param name="numberFormatInfo">The number format information.</param>
-    /// <param name="numericFormatInfo">The numeric format information.</param>
-    /// <exception cref="ArgumentNullException">numericFormatInfo</exception>
+    /// <param name="numberFormatInfo">  The number format information. </param>
+    /// <param name="numericFormatInfo"> The numeric format information. </param>
+    /// <exception cref="ArgumentNullException"> numericFormatInfo </exception>
     public static void MapToNumberFormatInfo(NumberFormatInfo numberFormatInfo, NumericFormatInfo numericFormatInfo)
     {
         Check.MustBeArgumentNotNull(numericFormatInfo, nameof(numericFormatInfo));
@@ -340,7 +338,7 @@ public sealed class NumericFormatInfo
     /// <summary>
     /// Maps to number format information.
     /// </summary>
-    /// <returns></returns>
+    /// <returns> </returns>
     public NumberFormatInfo MapToNumberFormatInfo()
     {
         var result = new NumberFormatInfo();
@@ -351,7 +349,7 @@ public sealed class NumericFormatInfo
     /// <summary>
     /// Maps to number format information.
     /// </summary>
-    /// <param name="numberFormatInfo">The number format information.</param>
+    /// <param name="numberFormatInfo"> The number format information. </param>
     public void MapToNumberFormatInfo(NumberFormatInfo numberFormatInfo)
         => MapToNumberFormatInfo(numberFormatInfo, this);
 }
@@ -392,19 +390,19 @@ public sealed class PercentFormat : NumericFormatBase
     /// <summary>
     /// Gets the format string.
     /// </summary>
-    /// <value>The format string.</value>
+    /// <value> The format string. </value>
     public override string FormatString => "P";
 
     /// <summary>
     /// Gets or sets the positive pattern.
     /// </summary>
-    /// <value>The positive pattern.</value>
+    /// <value> The positive pattern. </value>
     public int PositivePattern { get; set; }
 
     /// <summary>
     /// Gets or sets the symbol.
     /// </summary>
-    /// <value>The symbol.</value>
+    /// <value> The symbol. </value>
     public string? Symbol { get; set; }
 }
 
@@ -590,11 +588,38 @@ public enum PercentNegativePattern
     Value1 = 1
 }
 
+public enum PercentPositivePattern
+{
+    /// <summary>
+    /// n %
+    /// </summary>
+    [Description("n %")]
+    Value0 = 0,
+
+    /// <summary>
+    /// n%
+    /// </summary>
+    [Description("n%")]
+    Value1 = 1,
+
+    /// <summary>
+    /// %n
+    /// </summary>
+    [Description("%n")]
+    Value2 = 2,
+
+    /// <summary>
+    /// % n
+    /// </summary>
+    [Description("% n")]
+    Value3 = 3
+}
+
 /// <summary>
 /// Enum for Persian days of the week.
 /// </summary>
-/// <param name=""></param>
-/// <returns>YekShanbeh, DoShanbeh, SeShanbeh, ChaharShanbeh, PanjShanbeh, Jomeh, Shanbeh</returns>
+/// <param name=""> </param>
+/// <returns> YekShanbeh, DoShanbeh, SeShanbeh, ChaharShanbeh, PanjShanbeh, Jomeh, Shanbeh </returns>
 public enum PersianDayOfWeek
 {
     [LocalizedDescription("fa-IR", CultureConstants.YEK_SHANBE_FA)]
@@ -675,33 +700,6 @@ public enum PersianMonth
     [LocalizedDescription("fa-IR", CultureConstants.ESFAND_FA)]
     [LocalizedDescription("en-US", CultureConstants.ESFAND_EN)]
     Esfand
-}
-
-public enum PercentPositivePattern
-{
-    /// <summary>
-    /// n %
-    /// </summary>
-    [Description("n %")]
-    Value0 = 0,
-
-    /// <summary>
-    /// n%
-    /// </summary>
-    [Description("n%")]
-    Value1 = 1,
-
-    /// <summary>
-    /// %n
-    /// </summary>
-    [Description("%n")]
-    Value2 = 2,
-
-    /// <summary>
-    /// % n
-    /// </summary>
-    [Description("% n")]
-    Value3 = 3
 }
 
 public enum TimeBand

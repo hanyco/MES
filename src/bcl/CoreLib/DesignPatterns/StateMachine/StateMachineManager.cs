@@ -1,4 +1,6 @@
-﻿using Library.Validations;
+﻿using System.Diagnostics.CodeAnalysis;
+
+using Library.Validations;
 
 namespace Library.DesignPatterns.StateMachine;
 
