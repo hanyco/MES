@@ -11,7 +11,7 @@ public readonly record struct Result(bool IsSucceed, string? Message = null) : I
     public static Result Succeed =>
         new() { IsSucceed = true };
 }
-public readonly record struct Result<TValue>(TValue Value, bool IsSucceed, string? Message = null) : IResult<TValue>
+public readonly record struct Result<TValue>(TValue Value, bool IsSucceed = true, string? Message = null) : IResult<TValue>
 {
     public static explicit operator TValue(Result<TValue> result) =>
         result.Value;

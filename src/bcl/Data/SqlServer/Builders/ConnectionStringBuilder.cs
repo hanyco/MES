@@ -1,23 +1,24 @@
 ﻿using Library.Extensions;
 using Library.Resulting;
 using Library.Validations;
-using System.Data.SqlClient;
+
+using Microsoft.Data.SqlClient;
 
 namespace Library.Data.SqlServer.Builders;
 
 /// <summary>
 /// Fluent builder for creating SQL Server connection strings.
 /// </summary>
-public sealed class ConnectionStringBuilder : IValidatable<ConnectionStringBuilder>, IBuilder<string>
+public sealed class ConnectionStringBuilder : IValidatable<ConnectionStringBuilder>
 {
-    private readonly SqlConnectionStringBuilder _builder;
+    private readonly Microsoft.Data.SqlClient.SqlConnectionStringBuilder _builder;
 
     /// <summary>
     /// Private constructor for creating a ConnectionStringBuilder.
     /// </summary>
     /// <param name="connectionString">Optional initial connection string.</param>
-    private ConnectionStringBuilder(string? connectionString = null)
-        => this._builder = connectionString.IsNullOrEmpty() ? new() : new(connectionString);
+    private ConnectionStringBuilder(string? connectionString = null) =>
+        this._builder = connectionString.IsNullOrEmpty() ? new() : new(connectionString);
 
     /// <summary>
     /// Build a connection string with various optional parameters.
@@ -31,39 +32,92 @@ public sealed class ConnectionStringBuilder : IValidatable<ConnectionStringBuild
     /// <param name="connectTimeout">The connection timeout value.</param>
     /// <param name="attachDbFilename">The name of the primary database file.</param>
     /// <param name="applicationName">The application name to be used in SQL Server.</param>
-    /// <param name="hasMultipleActiveResultSets">Indicates whether multiple active result sets are allowed.</param>
+    /// <param name="hasMultipleActiveResultSets">
+    /// Indicates whether multiple active result sets are allowed.
+    /// </param>
     /// <param name="isEncrypt">Indicates whether the connection should be encrypted.</param>
     /// <param name="isUserInstance">Indicates whether to use a user instance of SQL Server.</param>
     /// <param name="isReadOnly">Indicates whether the connection is read-only.</param>
     /// <returns>The constructed connection string.</returns>
     public static string Build(string server,
-        string? userName = null,
-        string? password = null,
-        string? database = null,
-        bool? isIntegratedSecurity = null,
-        bool? shouldPersistSecurityInfo = null,
-        int? connectTimeout = 30,
-        string? attachDbFilename = null,
-        string? applicationName = null,
-        bool? hasMultipleActiveResultSets = null,
-        bool? isEncrypt = null,
-        bool? isUserInstance = null,
-        bool? isReadOnly = null)
-        => Create()
-            .Server(server).Fluent()
-            .IfTrue(!userName.IsNullOrEmpty(), builder => builder.UserName(userName!))
-            .IfTrue(!password.IsNullOrEmpty(), builder => builder.Password(password!))
-            .IfTrue(!database.IsNullOrEmpty(), builder => builder.DataBase(database!))
-            .IfTrue(isIntegratedSecurity.HasValue, builder => builder.IsIntegratedSecurity(isIntegratedSecurity!.Value))
-            .IfTrue(shouldPersistSecurityInfo.HasValue, builder => builder.ShouldPersistSecurityInfo(shouldPersistSecurityInfo!.Value))
-            .IfTrue(connectTimeout.HasValue, builder => builder.ConnectTimeout(connectTimeout!.Value))
-            .IfTrue(!attachDbFilename.IsNullOrEmpty(), builder => builder.AttachDbFilename(attachDbFilename!))
-            .IfTrue(!applicationName.IsNullOrEmpty(), builder => builder.ApplicationName(applicationName!))
-            .IfTrue(hasMultipleActiveResultSets.HasValue, builder => builder.MultipleActiveResultSets(hasMultipleActiveResultSets!.Value))
-            .IfTrue(isEncrypt.HasValue, builder => builder.IsEncrypted(isEncrypt!.Value))
-            .IfTrue(isUserInstance.HasValue, builder => builder.IsUserInstance(isUserInstance!.Value))
-            .IfTrue(isReadOnly.HasValue, builder => builder.IsReadOnly(isReadOnly!.Value)).GetValue()
-            .Build();
+    string? userName = null,
+    string? password = null,
+    string? database = null,
+    bool? isIntegratedSecurity = null,
+    bool? shouldPersistSecurityInfo = null,
+    int? connectTimeout = 30,
+    string? attachDbFilename = null,
+    string? applicationName = null,
+    bool? hasMultipleActiveResultSets = null,
+    bool? isEncrypt = null,
+    bool? isUserInstance = null,
+    bool? isReadOnly = null)
+    {
+        var builder = Create().Server(server);
+
+        // Set properties only if the corresponding values are provided
+        if (!string.IsNullOrEmpty(userName))
+        {
+            builder = builder.UserName(userName);
+        }
+
+        if (!string.IsNullOrEmpty(password))
+        {
+            builder = builder.Password(password);
+        }
+
+        if (!string.IsNullOrEmpty(database))
+        {
+            builder = builder.DataBase(database);
+        }
+
+        if (isIntegratedSecurity.HasValue)
+        {
+            builder = builder.IsIntegratedSecurity(isIntegratedSecurity.Value);
+        }
+
+        if (shouldPersistSecurityInfo.HasValue)
+        {
+            builder = builder.ShouldPersistSecurityInfo(shouldPersistSecurityInfo.Value);
+        }
+
+        if (connectTimeout.HasValue)
+        {
+            builder = builder.ConnectTimeout(connectTimeout.Value);
+        }
+
+        if (!string.IsNullOrEmpty(attachDbFilename))
+        {
+            builder = builder.AttachDbFilename(attachDbFilename);
+        }
+
+        if (!string.IsNullOrEmpty(applicationName))
+        {
+            builder = builder.ApplicationName(applicationName);
+        }
+
+        if (hasMultipleActiveResultSets.HasValue)
+        {
+            builder = builder.MultipleActiveResultSets(hasMultipleActiveResultSets.Value);
+        }
+
+        if (isEncrypt.HasValue)
+        {
+            builder = builder.IsEncrypted(isEncrypt.Value);
+        }
+
+        if (isUserInstance.HasValue)
+        {
+            builder = builder.IsUserInstance(isUserInstance.Value);
+        }
+
+        if (isReadOnly.HasValue)
+        {
+            builder = builder.IsReadOnly(isReadOnly.Value);
+        }
+
+        return builder.Build();
+    }
 
     /// <summary>
     /// Create a new ConnectionStringBuilder without an initial connection string.
@@ -155,4 +209,12 @@ public sealed class ConnectionStringBuilder : IValidatable<ConnectionStringBuild
     // Validate the connection string.
     public Result<ConnectionStringBuilder> Validate()
         => new(this);
+
+    IResult<ConnectionStringBuilder> IValidatable<ConnectionStringBuilder>.Validate() => this.Validate();
+
+    private ConnectionStringBuilder Fluent(Action action)
+    {
+        action?.Invoke();
+        return this;
+    }
 }
