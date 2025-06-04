@@ -2,11 +2,13 @@
 
 public readonly record struct Result(bool IsSucceed, string? Message = null, object? Error = null) : IResult
 {
+    public IResult? InnerResult { get; init; }
+
     public static implicit operator Result(bool isSucceed) =>
         new(isSucceed, null);
 
     public static Result<TValue> From<TValue>(IResult result, TValue value, bool isSucceedDefault = true) =>
-        new() { Value = value, IsSucceed = result?.IsSucceed ?? isSucceedDefault, Message = result?.Message };
+        new() { Value = value, IsSucceed = result?.IsSucceed ?? isSucceedDefault, Message = result?.Message, InnerResult = result };
 
     public static Result Success() =>
         new() { IsSucceed = true };
@@ -28,6 +30,8 @@ public readonly record struct Result(bool IsSucceed, string? Message = null, obj
 }
 public readonly record struct Result<TValue>(TValue Value, bool IsSucceed = true, string? Message = null, object? Error = null) : IResult<TValue>
 {
+    public IResult? InnerResult { get; init; }
+
     public static explicit operator TValue(Result<TValue> result) =>
         result.Value;
 
@@ -35,7 +39,7 @@ public readonly record struct Result<TValue>(TValue Value, bool IsSucceed = true
         : this(value, result.IsSucceed, result.Message, result.Error)
     {
     }
-    
+
     public static implicit operator Result(Result<TValue> result) =>
         new(result.IsSucceed, result.Message, result.Error);
 }

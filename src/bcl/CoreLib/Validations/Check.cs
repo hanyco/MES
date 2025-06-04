@@ -14,7 +14,7 @@ public static class Check
     /// <param name="getExceptionIfNot">
     /// A function to get the exception to throw if the boolean is false.
     /// </param>
-    public static void MustBe([DoesNotReturnIf(false)] bool ok, in Func<Exception> getExceptionIfNot)
+    public static void MustBe([DoesNotReturnIf(false)] bool ok, Func<Exception> getExceptionIfNot)
     {
         if (!ok)
         {
@@ -23,7 +23,7 @@ public static class Check
     }
 
     public static void MustBe([DoesNotReturnIf(false)] bool ok, Func<string> onNotOk) =>
-        MustBe(ok, () => new Exception(onNotOk()));
+        MustBe(ok, () => new CommonException(onNotOk()));
 
     public static void MustBe([DoesNotReturnIf(false)] bool ok, string message) =>
         MustBe(ok, () => message);

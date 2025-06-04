@@ -1,18 +1,13 @@
-﻿using Library.CodeGeneration.Models;
-using Library.CodeGenLib.Back;
-using Library.Results;
-using Library.Validations;
-
-namespace Library.CodeGenLib.Back;
+﻿namespace Library.CodeGenLib.Back;
 
 public interface IMethod : IMember, IHasGenericTypes
 {
     ISet<MethodArgument> Arguments { get; }
     string? Body { get; }
+    bool IsAsync { get; }
     bool IsConstructor { get; }
     bool IsExtension { get; }
     TypePath? ReturnType { get; }
-    bool IsAsync { get; }
 
     static IMethod New(string name, string? body = null, IEnumerable<MethodArgument>? arguments = null, TypePath? returnType = null)
     {
@@ -34,16 +29,17 @@ public sealed class Method(string name) : Member(name), IMethod
     public ISet<MethodArgument> Arguments { get; } = new HashSet<MethodArgument>();
     public string? Body { get; set; }
     public ISet<IGenericType> GenericTypes { get; } = new HashSet<IGenericType>();
+    public bool IsAsync { get; set; }
     public bool IsConstructor { get; init; }
     public bool IsExtension { get; init; }
     public TypePath? ReturnType { get; init; }
-    public bool IsAsync { get; set; }
 
-    protected override Result OnValidate() =>
-        this.Check()
-            .RuleFor(x => !(x.IsExtension && !x.Arguments.Any()), () => "Extension method cannot be parameterless.")
-            .RuleFor(x => !(x.IsConstructor && x.IsExtension), () => "Constructor cannot be extension method.")
-            .Build();
+    protected override Result OnValidate()
+    {
+        Check.MustBe(!(this.IsExtension && !this.Arguments.Any()), "Extension method cannot be parameterless.");
+        Check.MustBe(!(this.IsConstructor && this.IsExtension), "Constructor cannot be extension method.");
+        return Result.Success();
+    }
 }
 
 public static class MethodExtensions
@@ -61,7 +57,10 @@ public static class MethodExtensions
     }
 
     public static TMethod AddArgument<TMethod>(this TMethod method, MethodArgument argument) where TMethod : IMethod
-        => method.Fluent(method.Arguments.Add(argument));
+    {
+        _ = method.Arguments.Add(argument);
+        return method;
+    }
 
     public static IEnumerable<string> GetNameSpaces(this IMethod method)
     {
