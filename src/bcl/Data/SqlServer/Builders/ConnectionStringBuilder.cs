@@ -146,7 +146,10 @@ public sealed class ConnectionStringBuilder : IValidatable<ConnectionStringBuild
     /// <param name="value">The ApplicationName value.</param>
     /// <returns>The updated ConnectionStringBuilder.</returns>
     public ConnectionStringBuilder ApplicationName(string value)
-        => this.Fluent(() => this._builder.ApplicationName = value);
+    {
+        this._builder.ApplicationName = value;
+        return this;
+    }
 
     /// <summary>
     /// Set the AttachDbFilename in the connection string.
@@ -154,7 +157,10 @@ public sealed class ConnectionStringBuilder : IValidatable<ConnectionStringBuild
     /// <param name="value">The AttachDbFilename value.</param>
     /// <returns>The updated ConnectionStringBuilder.</returns>
     public ConnectionStringBuilder AttachDbFilename(string value)
-        => this.Fluent(() => this._builder.AttachDBFilename = value);
+    {
+        this._builder.AttachDBFilename = value;
+        return this;
+    }
 
     /// <summary>
     /// Build the final connection string.
@@ -165,46 +171,79 @@ public sealed class ConnectionStringBuilder : IValidatable<ConnectionStringBuild
 
     // Set the ConnectTimeout in the connection string.
     public ConnectionStringBuilder ConnectTimeout(int value)
-        => this.Fluent(() => this._builder.ConnectTimeout = value);
+    {
+        this._builder.ConnectTimeout = value;
+        return this;
+    }
 
     // Set the DataSource (Server) in the connection string.
     public ConnectionStringBuilder DataBase(string value)
-        => this.Fluent(() => this._builder.DataSource = value);
+    {
+        this._builder.DataSource = value;
+        return this;
+    }
 
     // Set the Encrypt option in the connection string.
     public ConnectionStringBuilder IsEncrypted(bool value)
-        => this.Fluent(() => this._builder.Encrypt = value);
+    {
+        this._builder.Encrypt = value;
+        return this;
+    }
 
     // Set the IntegratedSecurity option in the connection string.
     public ConnectionStringBuilder IsIntegratedSecurity(bool value)
-        => this.Fluent(() => this._builder.IntegratedSecurity = value);
+    {
+        this._builder.IntegratedSecurity = value;
+        return this;
+    }
 
     // Set the ReadOnly or ReadWrite option in the connection string.
     public ConnectionStringBuilder IsReadOnly(bool value)
-        => this.Fluent(() => this._builder.ApplicationIntent = value ? ApplicationIntent.ReadOnly : ApplicationIntent.ReadWrite);
+    {
+        this._builder.ApplicationIntent = value ? ApplicationIntent.ReadOnly : ApplicationIntent.ReadWrite;
+        return this;
+    }
 
     // Set the UserInstance option in the connection string.
     public ConnectionStringBuilder IsUserInstance(bool value)
-        => this.Fluent(() => this._builder.UserInstance = value);
+    {
+        this._builder.UserInstance = value;
+        return this;
+    }
 
     // Set the MultipleActiveResultSets option in the connection string.
     public ConnectionStringBuilder MultipleActiveResultSets(bool value)
-        => this.Fluent(() => this._builder.MultipleActiveResultSets = value);
+    {
+        this._builder.MultipleActiveResultSets = value;
+        return this;
+    }
 
     // Set the Password in the connection string.
     public ConnectionStringBuilder Password(string value)
-        => this.Fluent(() => this._builder.Password = value);
+    {
+        this._builder.Password = value;
+        return this;
+    }
 
     // Set the Server (DataSource) in the connection string.
     public ConnectionStringBuilder Server(string value)
-        => this.Fluent(() => this._builder.DataSource = value);
+    {
+        this._builder.DataSource = value;
+        return this;
+    }
 
     // Set the PersistSecurityInfo option in the connection string.
     public ConnectionStringBuilder ShouldPersistSecurityInfo(bool value)
-        => this.Fluent(() => this._builder.PersistSecurityInfo = value);
+    {
+        this._builder.PersistSecurityInfo = value;
+        return this;
+    }
 
     public ConnectionStringBuilder UserName(string value)
-        => this.Fluent(() => this._builder.UserID = value);
+    {
+        this._builder.UserID = value;
+        return this;
+    }
 
     // Validate the connection string.
     public Result<ConnectionStringBuilder> Validate()
@@ -212,9 +251,4 @@ public sealed class ConnectionStringBuilder : IValidatable<ConnectionStringBuild
 
     IResult<ConnectionStringBuilder> IValidatable<ConnectionStringBuilder>.Validate() => this.Validate();
 
-    private ConnectionStringBuilder Fluent(Action action)
-    {
-        action?.Invoke();
-        return this;
-    }
 }

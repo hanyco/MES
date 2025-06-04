@@ -52,7 +52,11 @@ public static partial class SqlStatementBuilder
         => Set(statement, entity.ArgumentNotNull().GetType().GetProperties().Where(x=>x.Name != "Id").Select(p => (p.Name, p.GetValue(entity)))!);
 
     public static IUpdateStatement Table([DisallowNull] this IUpdateStatement statement, [DisallowNull] string tableName)
-        => statement.Fluent(statement.ArgumentNotNull().TableName = tableName.ArgumentNotNull()).GetValue();
+    {
+        _ = statement.ArgumentNotNull();
+        statement.TableName = tableName.ArgumentNotNull();
+        return statement;
+    }
 
     public static IUpdateStatement Table<TTable>([DisallowNull] this IUpdateStatement statement)
     {
@@ -67,7 +71,11 @@ public static partial class SqlStatementBuilder
         => new UpdateStatement { TableName = tableName.ArgumentNotNull() };
 
     public static IUpdateStatement Where([DisallowNull] this IUpdateStatement statement, string? whereClause)
-        => statement.Fluent(statement.ArgumentNotNull().WhereClause = whereClause).GetValue();
+    {
+        _ = statement.ArgumentNotNull();
+        statement.WhereClause = whereClause;
+        return statement;
+    }
 
     private class UpdateStatement : IUpdateStatement
     {
