@@ -32,10 +32,18 @@ public partial class SqlStatementBuilder
         => new DeleteStatement();
 
     public static IDeleteStatement From([DisallowNull] this IDeleteStatement statement, [DisallowNull] string tableName)
-        => statement.ArgumentNotNull().Fluent(() => statement.TableName = tableName.ArgumentNotNull()).GetValue();
+    {
+        _ = statement.ArgumentNotNull();
+        statement.TableName = tableName.ArgumentNotNull();
+        return statement;
+    }
 
     public static IDeleteStatement Where([DisallowNull] this IDeleteStatement statement, string? whereClause)
-        => statement.ArgumentNotNull().Fluent(() => statement.WhereClause = whereClause).GetValue();
+    {
+        _ = statement.ArgumentNotNull();
+        statement.WhereClause = whereClause;
+        return statement;
+    }
 
     private struct DeleteStatement : IDeleteStatement
     {

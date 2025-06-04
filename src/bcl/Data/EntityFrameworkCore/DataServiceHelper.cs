@@ -443,8 +443,11 @@ public static class DataServiceHelper
 
         //! Convert model to entity and execute onCommitting if not null
         var entity = convertToEntity(model) // Convert model to entity
-            .NotNull(() => "Entity cannot be null.").Fluent(cancellationToken) // Cannot be null
-            .IfTrue(onCommitting is not null, x => onCommitting!(x)).GetValue(); // On Before commit
+            .NotNull(() => "Entity cannot be null.");
+        if (onCommitting is not null)
+        {
+            onCommitting(entity);
+        }
 
         //! Setup transaction
         IDbContextTransaction? transaction;

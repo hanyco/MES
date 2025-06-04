@@ -62,11 +62,12 @@ public static partial class SqlStatementBuilder
     }
 
     public static ISelectStatement ClearOrdering([DisallowNull] this ISelectStatement statement)
-        => statement.ArgumentNotNull().Fluent(() =>
-        {
-            statement.OrderByColumn = null;
-            statement.OrderByDirection = OrderByDirection.None;
-        }).GetValue();
+    {
+        _ = statement.ArgumentNotNull();
+        statement.OrderByColumn = null;
+        statement.OrderByDirection = OrderByDirection.None;
+        return statement;
+    }
 
     public static ISelectStatement Columns([DisallowNull] this ISelectStatement statement, params string[] columns)
         => statement.ArgumentNotNull().With(x => x.Columns.ClearAndAddRange(columns.Compact()));
@@ -114,8 +115,12 @@ public static partial class SqlStatementBuilder
     public static ISelectStatement Top([DisallowNull] this ISelectStatement statement, int? topCount) =>
         statement.ArgumentNotNull().With(x => x.TopCount = topCount);
 
-    public static ISelectStatement Star([DisallowNull] this ISelectStatement statement) =>
-        statement.ArgumentNotNull().Fluent(statement.Columns.Clear).GetValue();
+    public static ISelectStatement Star([DisallowNull] this ISelectStatement statement)
+    {
+        _ = statement.ArgumentNotNull();
+        statement.Columns.Clear();
+        return statement;
+    }
 
     public static ISelectStatement Where([DisallowNull] this ISelectStatement statement, string? whereClause) =>
         statement.ArgumentNotNull().With(x => x.WhereClause = whereClause);

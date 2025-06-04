@@ -25,7 +25,10 @@ public sealed class ObservableObject<TValue>
     }
 
     private ItemActingEventArgs<TValue?> OnChanging(ItemActingEventArgs<TValue?> e)
-        => e.Fluent(() => Changing?.Invoke(this, e));
+    {
+        Changing?.Invoke(this, e);
+        return e;
+    }
 
     private void OnChanged(ItemActedEventArgs<TValue?> e)
         => Changed?.Invoke(this, e);
