@@ -1,9 +1,4 @@
-﻿using Library.CodeGeneration.Models;
-using Library.CodeGenLib;
-using Library.DesignPatterns.Markers;
-using Library.Results;
-using Library.Validations;
-
+﻿
 namespace Library.CodeGenLib.Back;
 
 public interface INamespace : IValidatable
@@ -16,7 +11,6 @@ public interface INamespace : IValidatable
         new Namespace(name);
 }
 
-[Immutable]
 public sealed class Namespace(string name) : INamespace
 {
     public string Name { get; } = name.ArgumentNotNull();
@@ -61,10 +55,10 @@ public static class NamSpaceExtensions
         return ns;
     }
 
-    public static Result<string> GenerateCode<TCodeGeneratorEngine>(this INamespace ns, TCodeGeneratorEngine engine)
+    public static IResult<string> GenerateCode<TCodeGeneratorEngine>(this INamespace ns, TCodeGeneratorEngine engine)
         where TCodeGeneratorEngine : ICodeGeneratorEngine => engine.Generate(ns);
 
-    public static Result<string> GenerateCode<TCodeGeneratorEngine>(this INamespace ns)
+    public static IResult<string> GenerateCode<TCodeGeneratorEngine>(this INamespace ns)
         where TCodeGeneratorEngine : ICodeGeneratorEngine, new()
         => ns.GenerateCode(new TCodeGeneratorEngine());
 }

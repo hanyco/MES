@@ -1,6 +1,4 @@
-﻿using Library.DesignPatterns.Markers;
-using Library.Helpers.CodeGen;
-using Library.Validations;
+﻿using Library.CodeGenLib.Helpers;
 
 namespace Library.CodeGenLib.Back;
 
@@ -11,10 +9,10 @@ public interface IProperty : IMember
     PropertyAccessor? Setter { get; }
     TypePath Type { get; }
 
-    public static IProperty New(string name, TypePath type)
+    static IProperty New(string name, TypePath type)
         => new CodeGenProperty(name, type);
 
-    public static IProperty New(string name, TypePath type, string? backingFieldName)
+    static IProperty New(string name, TypePath type, string? backingFieldName)
         => new CodeGenProperty(name, type, backingField: backingFieldName ?? TypeMemberNameHelper.ToFieldName(name));
 }
 
@@ -48,5 +46,4 @@ public class CodeGenProperty : Member, IProperty
     public TypePath Type { get; }
 }
 
-[Immutable]
 public readonly record struct PropertyAccessor(AccessModifier AccessModifier = AccessModifier.None, string? Body = null);

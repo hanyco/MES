@@ -1,13 +1,12 @@
 ﻿using Library.CodeGenLib.Back;
-using Library.Helpers.CodeGen;
-using Library.Results;
 using Library.Validations;
+using Library.Extensions;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-using static Library.Helpers.CodeGen.RoslynHelper;
+using static Library.Extensions.RoslynHelper;
 
 namespace Library.CodeGenLib;
 
@@ -21,7 +20,7 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
         return prop.Root.AddMembers(prop.Member).GenerateCode();
     }
 
-    public Result<string> Generate(INamespace nameSpace)
+    public IResult<string> Generate(INamespace nameSpace)
     {
         // Validation checks
         Check.MustBeArgumentNotNull(nameSpace);

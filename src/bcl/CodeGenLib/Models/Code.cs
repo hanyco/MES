@@ -1,8 +1,4 @@
 ﻿using Library.Dynamics;
-using Library.Extensions;
-using Library.Resulting;
-using Library.Validations;
-
 namespace Library.CodeGenLib.Models;
 
 [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
@@ -13,28 +9,28 @@ public class Code([DisallowNull] in string name, [DisallowNull] in Language lang
     private static Code? _empty;
 
     /// <summary>
-    /// Constructor for the <see cref="Code"/> with parameters.
+    /// Constructor for the <see cref="Code" /> with parameters.
     /// </summary>
-    /// <param name="name">Name of the code.</param>
-    /// <param name="language">Language of the code.</param>
-    /// <param name="statement">Statement of the code.</param>
-    /// <param name="isPartial">Whether the code is partial or not.</param>
-    /// <param name="fileName">File name of the code.</param>
-    /// <returns>An instance of the <see cref="Code"/>.</returns>
+    /// <param name="name">      Name of the code. </param>
+    /// <param name="language">  Language of the code. </param>
+    /// <param name="statement"> Statement of the code. </param>
+    /// <param name="isPartial"> Whether the code is partial or not. </param>
+    /// <param name="fileName">  File name of the code. </param>
+    /// <returns> An instance of the <see cref="Code" />. </returns>
     public Code(in (string Name, Language Language, string Statement, bool IsPartial, string? FileName) data)
         : this(data.Name, data.Language, data.Statement, data.IsPartial, data.FileName) { }
 
     /// <summary>
-    /// Constructor for the <see cref="Code"/> with a copy of the original Code instance.
+    /// Constructor for the <see cref="Code" /> with a copy of the original Code instance.
     /// </summary>
-    /// <param name="original">Original Code instance to copy.</param>
+    /// <param name="original"> Original Code instance to copy. </param>
     public Code(Code original)
         : this(original.Name, original.Language, original.Statement, original.IsPartial, original.FileName)
     {
     }
 
     /// <summary>
-    /// Represents an empty instance of <see cref="Code"/> class.
+    /// Represents an empty instance of <see cref="Code" /> class.
     /// </summary>
     public static Code Empty { get; } = _empty ??= new(string.Empty, Languages.None, string.Empty);
 
@@ -67,14 +63,14 @@ public class Code([DisallowNull] in string name, [DisallowNull] in Language lang
     public string Statement { get; init; } = statement;
 
     /// <summary>
-    /// Constructor for the <see cref="Code"/> with parameters.
+    /// Constructor for the <see cref="Code" /> with parameters.
     /// </summary>
-    /// <param name="name">Name of the code.</param>
-    /// <param name="language">Language of the code.</param>
-    /// <param name="statement">Statement of the code.</param>
-    /// <param name="isPartial">Whether the code is partial or not.</param>
-    /// <param name="fileName">File name of the code.</param>
-    /// <returns>An instance of the <see cref="Code"/>.</returns>
+    /// <param name="name">      Name of the code. </param>
+    /// <param name="language">  Language of the code. </param>
+    /// <param name="statement"> Statement of the code. </param>
+    /// <param name="isPartial"> Whether the code is partial or not. </param>
+    /// <param name="fileName">  File name of the code. </param>
+    /// <returns> An instance of the <see cref="Code" />. </returns>
     public static Code Create((string Name, Language Language, string Statement, bool IsPartial) data) =>
         new(data.Name, data.Language, data.Statement, data.IsPartial);
 
@@ -171,10 +167,6 @@ public static class SourceCodeHelpers
     [return: NotNull]
     public static Codes ToCodes(this Code code) =>
         new(code);
-
-    [return: NotNull]
-    public static IResult<Codes> ToCodesResult(this IResult<Code> code) =>
-        IResult.From(code.ArgumentNotNull(), code.Value.ToCodes());
 
     [return: NotNull]
     public static Code WithStatement(this Code code, [DisallowNull] string statement) =>
