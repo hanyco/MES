@@ -1,13 +1,11 @@
-﻿using Library.CodeGenLib.Back;
-using Library.Validations;
-using Library.Extensions;
-
+﻿
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 using static Library.Extensions.RoslynHelper;
 using Library.Coding;
+using Library.Helpers;
 
 namespace Library.CodeGenLib;
 
@@ -129,7 +127,7 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
             {
                 root = root.AddUsingNameSpace(ns);
             }
-            result = result.AddAttribute(attributeType.Name, attribute.Properties.Select(x => (x.Name, x.Value))).Cast().As<BaseMethodDeclarationSyntax>()!;
+            result = Caster.Cast(result.AddAttribute(attributeType.Name, attribute.Properties.Select(x => (x.Name, x.Value)))).As<BaseMethodDeclarationSyntax>()!;
         }
         return (result, root);
     }

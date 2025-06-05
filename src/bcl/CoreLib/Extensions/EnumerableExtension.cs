@@ -9,6 +9,14 @@ namespace Library.Extensions;
 
 public static class EnumerableExtension
 {
+    /// <summary>
+    /// Creates an empty array of the specified type.
+    /// </summary>
+    /// <typeparam name="T">The type of the array elements.</typeparam>
+    /// <returns>An empty array of type T.</returns>
+    public static T[] EmptyArray<T>()
+        => [];
+
     extension(IEnumerable source)
     {
         // 'source' refers to receiver
@@ -113,5 +121,36 @@ public static class EnumerableExtension
             }
         }
         return list; // Return the updated collection with added items.
+    }
+
+    /// <summary>
+    /// Checks if the given IEnumerable contains a key-value pair with the specified key.
+    /// </summary>
+    public static bool ContainsKey<TKey, TValue>([DisallowNull] this IEnumerable<(TKey Key, TValue Value)> source, TKey key)
+        => source.ArgumentNotNull().Where(kv => kv.Key?.Equals(key) ?? key is null).Any();
+
+    /// <summary>
+    /// Gets the value from the given source by the specified key.
+    /// </summary>
+    /// <typeparam name="TKey">The type of the key.</typeparam>
+    /// <typeparam name="TValue">The type of the value.</typeparam>
+    /// <param name="source">The source.</param>
+    /// <param name="key">The key.</param>
+    /// <returns>The value.</returns>
+    public static TValue GetValueByKey<TKey, TValue>(this IEnumerable<(TKey Key, TValue Value)> source, TKey key) =>
+        source.ArgumentNotNull().First(kv => kv.Key?.Equals(key) ?? key is null).Value;
+
+    public static TResult? SelectImmutable<TItem, TResult>(this IEnumerable<TItem?> items, in Func<TItem?, TResult?, TResult?> selector, in TResult? defaultResult = default)
+    {
+        var result = defaultResult;
+        if (items is { } && items.Any())
+        {
+            Check.MustBeArgumentNotNull(selector);
+            foreach (var item in items)
+            {
+                result = selector(item, result);
+            }
+        }
+        return result;
     }
 }

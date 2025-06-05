@@ -9,3 +9,9 @@ global using Library.CodeGenLib.Models;
 global using Library.Extensions;
 global using Library.Resulting;
 global using Library.Validations;
+
+global using Library.CodeGenLib.Back;
+global using Library.Validations;
+global using Library.Extensions;
+
+global using Library.CodeGenLib.Helpers;

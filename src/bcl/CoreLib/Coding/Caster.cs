@@ -1,14 +1,14 @@
-﻿using System.Collections;
+﻿using Library.Validations;
+
+using System.Collections;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 
-using Library.Validations;
-
-namespace Library.Coding;
+namespace Library.Helpers;
 
 /// <summary>
-/// Defines a contract for types that can be cast to an object. Provides a nullable property 'Value'
-/// to retrieve the casted object.
+/// Defines a contract for types that can be cast to an object. Provides a nullable property 'Value' to retrieve the
+/// casted object.
 /// </summary>
 public interface ICastable
 {
@@ -18,9 +18,7 @@ public interface ICastable
 /// <summary>
 /// An interface that provides a nullable property to retrieve a value of a specified type.
 /// </summary>
-/// <typeparam name="T">
-/// The type of value that can be retrieved, allowing for flexibility in the data type used.
-/// </typeparam>
+/// <typeparam name="T">The type of value that can be retrieved, allowing for flexibility in the data type used.</typeparam>
 public interface ICastable<T>
 {
     T? Value { get; }
@@ -37,17 +35,17 @@ public static class Caster
     /// <summary>
     /// Casts the value of the object to the specified type.
     /// </summary>
-    /// <typeparam name="T"> The type to cast the value to. </typeparam>
-    /// <param name="o"> The object. </param>
-    /// <returns> The value of the object cast to the specified type. </returns>
+    /// <typeparam name="T">The type to cast the value to.</typeparam>
+    /// <param name="o">The object.</param>
+    /// <returns>The value of the object cast to the specified type.</returns>
     public static T? As<T>([DisallowNull] this ICastable o) where T : class =>
         o.Value as T;
 
     /// <summary>
     /// The entry of casting operations.
     /// </summary>
-    /// <param name="obj"> The object to cast. </param>
-    /// <returns> A new Castable object. </returns>
+    /// <param name="obj">The object to cast.</param>
+    /// <returns>A new Castable object.</returns>
     public static ICastable Cast(this object? obj) =>
         new Castable(obj);
 
@@ -77,9 +75,9 @@ public static class Caster
     /// <summary>
     /// Casts the given object to the specified type.
     /// </summary>
-    /// <typeparam name="T"> The type to cast the object to. </typeparam>
-    /// <param name="o"> The object to cast. </param>
-    /// <returns> The casted object. </returns>
+    /// <typeparam name="T">The type to cast the object to.</typeparam>
+    /// <param name="o">The object to cast.</param>
+    /// <returns>The casted object.</returns>
     [return: NotNull]
     public static T To<T>([DisallowNull] this ICastable o) =>
         (T)o.Value!;
@@ -117,10 +115,10 @@ public static class Caster
     /// <summary>
     /// Converts the specified object to an integer.
     /// </summary>
-    /// <param name="o">              The object to convert. </param>
-    /// <param name="defaultValue">   The default value to use if the conversion fails. </param>
-    /// <param name="formatProvider"> The format provider to use for the conversion. </param>
-    /// <returns> The converted integer. </returns>
+    /// <param name="o">The object to convert.</param>
+    /// <param name="defaultValue">The default value to use if the conversion fails.</param>
+    /// <param name="formatProvider">The format provider to use for the conversion.</param>
+    /// <returns>The converted integer.</returns>
     public static int ToInt([DisallowNull] this ICastable o, int defaultValue = default, IFormatProvider? formatProvider = null)
     {
         //Check if the value of o is an integer
@@ -151,17 +149,17 @@ public static class Caster
     /// <summary>
     /// Converts the value of the specified object to a long.
     /// </summary>
-    /// <param name="o"> The object to convert. </param>
-    /// <returns> A long that represents the value of the specified object. </returns>
+    /// <param name="o">The object to convert.</param>
+    /// <returns>A long that represents the value of the specified object.</returns>
     public static long ToLong([DisallowNull] this ICastable o) =>
         Convert.ToInt64(o.Value);
 
     /// <summary>
     /// Filters a sequence of items to return only those of type T.
     /// </summary>
-    /// <typeparam name="T"> The type of items to return. </typeparam>
-    /// <param name="items"> The sequence of items to filter. </param>
-    /// <returns> An <see cref="IEnumerableT" /> containing only those items of type T. </returns>
+    /// <typeparam name="T">The type of items to return.</typeparam>
+    /// <param name="items">The sequence of items to filter.</param>
+    /// <returns>An <see cref="IEnumerableT"/> containing only those items of type T.</returns>
     public static IEnumerable<T> TypeOf<T>(IEnumerable items)
     {
         if (items is null)
@@ -187,8 +185,8 @@ public static class Caster
     /// <summary>
     /// Filters a sequence of items and returns only those of type T.
     /// </summary>
-    /// <param name="items"> The sequence of items to filter. </param>
-    /// <returns> An IEnumerable of type T containing the filtered items. </returns>
+    /// <param name="items">The sequence of items to filter.</param>
+    /// <returns>An IEnumerable of type T containing the filtered items.</returns>
     public static IEnumerable<T> WhereIs<T>(IEnumerable items)
     {
         if (items is null)
