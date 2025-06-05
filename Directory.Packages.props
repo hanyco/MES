@@ -1,32 +1,14 @@
 ﻿<Project>
+	<PropertyGroup>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+	</PropertyGroup>	
 	<ItemGroup>
-		<!-- Managing package versions globally -->
-		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
-		<PackageVersion Include="xunit" Version="2.9.3" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<!-- Managing assets for specific packages -->
-		<PackageReference Include="coverlet.collector" Version="6.0.4">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-
-		<PackageReference Include="xunit.runner.visualstudio" Version="3.1.0">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-	</ItemGroup>
-
-	<ItemGroup>
-		<!-- Global package versions for CodeGenLib -->
 		<PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
 		<PackageVersion Include="Microsoft.Data.SqlClient" Version="6.0.2" />
 		<PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
 		<PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.5" />
 		<PackageVersion Include="Microsoft.Extensions.Identity.Core" Version="9.0.5" />
 		<PackageVersion Include="System.CodeDom" Version="9.0.5" />
-		<!-- Additional packages used across projects -->
 		<PackageVersion Include="Dapper" Version="2.1.66" />
 		<PackageVersion Include="MediatR" Version="12.5.0" />
 		<PackageVersion Include="Microsoft.Extensions.Configuration" Version="9.0.5" />
@@ -34,7 +16,8 @@
 		<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
 		<PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.5" />
 		<PackageVersion Include="EntityFramework" Version="6.5.1" />
-		<PackageVersion Include="Microsoft.AspNetCore.Components.WebView.Wpf" Version="8.0.0" />
-		<PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+		<PackageVersion Include="Microsoft.AspNetCore.Components.WebView.Wpf" Version="9.0.70" />
+		<PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="9.0.5" />
+		<PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
 </Project>
