@@ -38,8 +38,8 @@ public sealed class Method(string name) : Member(name), IMethod
 
     protected override Result OnValidate()
     {
-        Check.MustBe(!(this.IsExtension && !this.Arguments.Any()), "Extension method cannot be parameterless.");
-        Check.MustBe(!(this.IsConstructor && this.IsExtension), "Constructor cannot be extension method.");
+        Check.MustBe(!(this.IsExtension && !this.Arguments.Any()), ()=> "Extension method cannot be parameterless.");
+        Check.MustBe(!(this.IsConstructor && this.IsExtension), () => "Constructor cannot be extension method.");
         return Result.Success();
     }
 }

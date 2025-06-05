@@ -5,8 +5,6 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-using Library.CodeGeneration;
-using Library.Dynamic;
 using Library.Interfaces;
 using Library.Resulting;
 using Library.Validations;
@@ -21,7 +19,7 @@ namespace Library.Data.SqlServer;
 /// <param name="connectionString"></param>
 /// <param name="logTo"></param>
 [DebuggerStepThrough, StackTraceHidden]
-public sealed class Sql(string connectionString, Action<string>? logTo = null) : IFactory<Sql, string>
+public sealed class Sql(string connectionString, Action<string>? logTo = null)
 {
     private readonly Action<string>? _logTo = logTo;
 

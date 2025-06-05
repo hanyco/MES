@@ -22,20 +22,28 @@ public static class Check
         }
     }
 
-    public static void MustBe([DoesNotReturnIf(false)] bool ok, Func<string> onNotOk) =>
-        MustBe(ok, () => new CommonException(onNotOk()));
+    public static void MustBe([DoesNotReturnIf(false)] bool ok, Func<string> getMessage) =>
+        MustBe(ok, () => new CommonException(getMessage()));
 
-    public static void MustBe([DoesNotReturnIf(false)] bool ok, string message) =>
-        MustBe(ok, () => message);
-
-    public static void MustBe([DoesNotReturnIf(false)] bool ok, string message, params object[] args) =>
-        MustBe(ok, () => string.Format(message, args));
-
+    public static void MustBe([NotNull][AllowNull] object? obj, string? argumentName = null) =>
+        MustBe(obj != null, () => new ValidationException($"invalid value for argument: {argumentName}"));
     public static void MustBeArgumentNotNull([NotNull][AllowNull] object? obj, string? argumentName = null) =>
         MustBe(obj != null, () => new ValidationException($"{argumentName} cannot be null"));
 
     public static void MustBeNotNull([NotNull][AllowNull] object? obj, string? argumentName = null) =>
         MustBe(obj is not null, () => new ValidationException($"{argumentName} cannot be null"));
+
+    public static void MustBeNotNull([NotNull][AllowNull] object? obj, Func<string> getMessage) =>
+        MustBe(obj is not null, () => new ValidationException(getMessage()));
+
+    public static void MustBeNotNull([NotNull][AllowNull] object? obj, Func<Exception> getException) =>
+        MustBe(obj is not null, getException);
+
+    public static void MustBeNotNullOrEmpty([NotNull][AllowNull] string? str, string? argumentName = null) =>
+        MustBe(!string.IsNullOrEmpty(str), () => new ValidationException($"{argumentName} cannot be null or empty"));
+
+    public static void MustBeNotNullOrEmpty([NotNull][AllowNull] string? str, Func<Exception> getException) =>
+        MustBe(!string.IsNullOrEmpty(str), getException);
 
     extension<T>([NotNull][AllowNull] T? obj)
     {
@@ -47,7 +55,13 @@ public static class Check
 
         public T NotNull([CallerMemberName] string? argumentName = null)
         {
-            MustBe(obj is not null, () => new ValidationException($"{argumentName} cannot be null"));
+            MustBeNotNull(obj, () => new ValidationException($"{argumentName} cannot be null"));
+            return obj;
+        }
+
+        public T NotNull(Func<string> getMessage)
+        {
+            MustBeNotNull(obj, getMessage);
             return obj;
         }
     }

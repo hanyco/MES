@@ -153,4 +153,14 @@ public static class EnumerableExtension
         }
         return result;
     }
+    /// <summary>
+    /// Returns a collection of elements from the input sequence that do not satisfy the specified predicate.
+    /// </summary>
+    public static IEnumerable<T> Except<T>(this IEnumerable<T> items, Func<T, bool> exceptor)
+    {
+        Check.MustBeArgumentNotNull(exceptor);
+
+        return items.Where(x => !exceptor(x));
+    }
+
 }

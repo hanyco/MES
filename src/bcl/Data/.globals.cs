@@ -8,3 +8,6 @@ global using Library.Extensions;
 global using Library.Coding;
 global using Library.Resulting;
 global using Library.Validations;
+global using Library.Helpers;
+
+global using static Library.Coding.CodeHelper;

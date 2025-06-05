@@ -775,7 +775,7 @@ public readonly struct PersianDateTime :
     {
         Check.MustBeArgumentNotNull(item);
         var regex = new Regex(@"^(\d{4})\/(0?[1-9]|1[012])\/(0?[1-9]|[12][0-9]|3[01])(\s([01]?\d|2[0-3]):([0-5]?\d)(:([0-5]?\d))?\s?(AM|PM)?)?$");
-        Check.MustBe(regex.IsMatch(item), "Not valid date");
+        Check.MustBe(regex.IsMatch(item), () => "Not valid date");
         return Result.Success<string>(item);
     }
 
