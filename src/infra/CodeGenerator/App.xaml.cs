@@ -3,6 +3,8 @@
 using CodeGenerator.Application.DependencyInjection;
 using CodeGenerator.Designer.UI.ViewModels;
 
+using Library.CodeGenLib;
+
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

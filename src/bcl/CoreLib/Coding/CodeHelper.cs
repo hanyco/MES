@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
+using Library.DesignPatterns.ExceptionHandlingPattern;
 using Library.Exceptions;
 using Library.Resulting;
 using Library.Validations;
@@ -15,24 +15,73 @@ namespace Library.Coding;
 public static class CodeHelper
 {
     /// <summary>
-    /// Breaks code execution by throwing a <see cref="BreakException" />.
+    /// Breaks code execution by throwing a <see cref="BreakException"/>.
     /// </summary>
     [DoesNotReturn]
     public static void Break() =>
         BreakException.Throw();
 
     /// <summary>
-    /// Breaks code execution by throwing a <see cref="BreakException" />.
+    /// Breaks code execution by throwing a <see cref="BreakException"/>.
     /// </summary>
     [DoesNotReturn]
     public static T Break<T>() =>
         throw new BreakException();
 
     /// <summary>
-    /// Catch the result of a function and return the result value in <see cref="Result" /> class.
+    /// Catch the result of a function.
     /// </summary>
-    /// <param name="action"> </param>
-    /// <returns> </returns>
+    /// <param name="tryMethod"></param>
+    /// <param name="catchMethod"></param>
+    /// <param name="finallyMethod"></param>
+    /// <param name="handling"></param>
+    /// <param name="throwException"></param>
+    /// <returns></returns>
+    public static Exception? Catch(
+        in Action tryMethod,
+        in Action<Exception>? catchMethod = null,
+        in Action? finallyMethod = null,
+        in ExceptionHandling? handling = null,
+        in bool throwException = false)
+    {
+        Check.MustBeArgumentNotNull(tryMethod);
+
+        handling?.Reset();
+        try
+        {
+            tryMethod();
+            return null;
+        }
+        catch (Exception ex)
+        {
+            catchMethod?.Invoke(ex);
+            handling?.HandleException(ex);
+            if (throwException)
+            {
+                throw;
+            }
+
+            return ex;
+        }
+        finally
+        {
+            finallyMethod?.Invoke();
+        }
+    }
+
+    /// <summary>
+    /// Catch the result of a function.
+    /// </summary>
+    /// <param name="action"></param>
+    /// <param name="exceptionHandling"></param>
+    public static void Catch(in Action action, in ExceptionHandling exceptionHandling)
+        => Catch(action, handling: exceptionHandling);
+
+    /// <summary>
+    /// Catch the result of a function and return the result value in <see cref="Result"/> class.
+    /// </summary>
+    /// <param name="action"></param>
+    /// <returns></returns>
     public static async Task<Result> CatchAsync(Func<Task> action)
     {
         Check.MustBeArgumentNotNull(action);
@@ -49,11 +98,11 @@ public static class CodeHelper
     }
 
     /// <summary>
-    /// Catch the result of a function and return the result value in <see cref="Result" /> class.
+    /// Catch the result of a function and return the result value in <see cref="Result"/> class.
     /// </summary>
-    /// <typeparam name="TResult"> </typeparam>
-    /// <param name="action"> </param>
-    /// <returns> </returns>
+    /// <typeparam name="TResult"></typeparam>
+    /// <param name="action"></param>
+    /// <returns></returns>
     public static async Task<Result<TResult?>> CatchAsync<TResult>(Func<Task<TResult?>> action)
     {
         try
@@ -69,9 +118,9 @@ public static class CodeHelper
     /// <summary>
     /// Catch the result of a function and return the result value and the exception if occurred.
     /// </summary>
-    /// <typeparam name="TResult"> </typeparam>
-    /// <param name="action"> </param>
-    /// <returns> </returns>
+    /// <typeparam name="TResult"></typeparam>
+    /// <param name="action"></param>
+    /// <returns></returns>
     public static (TResult? Result, Exception? Exception) CatchFunc<TResult>(in Func<TResult> action)
     {
         Check.MustBeArgumentNotNull(action);
@@ -88,10 +137,10 @@ public static class CodeHelper
     /// <summary>
     /// Catch the result of a function and return the result value and the exception if occurred.
     /// </summary>
-    /// <typeparam name="TResult"> </typeparam>
-    /// <param name="action">       </param>
-    /// <param name="defaultValue"> </param>
-    /// <returns> </returns>
+    /// <typeparam name="TResult"></typeparam>
+    /// <param name="action"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
     public static (TResult Result, Exception? Exception) CatchFunc<TResult>(in Func<TResult> action, in TResult defaultValue)
     {
         Check.MustBeArgumentNotNull(action);
@@ -106,13 +155,13 @@ public static class CodeHelper
     }
 
     /// <summary>
-    /// Catch the result of a function and return the result value in <see cref="Result" /> class.
+    /// Catch the result of a function and return the result value in <see cref="Result"/> class.
     /// </summary>
-    /// <typeparam name="TResult"> </typeparam>
-    /// <typeparam name="TException"> </typeparam>
-    /// <param name="action">    </param>
-    /// <param name="predicate"> </param>
-    /// <returns> </returns>
+    /// <typeparam name="TResult"></typeparam>
+    /// <typeparam name="TException"></typeparam>
+    /// <param name="action"></param>
+    /// <param name="predicate"></param>
+    /// <returns></returns>
     public static TResult? CatchFunc<TResult, TException>(in Func<TResult> action, in Predicate<TException> predicate)
         where TException : Exception
     {
@@ -127,10 +176,10 @@ public static class CodeHelper
     }
 
     /// <summary>
-    /// Catch the result of a function and return the result value in <see cref="Result" /> class.
+    /// Catch the result of a function and return the result value in <see cref="Result"/> class.
     /// </summary>
-    /// <param name="action"> </param>
-    /// <returns> </returns>
+    /// <param name="action"></param>
+    /// <returns></returns>
     public static Result CatchResult([DisallowNull] in Action action)
     {
         Check.MustBeArgumentNotNull(action);
@@ -141,17 +190,17 @@ public static class CodeHelper
         }
         catch (Exception ex)
         {
-            return Result.Fail(ex);
+            return Result.Fail(ex.GetBaseException().Message, ex);
         }
     }
 
     /// <summary>
-    /// Catch the result of a function and return the result value in <see cref="Result" /> class.
+    /// Catch the result of a function and return the result value in <see cref="Result"/> class.
     /// </summary>
-    /// <typeparam name="TResult"> </typeparam>
-    /// <param name="action">        </param>
-    /// <param name="onErrorResult"> </param>
-    /// <returns> </returns>
+    /// <typeparam name="TResult"></typeparam>
+    /// <param name="action"></param>
+    /// <param name="onErrorResult"></param>
+    /// <returns></returns>
     public static Result<TResult?> CatchResult<TResult>([DisallowNull] in Func<TResult> action, TResult? onErrorResult = default)
     {
         Check.MustBeArgumentNotNull(action);
@@ -161,18 +210,18 @@ public static class CodeHelper
         }
         catch (Exception ex)
         {
-            return Result.Fail<TResult>(ex)!;
+            return Result.Fail<TResult?>(onErrorResult, ex.GetBaseException().Message, ex)!;
         }
     }
 
     /// <summary>
-    /// Catch the result of a function and return the result value in <see cref="Result" /> class.
+    /// Catch the result of a function and return the result value in <see cref="Result"/> class.
     /// </summary>
-    /// <typeparam name="TResult"> </typeparam>
-    /// <typeparam name="TArg"> </typeparam>
-    /// <param name="method"> </param>
-    /// <param name="arg">    </param>
-    /// <returns> </returns>
+    /// <typeparam name="TResult"></typeparam>
+    /// <typeparam name="TArg"></typeparam>
+    /// <param name="method"></param>
+    /// <param name="arg"></param>
+    /// <returns></returns>
     public static Result<IEnumerable<TResult?>?> CatchResult<TResult, TArg>(Func<TArg, IEnumerable<TResult?>> method, TArg arg)
     {
         Check.MustBeArgumentNotNull(method);
@@ -188,12 +237,12 @@ public static class CodeHelper
     }
 
     /// <summary>
-    /// Catch the result of a function and return the result value in <see cref="Result" /> class.
+    /// Catch the result of a function and return the result value in <see cref="Result"/> class.
     /// </summary>
-    /// <typeparam name="TResult"> </typeparam>
-    /// <param name="func">          </param>
-    /// <param name="defaultResult"> </param>
-    /// <returns> </returns>
+    /// <typeparam name="TResult"></typeparam>
+    /// <param name="func"></param>
+    /// <param name="defaultResult"></param>
+    /// <returns></returns>
     public static async Task<Result<TResult>> CatchResult<TResult>(Func<Task<TResult>> func, TResult? defaultResult = default)
     {
         Check.MustBeArgumentNotNull(func);
@@ -204,15 +253,15 @@ public static class CodeHelper
         }
         catch (Exception ex)
         {
-            return Result.Fail<TResult>(defaultResult!, ex);
+            return Result.Fail<TResult>(defaultResult, ex);
         }
     }
 
     /// <summary>
-    /// Catch the result of a function and return the result value in <see cref="Result" /> class.
+    /// Catch the result of a function and return the result value in <see cref="Result"/> class.
     /// </summary>
-    /// <param name="func"> </param>
-    /// <returns> </returns>
+    /// <param name="func"></param>
+    /// <returns></returns>
     public static async Task<Result> CatchResultAsync(Func<Task<Result>> func)
     {
         Check.MustBeArgumentNotNull(func);
@@ -227,10 +276,10 @@ public static class CodeHelper
     }
 
     /// <summary>
-    /// Catch the result of a function and return the result value in <see cref="Result" /> class.
+    /// Catch the result of a function and return the result value in <see cref="Result"/> class.
     /// </summary>
-    /// <param name="func"> </param>
-    /// <returns> </returns>
+    /// <param name="func"></param>
+    /// <returns></returns>
     public static async Task<Result> CatchResultAsync(Func<Task> func)
     {
         Check.MustBeArgumentNotNull(func);
@@ -262,11 +311,11 @@ public static class CodeHelper
     /// <summary>
     /// Compose a function with a given argument.
     /// </summary>
-    /// <typeparam name="TArgs"> </typeparam>
-    /// <typeparam name="TResult2"> </typeparam>
-    /// <param name="args"> </param>
-    /// <param name="func"> </param>
-    /// <returns> </returns>
+    /// <typeparam name="TArgs"></typeparam>
+    /// <typeparam name="TResult2"></typeparam>
+    /// <param name="args"></param>
+    /// <param name="func"></param>
+    /// <returns></returns>
     public static Func<TResult2> Compose<TArgs, TResult2>(TArgs args, Func<TArgs, TResult2> func)
     {
         Check.MustBeArgumentNotNull(func);
@@ -304,13 +353,13 @@ public static class CodeHelper
     /// <summary>
     /// Compose a function with a given argument.
     /// </summary>
-    /// <typeparam name="TArgs"> The type of the result of the first function. </typeparam>
-    /// <typeparam name="TResult2"> The type of the result of the composed function. </typeparam>
-    /// <typeparam name="TArg"> The type of the argument of the composed function. </typeparam>
-    /// <param name="create"> The first function. </param>
-    /// <param name="func">   The composed function. </param>
-    /// <param name="arg">    The argument of the composed function. </param>
-    /// <returns> The composed function. </returns>
+    /// <typeparam name="TArgs">The type of the result of the first function.</typeparam>
+    /// <typeparam name="TResult2">The type of the result of the composed function.</typeparam>
+    /// <typeparam name="TArg">The type of the argument of the composed function.</typeparam>
+    /// <param name="create">The first function.</param>
+    /// <param name="func">The composed function.</param>
+    /// <param name="arg">The argument of the composed function.</param>
+    /// <returns>The composed function.</returns>
     public static Func<TResult2> Compose<TArgs, TResult2, TArg>([DisallowNull] this Func<TArgs> create, Func<TArgs, TArg, TResult2> func, TArg arg)
     {
         Check.MustBeArgumentNotNull(create);
@@ -321,14 +370,14 @@ public static class CodeHelper
     /// <summary>
     /// Combines two functions and an action into a single function.
     /// </summary>
-    /// <typeparam name="TResult1"> The type of the first result. </typeparam>
-    /// <typeparam name="TResult2"> The type of the second result. </typeparam>
-    /// <typeparam name="TArg"> The type of the argument. </typeparam>
-    /// <param name="create"> The first function. </param>
-    /// <param name="func">   The second function. </param>
-    /// <param name="action"> The action. </param>
-    /// <param name="arg">    The argument. </param>
-    /// <returns> A function that combines the two functions and the action. </returns>
+    /// <typeparam name="TResult1">The type of the first result.</typeparam>
+    /// <typeparam name="TResult2">The type of the second result.</typeparam>
+    /// <typeparam name="TArg">The type of the argument.</typeparam>
+    /// <param name="create">The first function.</param>
+    /// <param name="func">The second function.</param>
+    /// <param name="action">The action.</param>
+    /// <param name="arg">The argument.</param>
+    /// <returns>A function that combines the two functions and the action.</returns>
     public static Func<TResult2> Compose<TResult1, TResult2, TArg>([DisallowNull] this Func<TResult1> create, Func<TResult1, TResult2> func, Action<TArg> action, TArg arg)
     {
         Check.MustBeArgumentNotNull(create);
@@ -343,12 +392,12 @@ public static class CodeHelper
     /// <summary>
     /// Creates a new function that composes a given function with an action that takes an argument.
     /// </summary>
-    /// <typeparam name="TResult1"> The type of the result of the created function. </typeparam>
-    /// <typeparam name="TArg"> The type of the argument of the action. </typeparam>
-    /// <param name="create"> The function to compose. </param>
-    /// <param name="action"> The action to compose. </param>
-    /// <param name="arg">    The argument of the action. </param>
-    /// <returns> A new function that composes the given function with the action. </returns>
+    /// <typeparam name="TResult1">The type of the result of the created function.</typeparam>
+    /// <typeparam name="TArg">The type of the argument of the action.</typeparam>
+    /// <param name="create">The function to compose.</param>
+    /// <param name="action">The action to compose.</param>
+    /// <param name="arg">The argument of the action.</param>
+    /// <returns>A new function that composes the given function with the action.</returns>
     public static Func<TResult1> Compose<TResult1, TArg>([DisallowNull] this Func<TResult1> create, Action<TResult1, TArg> action, TArg arg)
     {
         Check.MustBeArgumentNotNull(create);
@@ -363,12 +412,12 @@ public static class CodeHelper
     /// <summary>
     /// Combines two functions into one, where the first function is executed and then the second one.
     /// </summary>
-    /// <typeparam name="TResult1"> The type of the result of the first function. </typeparam>
-    /// <typeparam name="TArg"> The type of the argument of the second function. </typeparam>
-    /// <param name="create"> The first function. </param>
-    /// <param name="action"> The second function. </param>
-    /// <param name="arg">    The argument of the second function. </param>
-    /// <returns> A combined function. </returns>
+    /// <typeparam name="TResult1">The type of the result of the first function.</typeparam>
+    /// <typeparam name="TArg">The type of the argument of the second function.</typeparam>
+    /// <param name="create">The first function.</param>
+    /// <param name="action">The second function.</param>
+    /// <param name="arg">The argument of the second function.</param>
+    /// <returns>A combined function.</returns>
     public static Func<TResult1> Compose<TResult1, TArg>([DisallowNull] this Func<TResult1> create, Action<TArg> action, TArg arg)
     {
         Check.MustBeArgumentNotNull(create);
@@ -383,12 +432,12 @@ public static class CodeHelper
     /// <summary>
     /// Compose a Func with an Action and a Func to get the argument for the Action.
     /// </summary>
-    /// <typeparam name="TArgs"> The type of the result of the Func. </typeparam>
-    /// <typeparam name="TResult"> The type of the argument for the Action. </typeparam>
-    /// <param name="create">    The Func to compose. </param>
-    /// <param name="action">    The Action to compose. </param>
-    /// <param name="getResult"> The Func to get the argument for the Action. </param>
-    /// <returns> A composed Func. </returns>
+    /// <typeparam name="TArgs">The type of the result of the Func.</typeparam>
+    /// <typeparam name="TResult">The type of the argument for the Action.</typeparam>
+    /// <param name="create">The Func to compose.</param>
+    /// <param name="action">The Action to compose.</param>
+    /// <param name="getResult">The Func to get the argument for the Action.</param>
+    /// <returns>A composed Func.</returns>
     public static Func<TArgs> Compose<TArgs, TResult>([DisallowNull] this Func<TArgs> create, Action<TResult> action, Func<TArgs, TResult> getResult)
     {
         Check.MustBeArgumentNotNull(create);
@@ -403,12 +452,12 @@ public static class CodeHelper
     /// <summary>
     /// Compose a function with an action and a getArg function.
     /// </summary>
-    /// <typeparam name="TResult1"> The type of the result of the create function. </typeparam>
-    /// <typeparam name="TArg"> The type of the argument of the action. </typeparam>
-    /// <param name="create"> The function to be composed. </param>
-    /// <param name="action"> The action to be composed. </param>
-    /// <param name="getArg"> The getArg function to be composed. </param>
-    /// <returns> The composed function. </returns>
+    /// <typeparam name="TResult1">The type of the result of the create function.</typeparam>
+    /// <typeparam name="TArg">The type of the argument of the action.</typeparam>
+    /// <param name="create">The function to be composed.</param>
+    /// <param name="action">The action to be composed.</param>
+    /// <param name="getArg">The getArg function to be composed.</param>
+    /// <returns>The composed function.</returns>
     public static Func<TResult1> Compose<TResult1, TArg>([DisallowNull] this Func<TResult1> create, Action<TResult1, TArg> action, Func<TResult1, TArg> getArg)
     {
         Check.MustBeArgumentNotNull(create);
@@ -423,13 +472,13 @@ public static class CodeHelper
     /// <summary>
     /// Creates a new function that composes two functions together.
     /// </summary>
-    /// <typeparam name="TResult1"> The type of the first result. </typeparam>
-    /// <typeparam name="TResult2"> The type of the second result. </typeparam>
-    /// <typeparam name="TArg"> The type of the argument. </typeparam>
-    /// <param name="create"> The first function. </param>
-    /// <param name="func">   The second function. </param>
-    /// <param name="getArg"> The argument for the second function. </param>
-    /// <returns> A new function that composes the two functions. </returns>
+    /// <typeparam name="TResult1">The type of the first result.</typeparam>
+    /// <typeparam name="TResult2">The type of the second result.</typeparam>
+    /// <typeparam name="TArg">The type of the argument.</typeparam>
+    /// <param name="create">The first function.</param>
+    /// <param name="func">The second function.</param>
+    /// <param name="getArg">The argument for the second function.</param>
+    /// <returns>A new function that composes the two functions.</returns>
     public static Func<TResult2> Compose<TResult1, TResult2, TArg>([DisallowNull] this Func<TResult1> create, Func<TResult1, TArg, TResult2> func, Func<TResult1, TArg> getArg)
     {
         Check.MustBeArgumentNotNull(create);
@@ -464,51 +513,51 @@ public static class CodeHelper
     /// <summary>
     /// Disposes the specified disposable object.
     /// </summary>
-    /// <typeparam name="TDisposable"> The type of the disposable. </typeparam>
-    /// <param name="disposable"> The disposable. </param>
-    /// <param name="action">     The action. </param>
+    /// <typeparam name="TDisposable">The type of the disposable.</typeparam>
+    /// <param name="disposable">The disposable.</param>
+    /// <param name="action">The action.</param>
     public static void Dispose<TDisposable>(in TDisposable disposable, in Action<TDisposable>? action = null) where TDisposable : IDisposable
         => Dispose(disposable, action);
 
     /// <summary>
     /// Disposes the specified disposable object.
     /// </summary>
-    /// <typeparam name="TDisposable"> The type of the disposable. </typeparam>
-    /// <typeparam name="TResult"> The type of the result. </typeparam>
-    /// <param name="disposable"> The disposable. </param>
-    /// <param name="action">     The action. </param>
-    /// <returns> </returns>
+    /// <typeparam name="TDisposable">The type of the disposable.</typeparam>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="disposable">The disposable.</param>
+    /// <param name="action">The action.</param>
+    /// <returns></returns>
     public static TResult Dispose<TDisposable, TResult>(in TDisposable disposable, in Func<TDisposable, TResult> action) where TDisposable : IDisposable
         => Dispose(disposable, action);
 
     /// <summary>
     /// Disposes the specified disposable object.
     /// </summary>
-    /// <typeparam name="TDisposable"> The type of the disposable. </typeparam>
-    /// <typeparam name="TResult"> The type of the result. </typeparam>
-    /// <param name="disposable"> The disposable. </param>
-    /// <param name="result">     The result. </param>
-    /// <returns> </returns>
+    /// <typeparam name="TDisposable">The type of the disposable.</typeparam>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="disposable">The disposable.</param>
+    /// <param name="result">The result.</param>
+    /// <returns></returns>
     public static TResult Dispose<TDisposable, TResult>(in TDisposable disposable, in TResult result) where TDisposable : IDisposable
         => Dispose(disposable, result);
 
     /// <summary>
     /// Disposes the specified disposable object.
     /// </summary>
-    /// <typeparam name="TDisposable"> The type of the disposable. </typeparam>
-    /// <typeparam name="TResult"> The type of the result. </typeparam>
-    /// <param name="disposable"> The disposable. </param>
-    /// <param name="action">     The action. </param>
-    /// <returns> </returns>
+    /// <typeparam name="TDisposable">The type of the disposable.</typeparam>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="disposable">The disposable.</param>
+    /// <param name="action">The action.</param>
+    /// <returns></returns>
     public static TResult Dispose<TDisposable, TResult>(in TDisposable disposable, in Func<TResult> action) where TDisposable : IDisposable
         => Dispose(disposable, action);
 
     /// <summary>
     /// Disposes the specified disposable object.
     /// </summary>
-    /// <typeparam name="TDisposable"> The type of the disposable. </typeparam>
-    /// <param name="disposable"> The disposable. </param>
-    /// <param name="action">     The action. </param>
+    /// <typeparam name="TDisposable">The type of the disposable.</typeparam>
+    /// <param name="disposable">The disposable.</param>
+    /// <param name="action">The action.</param>
     public static void Dispose<TDisposable>(this TDisposable disposable, in Action<TDisposable>? action = null)
         where TDisposable : IDisposable
     {
@@ -525,11 +574,11 @@ public static class CodeHelper
     /// <summary>
     /// Disposes the specified disposable object.
     /// </summary>
-    /// <typeparam name="TDisposable"> The type of the disposable. </typeparam>
-    /// <typeparam name="TResult"> The type of the result. </typeparam>
-    /// <param name="disposable"> The disposable. </param>
-    /// <param name="action">     The action. </param>
-    /// <returns> </returns>
+    /// <typeparam name="TDisposable">The type of the disposable.</typeparam>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="disposable">The disposable.</param>
+    /// <param name="action">The action.</param>
+    /// <returns></returns>
     public static TResult Dispose<TDisposable, TResult>(this TDisposable disposable, in Func<TDisposable, TResult> action)
         where TDisposable : IDisposable
     {
@@ -547,11 +596,11 @@ public static class CodeHelper
     /// <summary>
     /// Disposes the specified disposable object.
     /// </summary>
-    /// <typeparam name="TDisposable"> The type of the disposable. </typeparam>
-    /// <typeparam name="TResult"> The type of the result. </typeparam>
-    /// <param name="disposable"> The disposable. </param>
-    /// <param name="result">     The result. </param>
-    /// <returns> </returns>
+    /// <typeparam name="TDisposable">The type of the disposable.</typeparam>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="disposable">The disposable.</param>
+    /// <param name="result">The result.</param>
+    /// <returns></returns>
     public static TResult Dispose<TDisposable, TResult>(this TDisposable disposable, in TResult result)
         where TDisposable : IDisposable
     {
@@ -568,11 +617,11 @@ public static class CodeHelper
     /// <summary>
     /// Disposes the specified disposable object.
     /// </summary>
-    /// <typeparam name="TDisposable"> The type of the disposable. </typeparam>
-    /// <typeparam name="TResult"> The type of the result. </typeparam>
-    /// <param name="disposable"> The disposable. </param>
-    /// <param name="action">     The action. </param>
-    /// <returns> </returns>
+    /// <typeparam name="TDisposable">The type of the disposable.</typeparam>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="disposable">The disposable.</param>
+    /// <param name="action">The action.</param>
+    /// <returns></returns>
     public static TResult Dispose<TDisposable, TResult>(this TDisposable disposable, in Func<TResult> action)
         where TDisposable : IDisposable
     {
@@ -616,10 +665,10 @@ public static class CodeHelper
     /// <summary>
     /// Loop through the items and execute the action for each item.
     /// </summary>
-    /// <typeparam name="TItem"> </typeparam>
-    /// <param name="items">   </param>
-    /// <param name="action">  </param>
-    /// <param name="getNext"> </param>
+    /// <typeparam name="TItem"></typeparam>
+    /// <param name="items"></param>
+    /// <param name="action"></param>
+    /// <param name="getNext"></param>
     public static void For<TItem>(IEnumerable<TItem>? items, in Action<(TItem Item, int Index)> action, Func<int, int>? getNext = null)
     {
         var act = action;
@@ -627,17 +676,14 @@ public static class CodeHelper
     }
 
     /// <summary>
-    /// Loop through the items and execute the action for each item. This method is a replacement
-    /// for the keyword
-    /// <code>for </code>
-    /// .
-    /// <code>for </code>
+    /// Loop through the items and execute the action for each item. This method is a replacement for the keyword <code>for</code>.
+    /// <code>for</code>
     /// keyword.
     /// </summary>
-    /// <typeparam name="TItem"> The type of the items in the IEnumerable. </typeparam>
-    /// <param name="items">   The IEnumerable of items. </param>
-    /// <param name="action">  The action to execute for each item. </param>
-    /// <param name="getNext"> A function to get the next index. </param>
+    /// <typeparam name="TItem">The type of the items in the IEnumerable.</typeparam>
+    /// <param name="items">The IEnumerable of items.</param>
+    /// <param name="action">The action to execute for each item.</param>
+    /// <param name="getNext">A function to get the next index.</param>
     public static void For<TItem>(IEnumerable<TItem>? items, in Action<TItem, int> action, Func<int, int>? getNext = null)
     {
         //If the action is null, return
@@ -681,10 +727,10 @@ public static class CodeHelper
     /// <summary>
     /// Loop through the items and execute the action for each item.
     /// </summary>
-    /// <typeparam name="T"> </typeparam>
-    /// <param name="max">      </param>
-    /// <param name="selector"> </param>
-    /// <returns> </returns>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="max"></param>
+    /// <param name="selector"></param>
+    /// <returns></returns>
     public static IEnumerable<T> For<T>(int max, Func<int, T> selector)
     {
         Check.MustBeArgumentNotNull(selector);
@@ -698,12 +744,12 @@ public static class CodeHelper
     /// <summary>
     /// Loops through the items and executes the action for each item.
     /// </summary>
-    /// <typeparam name="TInstance"> </typeparam>
-    /// <typeparam name="Item"> </typeparam>
-    /// <param name="this">   </param>
-    /// <param name="items">  </param>
-    /// <param name="action"> </param>
-    /// <returns> </returns>
+    /// <typeparam name="TInstance"></typeparam>
+    /// <typeparam name="Item"></typeparam>
+    /// <param name="this"></param>
+    /// <param name="items"></param>
+    /// <param name="action"></param>
+    /// <returns></returns>
     public static TInstance ForEach<TInstance, Item>(in TInstance @this, IEnumerable<Item>? items, in Action<Item> action)
     {
         if (items is null || action is null)
@@ -722,19 +768,19 @@ public static class CodeHelper
     /// <summary>
     /// Gets the caller method.
     /// </summary>
-    /// <param name="index"> The index. </param>
-    /// <returns> </returns>
+    /// <param name="index">The index.</param>
+    /// <returns></returns>
     public static MethodBase? GetCallerMethod(in int index = 2)
         => new StackTrace(true).GetFrame(index)?.GetMethod();
 
     /// <summary>
     /// Gets the caller method from the stack trace.
     /// </summary>
-    /// <param name="index">           The index of the stack frame. </param>
+    /// <param name="index">The index of the stack frame.</param>
     /// <param name="parsePrevIfNull">
     /// Whether to parse the previous frame if the current one is null.
     /// </param>
-    /// <returns> The method base of the caller. </returns>
+    /// <returns>The method base of the caller.</returns>
     [Obsolete("Subject to remove", true)]
     public static MethodBase? GetCallerMethod(in int index, bool parsePrevIfNull)
     {
@@ -744,7 +790,7 @@ public static class CodeHelper
         var i = index;
         // If the frame at the index is not null, or parsePrevIfNull is false, return the method at
         // the index
-        if (stackTrace.GetFrame(i) is not null || !parsePrevIfNull)
+        if (stackTrace.GetFrame(i) is not null || parsePrevIfNull is false)
         {
             return stackTrace.GetFrame(i)?.GetMethod();
         }
@@ -765,17 +811,17 @@ public static class CodeHelper
     /// <summary>
     /// Gets the name of the caller method.
     /// </summary>
-    /// <param name="index"> The index. </param>
-    /// <returns> </returns>
+    /// <param name="index">The index.</param>
+    /// <returns></returns>
     public static string? GetCallerMethodName(in int index = 2)
         => GetCallerMethod(index)?.Name;
 
     /// <summary>
     /// If b returns true then invoke the ifTrue function else invoke the ifFalse function.
     /// </summary>
-    /// <param name="b">       </param>
-    /// <param name="ifTrue">  </param>
-    /// <param name="ifFalse"> </param>
+    /// <param name="b"></param>
+    /// <param name="ifTrue"></param>
+    /// <param name="ifFalse"></param>
     public static void If(Func<bool> b, in Action ifTrue, in Action? ifFalse = null)
     {
         if (b())
@@ -791,9 +837,9 @@ public static class CodeHelper
     /// <summary>
     /// If b returns true then invoke the ifTrue function else invoke the ifFalse function.
     /// </summary>
-    /// <param name="b">       </param>
-    /// <param name="ifTrue">  </param>
-    /// <param name="ifFalse"> </param>
+    /// <param name="b"></param>
+    /// <param name="ifTrue"></param>
+    /// <param name="ifFalse"></param>
     public static void If(bool b, in Action ifTrue, in Action? ifFalse = null)
     {
         if (b)
@@ -809,10 +855,10 @@ public static class CodeHelper
     /// <summary>
     /// If b is true then invoke the ifTrue function else invoke the ifFalse function.
     /// </summary>
-    /// <param name="b">       </param>
-    /// <param name="ifTrue">  </param>
-    /// <param name="ifFalse"> </param>
-    /// <returns> </returns>
+    /// <param name="b"></param>
+    /// <param name="ifTrue"></param>
+    /// <param name="ifFalse"></param>
+    /// <returns></returns>
     public static Task If(bool b, in Func<Task> ifTrue, in Func<Task>? ifFalse = null) =>
         b
             ? ifTrue()
@@ -820,38 +866,12 @@ public static class CodeHelper
                 ?? Task.CompletedTask;
 
     /// <summary>
-    /// If b is false then invoke the ifFalse function.
-    /// </summary>
-    /// <param name="b">       </param>
-    /// <param name="ifFalse"> </param>
-    /// <returns> </returns>
-    public static bool IfFalse(this bool b, in Action ifFalse)
-    {
-        if (!b)
-        {
-            ifFalse?.Invoke();
-        }
-        return b;
-    }
-
-    /// <summary>
-    /// If b is false then invoke the ifFalse function else return the default value.
-    /// </summary>
-    /// <typeparam name="T"> </typeparam>
-    /// <param name="b">            </param>
-    /// <param name="ifFalse">      </param>
-    /// <param name="defaultValue"> </param>
-    /// <returns> </returns>
-    public static T IfFalse<T>(this bool b, in Func<T> ifFalse, in T defaultValue = default!)
-        => !b ? ifFalse.Invoke() : defaultValue;
-
-    /// <summary>
     /// If b is true then invoke the ifTrue function else invoke the ifFalse function.
     /// </summary>
-    /// <param name="obj">     </param>
-    /// <param name="ifTrue">  </param>
-    /// <param name="ifFalse"> </param>
-    /// <returns> </returns>
+    /// <param name="obj"></param>
+    /// <param name="ifTrue"></param>
+    /// <param name="ifFalse"></param>
+    /// <returns></returns>
     public static Task IfNotNull(object? obj, in Func<Task> ifTrue, in Func<Task>? ifFalse = null) =>
         obj is not null
             ? ifTrue()
@@ -861,10 +881,10 @@ public static class CodeHelper
     /// <summary>
     /// If b is true then invoke the ifTrue function else invoke the ifFalse function.
     /// </summary>
-    /// <param name="obj">     </param>
-    /// <param name="ifTrue">  </param>
-    /// <param name="ifFalse"> </param>
-    /// <returns> </returns>
+    /// <param name="obj"></param>
+    /// <param name="ifTrue"></param>
+    /// <param name="ifFalse"></param>
+    /// <returns></returns>
     public static Task<Result> IfNotNull(object? obj, in Func<Task<Result>> ifTrue, in Func<Task<Result>>? ifFalse = null) =>
         obj is not null
             ? ifTrue()
@@ -872,14 +892,40 @@ public static class CodeHelper
                 ?? Task.FromResult(Result.Success());
 
     /// <summary>
+    /// If b is false then invoke the ifFalse function.
+    /// </summary>
+    /// <param name="b"></param>
+    /// <param name="ifFalse"></param>
+    /// <returns></returns>
+    public static bool IfFalse(this bool b, in Action ifFalse)
+    {
+        if (b is false)
+        {
+            ifFalse?.Invoke();
+        }
+        return b;
+    }
+
+    /// <summary>
+    /// If b is false then invoke the ifFalse function else return the default value.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="b"></param>
+    /// <param name="ifFalse"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public static T IfFalse<T>(this bool b, in Func<T> ifFalse, in T defaultValue = default!)
+        => b is false ? ifFalse.Invoke() : defaultValue;
+
+    /// <summary>
     /// If b is true then invoke the ifTrue function.
     /// </summary>
-    /// <param name="b">      </param>
-    /// <param name="ifTrue"> </param>
-    /// <returns> </returns>
+    /// <param name="b"></param>
+    /// <param name="ifTrue"></param>
+    /// <returns></returns>
     public static bool IfTrue(this bool b, in Action ifTrue)
     {
-        if (b)
+        if (b is true)
         {
             ifTrue?.Invoke();
         }
@@ -889,34 +935,34 @@ public static class CodeHelper
     /// <summary>
     /// If b is true then invoke the ifTrue function else return the default value.
     /// </summary>
-    /// <typeparam name="T"> </typeparam>
-    /// <param name="b">            </param>
-    /// <param name="ifTrue">       </param>
-    /// <param name="defaultValue"> </param>
-    /// <returns> </returns>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="b"></param>
+    /// <param name="ifTrue"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
     public static T IfTrue<T>(this bool b, in Func<T> ifTrue, in T defaultValue = default!)
-        => b ? ifTrue.Invoke() : defaultValue;
+        => b is true ? ifTrue.Invoke() : defaultValue;
 
     /// <summary>
     /// Locks the specified lock object.
     /// </summary>
-    /// <param name="lockObject"> </param>
-    /// <param name="action">     </param>
+    /// <param name="lockObject"></param>
+    /// <param name="action"></param>
     public static void Lock(object? lockObject, Action action)
         => _ = Lock(lockObject, ()
             =>
-        {
-            action.ArgumentNotNull(nameof(action))();
-            return true;
-        });
+            {
+                action.ArgumentNotNull(nameof(action))();
+                return true;
+            });
 
     /// <summary>
     /// Locks the specified lock object.
     /// </summary>
-    /// <typeparam name="TResult"> </typeparam>
-    /// <param name="lockObject"> </param>
-    /// <param name="action">     </param>
-    /// <returns> </returns>
+    /// <typeparam name="TResult"></typeparam>
+    /// <param name="lockObject"></param>
+    /// <param name="action"></param>
+    /// <returns></returns>
     public static TResult Lock<TResult>(object? lockObject, in Func<TResult> action)
     {
         lock (lockObject ?? CodeHelper.GetCallerMethod()!.DeclaringType!)
@@ -928,18 +974,18 @@ public static class CodeHelper
     /// <summary>
     /// Creates a new instance of the generic type T.
     /// </summary>
-    /// <typeparam name="T"> The type of the instance to create. </typeparam>
-    /// <returns> A new instance of the generic type T. </returns>
+    /// <typeparam name="T">The type of the instance to create.</typeparam>
+    /// <returns>A new instance of the generic type T.</returns>
     public static T New<T>()
-        where T : class, new() =>
-        new();
+            where T : class, new()
+            => new();
 
     /// <summary>
     /// Creates a new instance of the generic type T.
     /// </summary>
-    /// <typeparam name="T"> </typeparam>
-    /// <param name="args"> </param>
-    /// <returns> </returns>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="args"></param>
+    /// <returns></returns>
     public static T New<T>(params object[] args)
         => Activator.CreateInstance(typeof(T), args).NotNull().Cast().To<T>();
 
@@ -953,9 +999,9 @@ public static class CodeHelper
     /// <summary>
     /// Throws the specified exception.
     /// </summary>
-    /// <typeparam name="TFakeResult"> The type of the return value. </typeparam>
-    /// <param name="exception"> The exception to throw. </param>
-    /// <returns> This method does not return. </returns>
+    /// <typeparam name="TFakeResult">The type of the return value.</typeparam>
+    /// <param name="exception">The exception to throw.</param>
+    /// <returns>This method does not return.</returns>
     [DoesNotReturn]
     public static TFakeResult Throw<TFakeResult>(in Exception exception) =>
         throw exception;
@@ -963,7 +1009,7 @@ public static class CodeHelper
     /// <summary>
     /// Throws the specified exception.
     /// </summary>
-    /// <param name="exception"> The exception to throw. </param>
+    /// <param name="exception">The exception to throw.</param>
     [DoesNotReturn]
     public static void Throw(in Exception exception) =>
         throw exception;
@@ -985,10 +1031,10 @@ public static class CodeHelper
     /// <summary>
     /// Executes the specified action and throws an exception if an error occurs.
     /// </summary>
-    /// <typeparam name="TResult"> The type of the result. </typeparam>
-    /// <param name="action">       The action to execute. </param>
-    /// <param name="getException"> A function to get the exception to throw. </param>
-    /// <returns> The result of the action. </returns>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="action">The action to execute.</param>
+    /// <param name="getException">A function to get the exception to throw.</param>
+    /// <returns>The result of the action.</returns>
     public static TResult ThrowOnError<TResult>(in Func<TResult> action, Func<Exception, Exception>? getException = null)
     {
         Check.MustBeArgumentNotNull(action);
@@ -1008,28 +1054,28 @@ public static class CodeHelper
     }
 
     /// <summary>
-    /// Converts an action to an other action.
+    ///  Converts an action to an other action.
     /// </summary>
-    /// <param name="action"> </param>
-    /// <returns> </returns>
+    /// <param name="action"></param>
+    /// <returns></returns>
     public static Action ToAction(Action action)
         => action;
 
     /// <summary>
     /// Converts a function to an other function.
     /// </summary>
-    /// <typeparam name="TResult"> </typeparam>
-    /// <param name="action"> </param>
-    /// <returns> </returns>
+    /// <typeparam name="TResult"></typeparam>
+    /// <param name="action"></param>
+    /// <returns></returns>
     public static Func<TResult> ToFunc<TResult>(Func<TResult> action)
         => action;
 
     /// <summary>
     /// Executes an action using a disposable object.
     /// </summary>
-    /// <typeparam name="TDisposable"> </typeparam>
-    /// <param name="getItem"> </param>
-    /// <param name="action">  </param>
+    /// <typeparam name="TDisposable"></typeparam>
+    /// <param name="getItem"></param>
+    /// <param name="action"></param>
     public static void Using<TDisposable>(Func<TDisposable> getItem, Action<TDisposable> action)
                 where TDisposable : IDisposable
     {
@@ -1040,11 +1086,11 @@ public static class CodeHelper
     /// <summary>
     /// Executes an action using a disposable object.
     /// </summary>
-    /// <typeparam name="TDisposable"> </typeparam>
-    /// <typeparam name="TResult"> </typeparam>
-    /// <param name="getItem"> </param>
-    /// <param name="action">  </param>
-    /// <returns> </returns>
+    /// <typeparam name="TDisposable"></typeparam>
+    /// <typeparam name="TResult"></typeparam>
+    /// <param name="getItem"></param>
+    /// <param name="action"></param>
+    /// <returns></returns>
     public static TResult Using<TDisposable, TResult>(Func<TDisposable> getItem, Func<TDisposable, TResult> action)
         where TDisposable : IDisposable
     {
@@ -1068,8 +1114,8 @@ public static class CodeHelper
     /// <summary>
     /// Executes an action while a predicate is true.
     /// </summary>
-    /// <param name="predicate"> </param>
-    /// <param name="action">    </param>
+    /// <param name="predicate"></param>
+    /// <param name="action"></param>
     public static void While(in Func<bool> predicate, in Action? action = null)
     {
         Check.MustBeArgumentNotNull(predicate);
@@ -1083,9 +1129,9 @@ public static class CodeHelper
     /// <summary>
     /// Invokes an action on an instance and returns the instance.
     /// </summary>
-    /// <param name="instance"> The instance to invoke the action on. </param>
-    /// <param name="action">   The action to invoke. </param>
-    /// <returns> The instance. </returns>
+    /// <param name="instance">The instance to invoke the action on.</param>
+    /// <param name="action">The action to invoke.</param>
+    /// <returns>The instance.</returns>
     public static TInstance With<TInstance>(this TInstance instance, in Action<TInstance>? action)
     {
         action?.Invoke(instance);
@@ -1095,19 +1141,21 @@ public static class CodeHelper
     /// <summary>
     /// Executes an action on a task instance and returns the result.
     /// </summary>
-    /// <typeparam name="TInstance"> </typeparam>
-    /// <param name="instance"> </param>
-    /// <param name="action">   </param>
-    /// <returns> </returns>
-    public static TInstance With<TInstance>(this TInstance instance, in Func<TInstance, TInstance> action) =>
-        action(instance);
+    /// <typeparam name="TInstance"></typeparam>
+    /// <param name="instance"></param>
+    /// <param name="action"></param>
+    /// <returns></returns>
+    public static TInstance With<TInstance>(this TInstance instance, in Func<TInstance, TInstance> action)
+    {
+        return action(instance);
+    }
 
     /// <summary>
     /// Executes an action on a task instance and returns the result.
     /// </summary>
-    /// <param name="instanceAsync"> The task instance. </param>
-    /// <param name="action">        The action to execute. </param>
-    /// <returns> The result of the task instance. </returns>
+    /// <param name="instanceAsync">The task instance.</param>
+    /// <param name="action">The action to execute.</param>
+    /// <returns>The result of the task instance.</returns>
     public static async Task<TInstance> WithAsync<TInstance>(this Task<TInstance> instanceAsync, Action<TInstance>? action)
     {
         var result = await instanceAsync;
