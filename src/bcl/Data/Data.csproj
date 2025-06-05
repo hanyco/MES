@@ -4,9 +4,9 @@
 		<RootNamespace>Library.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
 	</PropertyGroup>
 	<ItemGroup>
-	  <PackageReference Include="EntityFramework" Version="6.5.1" />
-	  <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
-	</ItemGroup>
+          <PackageReference Include="EntityFramework" />
+          <PackageReference Include="Microsoft.Data.SqlClient" />
+        </ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\CoreLib\CoreLib.csproj" />
 	</ItemGroup>
