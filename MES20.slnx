@@ -1,4 +1,11 @@
 <Solution>
+  <Folder Name="/items/">
+    <File Path=".filenesting.json" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
   <Folder Name="/src/" />
   <Folder Name="/src/bcl/">
     <Project Path="src/bcl/CodeGenLib/CodeGenLib.csproj" Id="20591deb-0826-43d1-84e3-776bfa78c0bf" />
