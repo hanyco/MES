@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Data.Entity;
+using System.Reflection;
 
 using Library.Data.Markers;
 
@@ -9,7 +10,7 @@ public static class DataServiceHelper
 {
     #region CRUD
 
-    public static async Task<IDbContextTransaction?> CreateTransactionOnDemand(this IBusinessService? _, DbContext dbContext, bool persist, CancellationToken token) =>
+    public static async Task<   IDbContextTransaction?> CreateTransactionOnDemand(this IBusinessService? _, DbContext dbContext, bool persist, CancellationToken token) =>
         !persist ? null : dbContext.Database.CurrentTransaction ?? await dbContext.Database.BeginTransactionAsync(token);
 
     /// <summary>

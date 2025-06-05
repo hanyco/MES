@@ -13,6 +13,5 @@
   <ItemGroup>
     <ProjectReference Include="..\..\bcl\CodeGenLib\CodeGenLib.csproj" />
     <ProjectReference Include="..\..\bcl\CoreLib\CoreLib.csproj" />
-    <ProjectReference Include="..\..\bcl\Data\Data.csproj" />
   </ItemGroup>
 </Project>
