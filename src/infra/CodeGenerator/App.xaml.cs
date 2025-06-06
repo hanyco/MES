@@ -4,6 +4,8 @@ using CodeGenerator.Application.DependencyInjection;
 using CodeGenerator.Designer.UI.ViewModels;
 
 using Library.CodeGenLib;
+using Library.CodeGenLib.Back;
+using Library.CodeGenLib.CodeGenerators;
 
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
@@ -34,7 +36,7 @@ public partial class App : System.Windows.Application
                               .GetConnectionString("DefaultConnection")!));
 
         // CodeGen engine
-        _ = services.AddTransient<ICodeGeneratorEngine, RoslynCodeGenerator>();
+        _ = services.AddTransient<ICodeGeneratorEngine<INamespace>, RoslynCodeGenerator>();
 
         // ViewModels
         _ = services.AddTransient<DtosPageViewModel>();

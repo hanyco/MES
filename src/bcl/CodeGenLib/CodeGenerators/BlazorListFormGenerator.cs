@@ -1,7 +1,4 @@
-using System.Text;
-using System.Linq;
-
-namespace Library.CodeGenLib;
+﻿namespace Library.CodeGenLib.CodeGenerators;
 
 /// <summary>
 /// Simple generator that creates a Blazor component from a DTO definition.
