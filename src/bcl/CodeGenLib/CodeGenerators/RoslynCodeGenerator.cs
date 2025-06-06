@@ -1,22 +1,23 @@
-﻿
+﻿using Library.Coding;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 using static Library.Extensions.RoslynHelper;
-using Library.Coding;
-using Library.Helpers;
 
-namespace Library.CodeGenLib;
+namespace Library.CodeGenLib.CodeGenerators;
 
-public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
+public sealed class RoslynCodeGenerator : ICodeGeneratorEngine<INamespace>, ICodeGeneratorEngine<IProperty>
 {
-    public string Generate(IProperty property)
+    public IResult<string> Generate(IProperty property)
     {
         Check.MustBeArgumentNotNull(property);
 
         var prop = CreateRosProperty(CreateRoot(), property);
-        return prop.Root.AddMembers(prop.Member).GenerateCode();
+        var statement = prop.Root.AddMembers(prop.Member).GenerateCode();
+        var result = Result.Success(ReformatCode(statement));
+        return result;
     }
 
     public IResult<string> Generate(INamespace nameSpace)
@@ -85,7 +86,7 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
             .Compact();
         var finalRoot = root.WithUsings(List(distinctUsings));
 
-        return Result.Success<string>(finalRoot.GenerateCode())!;
+        return Result.Success(finalRoot.GenerateCode())!;
     }
 
     private static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) AddAttributes(PropertyDeclarationSyntax prop, CompilationUnitSyntax root, IMember member)
@@ -127,7 +128,7 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
             {
                 root = root.AddUsingNameSpace(ns);
             }
-            result = Caster.Cast(result.AddAttribute(attributeType.Name, attribute.Properties.Select(x => (x.Name, x.Value)))).As<BaseMethodDeclarationSyntax>()!;
+            result = result.AddAttribute(attributeType.Name, attribute.Properties.Select(x => (x.Name, x.Value))).Cast().As<BaseMethodDeclarationSyntax>()!;
         }
         return (result, root);
     }

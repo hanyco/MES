@@ -1,4 +1,4 @@
-﻿namespace Library.CodeGenLib;
+﻿namespace Library.CodeGenLib.CodeGenerators;
 
 /// <summary>
 /// Simple generator that creates a Blazor component from a DTO definition.
@@ -20,6 +20,7 @@ public sealed class BlazorListFormGenerator : ICodeGeneratorEngine<DtoDefinition
         {
             _ = sb.AppendLine($"@using {dto.Namespace};");
         }
+        _ = sb.AppendLine("@using System.Linq;");
 
         _ = sb.AppendLine();
         _ = sb.AppendLine($"<h3>{dto.Name} List</h3>");
@@ -30,7 +31,14 @@ public sealed class BlazorListFormGenerator : ICodeGeneratorEngine<DtoDefinition
         }
         if (options.IncludeDeleteButton)
         {
-            _ = sb.AppendLine("<button @onclick=\"DeleteAsync\" disabled=\"@(Selected.Count == 0)\">حذف</button>");
+            if (options.EnableMultiSelect)
+            {
+                _ = sb.AppendLine("<button @onclick=\"DeleteAsync\" disabled=\"@(Selected.Count == 0)\">حذف</button>");
+            }
+            else
+            {
+                _ = sb.AppendLine("<button @onclick=\"DeleteAsync\">حذف</button>");
+            }
         }
 
         _ = sb.AppendLine("<table class=\"table\">");
