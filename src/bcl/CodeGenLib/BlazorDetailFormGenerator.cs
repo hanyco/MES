@@ -1,4 +1,7 @@
-﻿namespace Library.CodeGenLib;
+using System.Text;
+using System.Linq;
+
+namespace Library.CodeGenLib;
 
 /// <summary>
 /// Simple generator that creates a Blazor component from a DTO definition.
@@ -20,6 +23,9 @@ public sealed class BlazorDetailFormGenerator : ICodeGeneratorEngine<DtoDefiniti
         {
             sb.AppendLine($"@using {dto.Namespace};");
         }
+        sb.AppendLine("@using MediatR;");
+        sb.AppendLine("@using Microsoft.AspNetCore.Components;");
+        sb.AppendLine("@using Microsoft.JSInterop;");
 
         sb.AppendLine();
         sb.AppendLine("<EditForm Model=\"model\" OnValidSubmit=\"SaveAsync\">");
@@ -28,9 +34,14 @@ public sealed class BlazorDetailFormGenerator : ICodeGeneratorEngine<DtoDefiniti
 
         foreach (var field in dto.Fields)
         {
-            var component = field.Type.ToLowerInvariant() switch
+            var type = field.Type.ToLowerInvariant();
+            var component = type switch
             {
                 "bool" => $"<InputCheckbox @bind-Value=\"model.{field.Name}\" />",
+                "int" or "long" or "float" or "double" or "decimal" =>
+                    $"<InputNumber<{field.Type}> @bind-Value=\"model.{field.Name}\" />",
+                "datetime" or "datetimeoffset" =>
+                    $"<InputDate @bind-Value=\"model.{field.Name}\" />",
                 _ => $"<InputText @bind-Value=\"model.{field.Name}\" />"
             };
             sb.AppendLine("    <div>");
@@ -53,7 +64,7 @@ public sealed class BlazorDetailFormGenerator : ICodeGeneratorEngine<DtoDefiniti
         var commandName = string.IsNullOrWhiteSpace(options.SaveCommandName) ? "" : options.SaveCommandName;
         if (!string.IsNullOrWhiteSpace(commandName))
         {
-            sb.AppendLine($"    private async Task SaveAsync() => await Mediator.Send(new {commandName}(model));");
+            sb.AppendLine($"    private async Task SaveAsync()\n    {{\n        await Mediator.Send(new {commandName}(model));\n        Nav.NavigateTo(\"/{dto.Name.ToLowerInvariant()}s\");\n    }}");
         }
         else
         {
