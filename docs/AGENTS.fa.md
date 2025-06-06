@@ -80,3 +80,4 @@ public class GetPersonByIdHandler : IRequestHandler<GetPersonByIdQuery, IResult<
 
 - تو فقط اجرا کننده قوانینی، نه طراح معماری.
 - ساده بنویس. سریع بنویس. تموم کن.
+- لطفا همیشه فارسی صحبت کن و فقط کلمات فنی را به زبان فنی بگو.
