@@ -10,6 +10,7 @@
   <Folder Name="/src/bcl/">
     <Project Path="src/bcl/CodeGenLib/CodeGenLib.csproj" Id="20591deb-0826-43d1-84e3-776bfa78c0bf" />
     <Project Path="src/bcl/CoreLib/CoreLib.csproj" />
+    <Project Path="src/bcl/DataLib/DataLib.csproj" />
   </Folder>
   <Folder Name="/src/infra/">
     <Project Path="src/infra/CodeGenerator/CodeGenerator.csproj" Id="ffa23aa6-bfcd-464a-ba06-89ecb0960a33" />
