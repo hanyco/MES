@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using System.Data;
+﻿using System.Data;
 
 using Microsoft.Data.SqlClient;
 
@@ -28,18 +27,21 @@ public static class MetadataExtension
         /// An asynchronous stream of strings, where each string represents the fully qualified name
         /// of a table in the format "schema.table".
         /// </returns>
-        public async IAsyncEnumerable<(string Schema, string Name)> GetTableNamesAsync(SqlConnection connection)
+        public async IAsyncEnumerable<(int ObjectId, string Schema, string Name)> GetTables(SqlConnection connection)
         {
+            var was_open = false;
             if (connection.State != ConnectionState.Open)
             {
                 await connection.OpenAsync();
+                was_open = true;
             }
 
             using var cmd = connection.CreateCommand();
             cmd.CommandText = """
                 SELECT
-                   s.name AS SchemaName,
-                    t.name AS TableName
+                	t.object_id,
+                    s.name AS [schema],
+                    t.name AS [name]
                 FROM sys.tables t
                 LEFT JOIN sys.schemas s ON t.schema_id = s.schema_id;
                 """;
@@ -47,33 +49,43 @@ public static class MetadataExtension
             await using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
-                yield return (reader.GetString(0), reader.GetString(1));
+                yield return (reader.GetInt32("object_id"), reader.GetString("schema"), reader.GetString("name"));
+            }
+            if (was_open)
+            {
+                await connection.CloseAsync();
             }
         }
 
-        public static async Task<ImmutableArray<Table>> GetTablesAsync(this Database database, SqlConnection connection)
-        {
-            if (connection.State != ConnectionState.Open)
-            {
-                await connection.OpenAsync();
-            }
-            using var cmd = connection.CreateCommand();
-            cmd.CommandText = """
-                SELECT
-                    s.name AS SchemaName,
-                    t.name AS TableName
-                FROM sys.tables t
-                LEFT JOIN sys.schemas s ON t.schema_id = s.schema_id;
-                """;
-            await using var reader = await cmd.ExecuteReaderAsync();
-            var tablesBuilder = ImmutableArray.CreateBuilder<Table>();
-            while (await reader.ReadAsync())
-            {
-                var schemaName = reader.GetString(0);
-                var tableName = reader.GetString(1);
-                tablesBuilder.Add(new Table { Name = $"{schemaName}.{tableName}" });
-            }
-            return tablesBuilder.ToImmutable();
-        }
+        //public async Task<ImmutableArray<Table>> GetTables(SqlConnection connection)
+        //{
+        //    if (connection.State != ConnectionState.Open)
+        //    {
+        //        await connection.OpenAsync();
+        //    }
+        //    using var cmd = connection.CreateCommand();
+        //    cmd.CommandText = """
+        //        SELECT
+        //        	t.object_id,
+        //            s.name AS [schema],
+        //            t.name AS [name]
+        //        FROM sys.tables t
+        //        LEFT JOIN sys.schemas s ON t.schema_id = s.schema_id;
+
+        //        SELECT t.object_id, t.name [table_name], c.name [column_name], c.column_id, [type].name type_name, c.is_identity, c.is_nullable FROM sys.tables t
+        //        LEFT JOIN sys.columns c ON c.object_id = t.object_id
+        //        LEFT JOIN sys.types [type] ON [type].system_type_id = c.system_type_id;
+        //        """;
+        //    await using var reader = await cmd.ExecuteReaderAsync();
+        //    var tablesBuilder = ImmutableArray.CreateBuilder<Table>();
+        //    while (await reader.ReadAsync())
+        //    {
+        //        var id = reader.GetInt32("object_id");
+        //        var schemaName = reader.GetString("schema");
+        //        var tableName = reader.GetString("name");
+        //        tablesBuilder.Add(new Table { ObjectId = id, Name = tableName, Schema = schemaName });
+        //    }
+        //    return tablesBuilder.ToImmutable();
+        //}
     }
 }

@@ -80,16 +80,8 @@ public static class EnumerableExtension
             }
         }
 
-        public IEnumerable<TItem> Compact()
-        {
-            foreach (var item in source)
-            {
-                if (item is not null)
-                {
-                    yield return item;
-                }
-            }
-        }
+        public IEnumerable<TItem> Compact() =>
+            source?.Where(x => x is not null) ?? [];
 
         public IEnumerable<TItem> AddImmuted(TItem item)
         {
