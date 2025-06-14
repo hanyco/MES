@@ -1,4 +1,4 @@
-﻿using System.Reflection.Metadata;
+using Library.CodeGenLib.Models;
 
 namespace CodeGenerator.Application.Domain;
 
@@ -7,9 +7,17 @@ namespace CodeGenerator.Application.Domain;
 /// </summary>
 public class DtoDefinition
 {
-    public string? Comment { get; set; }
-    public List<FieldDefinition> Fields { get; set; } = [];
-    public Guid Id { get; set; }
+    public long Id { get; set; }
+    public Guid Guid { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Namespace { get; set; } = string.Empty;
+    public long? ModuleId { get; set; }
+    public string? DbObjectId { get; set; }
+    public string? Comment { get; set; }
+    public bool IsParamsDto { get; set; }
+    public bool IsResultDto { get; set; }
+    public bool IsViewModel { get; set; }
+    public bool? IsList { get; set; }
+    public string? BaseType { get; set; }
+    public List<FieldDefinition> Fields { get; set; } = [];
 }

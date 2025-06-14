@@ -1,15 +1,11 @@
 ﻿using System.Windows;
 
-using CodeGenerator.Application.DependencyInjection;
+using CodeGenerator.Application.Services;
 using CodeGenerator.Designer.UI.ViewModels;
 
-using Library.CodeGenLib;
-using Library.CodeGenLib.Back;
-using Library.CodeGenLib.CodeGenerators;
 
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace CodeGenerator;
 
@@ -18,7 +14,6 @@ namespace CodeGenerator;
 /// </summary>
 public partial class App : System.Windows.Application
 {
-    public IServiceProvider Services { get; private set; } = null!;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -27,24 +22,14 @@ public partial class App : System.Windows.Application
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .Build();
 
-        var services = new ServiceCollection();
-        services.AddSingleton<IConfiguration>(config);
+        var connStr = config.GetConnectionString("DefaultConnection")!;
+        var db = new SqlConnection(connStr);
 
-        // Only IDbConnection and MediatR
-        _ = services.AddApplicationLayer(sp =>
-            new SqlConnection(sp.GetRequiredService<IConfiguration>()
-                              .GetConnectionString("DefaultConnection")!));
+        var dtoService = new DtoService(db);
+        var dtosPage = new DtosPageViewModel(dtoService);
+        var shell = new ShellViewModel(dtosPage);
 
-        // CodeGen engine
-        _ = services.AddTransient<ICodeGeneratorEngine<INamespace>, RoslynCodeGenerator>();
-
-        // ViewModels
-        _ = services.AddTransient<DtosPageViewModel>();
-        _ = services.AddTransient<ShellViewModel>();
-
-        // Build & show
-        var sp = services.BuildServiceProvider();
-        var wnd = new MainWindow { DataContext = sp.GetRequiredService<ShellViewModel>() };
+        var wnd = new MainWindow { DataContext = shell };
         wnd.Show();
     }
 }
