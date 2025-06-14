@@ -1,11 +1,6 @@
-using Library.CodeGenLib.Models;
-
 namespace CodeGenerator.Application.Domain;
 
-/// <summary>
-/// Describes a DTO model for code generation.
-/// </summary>
-public class DtoDefinition
+public class Dto
 {
     public long Id { get; set; }
     public Guid Guid { get; set; }
@@ -19,5 +14,5 @@ public class DtoDefinition
     public bool IsViewModel { get; set; }
     public bool? IsList { get; set; }
     public string? BaseType { get; set; }
-    public List<FieldDefinition> Fields { get; set; } = [];
+    public List<Property> Properties { get; set; } = [];
 }
