@@ -11,13 +11,13 @@ public partial class DtoService
     /// <summary>
     /// تولید کد کلاس DTO به صورت partial.
     /// </summary>
-    public Code GenerateCode(DtoDefinition dto)
+    public Code GenerateCode(Dto dto)
     {
         var ns = INamespace.New(dto.Namespace);
         var cls = IClass.New(dto.Name);
-        foreach (var field in dto.Fields)
+        foreach (var field in dto.Properties)
         {
-            var prop = IProperty.New(field.Name, TypePath.New(field.Type));
+            var prop = IProperty.New(field.Name, TypePath.New(field.TypeFullName ?? "object"));
             cls.AddProperty(prop);
         }
         ns.AddType(cls);

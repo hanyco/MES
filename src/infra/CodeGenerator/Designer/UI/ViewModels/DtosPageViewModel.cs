@@ -31,13 +31,13 @@ public class DtosPageViewModel : INotifyPropertyChanged
 
     public ICommand AddCommand { get; }
     public ICommand DeleteCommand { get; }
-    public ObservableCollection<DtoDefinition> Dtos { get; }
+    public ObservableCollection<Dto> Dtos { get; }
 
     public ICommand RefreshCommand { get; }
 
     public ICommand SaveCommand { get; }
 
-    public DtoDefinition? SelectedDto
+    public Dto? SelectedDto
     {
         get;
         set
@@ -54,7 +54,7 @@ public class DtosPageViewModel : INotifyPropertyChanged
 
     private void AddDto()
     {
-        var newDto = new DtoDefinition
+        var newDto = new Dto
         {
             Id = 0,
             Guid = Guid.NewGuid(),
