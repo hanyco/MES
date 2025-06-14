@@ -1,25 +1,23 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
-using CodeGenerator.Application.Cqrs;
-using CodeGenerator.Application.Cqrs.Commands;
 using CodeGenerator.Application.Domain;
 using CodeGenerator.Designer.UI.Common;
-
-using MediatR;
+using CodeGenerator.Application.Services;
 
 namespace CodeGenerator.Designer.UI.ViewModels;
 
 public class DtosPageViewModel : INotifyPropertyChanged
 {
-    private readonly IMediator _mediator;
+    private readonly DtoService _service;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    public DtosPageViewModel(IMediator mediator)
+    public DtosPageViewModel(DtoService service)
     {
-        this._mediator = mediator;
+        this._service = service;
         this.Dtos = [];
 
         this.RefreshCommand = new RelayCommand(async _ => await this.LoadDtosAsync());
@@ -33,13 +31,13 @@ public class DtosPageViewModel : INotifyPropertyChanged
 
     public ICommand AddCommand { get; }
     public ICommand DeleteCommand { get; }
-    public ObservableCollection<DtoDefinition> Dtos { get; }
+    public ObservableCollection<Dto> Dtos { get; }
 
     public ICommand RefreshCommand { get; }
 
     public ICommand SaveCommand { get; }
 
-    public DtoDefinition? SelectedDto
+    public Dto? SelectedDto
     {
         get;
         set
@@ -56,9 +54,10 @@ public class DtosPageViewModel : INotifyPropertyChanged
 
     private void AddDto()
     {
-        var newDto = new DtoDefinition
+        var newDto = new Dto
         {
-            Id = Guid.NewGuid(),
+            Id = 0,
+            Guid = Guid.NewGuid(),
             Name = "NewDto",
             Namespace = "MyNamespace"
         };
@@ -73,13 +72,13 @@ public class DtosPageViewModel : INotifyPropertyChanged
             return;
         }
 
-        await this._mediator.Send(new DeleteDtoCommand(this.SelectedDto.Id));
+        await this._service.Delete(this.SelectedDto.Id);
         await this.LoadDtosAsync();
     }
 
     private async Task LoadDtosAsync()
     {
-        var dtos = await this._mediator.Send(new GetAllDtosQuery());
+        var dtos = await this._service.GetAll();
         this.Dtos.Clear();
         foreach (var dto in dtos)
         {
@@ -102,11 +101,12 @@ public class DtosPageViewModel : INotifyPropertyChanged
 
         if (this.SelectedDto.Id == default)
         {
-            this.SelectedDto = await this._mediator.Send(new CreateDtoCommand(this.SelectedDto));
+            var id = await this._service.Insert(this.SelectedDto);
+            this.SelectedDto.Id = id;
         }
         else
         {
-            this.SelectedDto = await this._mediator.Send(new UpdateDtoCommand(this.SelectedDto));
+            await this._service.Update(this.SelectedDto);
         }
 
         await this.LoadDtosAsync();
