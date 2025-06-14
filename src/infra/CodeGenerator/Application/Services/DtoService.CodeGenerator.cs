@@ -1,5 +1,6 @@
 using System;
 using CodeGenerator.Application.Domain;
+﻿using CodeGenerator.Application.Domain;
 using Library.CodeGenLib.Back;
 using Library.CodeGenLib.CodeGenerators;
 using Library.CodeGenLib.Models;
@@ -10,9 +11,6 @@ namespace CodeGenerator.Application.Services;
 
 public partial class DtoService
 {
-    /// <summary>
-    /// تولید کد کلاس DTO به صورت partial.
-    /// </summary>
     public IResult<Code> GenerateCode(Dto dto)
     {
         if (dto is null)
@@ -44,5 +42,4 @@ public partial class DtoService
         {
             return Result.Fail<Code>(ex);
         }
-    }
 }
