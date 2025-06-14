@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Immutable;
+using System.Threading.Tasks;
 
 namespace Library.Extensions;
 
@@ -44,6 +45,31 @@ public static class EnumerableExtension
     /// <returns> An empty array of type T. </returns>
     public static T[] EmptyArray<T>()
         => [];
+
+    /// <summary>
+    /// Selects all elements from a sequence of sequences.
+    /// </summary>
+    /// <param name="values"> The sequence of sequences. </param>
+    /// <returns> A sequence containing all elements of the input sequences. </returns>
+    public static IEnumerable<T> SelectAll<T>(this IEnumerable<IEnumerable<T>> values)
+    {
+        Check.MustBeArgumentNotNull(values);
+        foreach (var value in values)
+        {
+            foreach (var item in value)
+            {
+                yield return item;
+            }
+        }
+    }
+
+    public static async Task<List<TItem>> ToListAsync<TItem>(this Task<IEnumerable<TItem>> itemsTask, CancellationToken cancellationToken = default)
+    {
+        var items = await itemsTask.ConfigureAwait(false);
+        cancellationToken.ThrowIfCancellationRequested();
+        var result = items.ToList();
+        return result;
+    }
 
     extension(IEnumerable source)
     {
@@ -117,25 +143,6 @@ public static class EnumerableExtension
             return result;
         }
     }
-
-    /// <summary>
-    /// Selects all elements from a sequence of sequences.
-    /// </summary>
-    /// <param name="values"> The sequence of sequences. </param>
-    /// <returns> A sequence containing all elements of the input sequences. </returns>
-    public static IEnumerable<T> SelectAll<T>(this IEnumerable<IEnumerable<T>> values)
-    {
-        Check.MustBeArgumentNotNull(values);
-
-        foreach (var value in values)
-        {
-            foreach (var item in value)
-            {
-                yield return item;
-            }
-        }
-    }
-
     extension<TKey, TValue>(IEnumerable<(TKey Key, TValue Value)> source)
     {
         /// <summary>
