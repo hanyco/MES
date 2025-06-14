@@ -1,8 +1,6 @@
-﻿using System.Data;
-
-using CodeGenerator.Application.Domain;
-
+using System.Data;
 using Dapper;
+using CodeGenerator.Application.Domain;
 
 namespace CodeGenerator.Application.Services;
 
@@ -16,10 +14,10 @@ public partial class DtoService(IDbConnection db)
     public async Task<IEnumerable<Dto>> GetAll(CancellationToken ct = default)
     {
         const string sql = "SELECT * FROM [infra].[Dto]";
-        var dtos = (await this._db.QueryAsync<Dto>(sql)).ToList();
+        var dtos = (await _db.QueryAsync<Dto>(sql)).ToList();
         foreach (var dto in dtos)
         {
-            var props = await this._db.QueryAsync<Property>(
+            var props = await _db.QueryAsync<Property>(
                 "SELECT * FROM [infra].[Property] WHERE DtoId = @Id",
                 new { dto.Id });
             dto.Properties.Clear();
@@ -72,6 +70,12 @@ public partial class DtoService(IDbConnection db)
                 IsList = @IsList,
                 BaseType = @BaseType
             WHERE Id = @Id";
+        await _db.ExecuteAsync(sql, dto);
+        await _db.ExecuteAsync("DELETE FROM [infra].[Property] WHERE DtoId = @Id", new { dto.Id });
+        await SaveProperties(dto, ct);
+    }
+
+    public Task<int> Delete(long id, CancellationToken ct = default)
         _ = await this._db.ExecuteAsync(sql, dto);
         _ = await this._db.ExecuteAsync("DELETE FROM [infra].[Property] WHERE DtoId = @Id", new { dto.Id });
         await this.SaveProperties(dto, ct);

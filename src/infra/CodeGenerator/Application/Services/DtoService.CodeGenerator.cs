@@ -1,5 +1,6 @@
+using System;
+using CodeGenerator.Application.Domain;
 ﻿using CodeGenerator.Application.Domain;
-
 using Library.CodeGenLib.Back;
 using Library.CodeGenLib.CodeGenerators;
 using Library.CodeGenLib.Models;
@@ -32,7 +33,6 @@ public partial class DtoService
                 _ = cls.AddProperty(prop);
             }
             _ = ns.AddType(cls);
-
             var codeResult = ns.GenerateCode<RoslynCodeGenerator>();
             var code = new Code(dto.Name, Languages.CSharp, codeResult.Value!, isPartial: true);
             return Result.From(codeResult, code);
