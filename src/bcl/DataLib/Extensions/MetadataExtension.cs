@@ -1,8 +1,12 @@
 ﻿using System.Data;
+using System.Runtime.CompilerServices;
+
+using DataLib;
+using DataLib.Extensions;
 
 using Microsoft.Data.SqlClient;
 
-namespace DataLib;
+namespace DataLib.Extensions;
 
 public static class MetadataExtension
 {
@@ -27,17 +31,9 @@ public static class MetadataExtension
         /// An asynchronous stream of strings, where each string represents the fully qualified name
         /// of a table in the format "schema.table".
         /// </returns>
-        public async IAsyncEnumerable<(int ObjectId, string Schema, string Name)> GetTables(SqlConnection connection)
+        public async IAsyncEnumerable<(int ObjectId, string Schema, string Name)> GetTables(SqlConnection connection, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            var was_open = false;
-            if (connection.State != ConnectionState.Open)
-            {
-                await connection.OpenAsync();
-                was_open = true;
-            }
-
-            using var cmd = connection.CreateCommand();
-            cmd.CommandText = """
+            const string sql = """
                 SELECT
                 	t.object_id,
                     s.name AS [schema],
@@ -45,15 +41,34 @@ public static class MetadataExtension
                 FROM sys.tables t
                 LEFT JOIN sys.schemas s ON t.schema_id = s.schema_id;
                 """;
-
-            await using var reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
+            var resultTask = connection.ReadAsync(sql,
+                static reader => (reader.GetInt32("object_id"), reader.GetString("schema"), reader.GetString("name")),
+                cancellationToken);
+            await foreach (var item in resultTask)
             {
-                yield return (reader.GetInt32("object_id"), reader.GetString("schema"), reader.GetString("name"));
+                cancellationToken.ThrowIfCancellationRequested();
+                yield return item;
             }
-            if (was_open)
+        }
+
+        public async IAsyncEnumerable<(int ObjectId, string Schema, string Name)> GetTables(string connectionString, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            const string sql = """
+                SELECT
+                	t.object_id,
+                    s.name AS [schema],
+                    t.name AS [name]
+                FROM sys.tables t
+                LEFT JOIN sys.schemas s ON t.schema_id = s.schema_id;
+                """;
+            var resultTask = SqlConnection.ReadAsync(
+                connectionString, sql,
+                static reader => (reader.GetInt32("object_id"), reader.GetString("schema"), reader.GetString("name")),
+                cancellationToken);
+            await foreach (var item in resultTask)
             {
-                await connection.CloseAsync();
+                cancellationToken.ThrowIfCancellationRequested();
+                yield return item;
             }
         }
 
