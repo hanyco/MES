@@ -4,14 +4,12 @@ using CodeGenerator.Application.Domain;
 
 namespace CodeGenerator.Application.Services;
 
-public partial class DtoService
+public partial class DtoService(IDbConnection db)
 {
-    private readonly IDbConnection _db;
+    private readonly IDbConnection _db = db;
 
-    public DtoService(IDbConnection db)
-    {
-        _db = db;
-    }
+    public Task<int> Delete(long id, CancellationToken ct = default)
+        => this._db.ExecuteAsync("DELETE FROM [infra].[Dto] WHERE Id = @Id", new { Id = id });
 
     public async Task<IEnumerable<Dto>> GetAll(CancellationToken ct = default)
     {
@@ -31,14 +29,14 @@ public partial class DtoService
     public async Task<Dto?> GetById(long id, CancellationToken ct = default)
     {
         const string sql = "SELECT * FROM [infra].[Dto] WHERE Id = @Id";
-        var dto = await _db.QueryFirstOrDefaultAsync<Dto>(sql, new { Id = id });
+        var dto = await this._db.QueryFirstOrDefaultAsync<Dto>(sql, new { Id = id });
         if (dto is null)
         {
             return null;
         }
-        var props = await _db.QueryAsync<Property>(
+        var props = await this._db.QueryAsync<Property>(
             "SELECT * FROM [infra].[Property] WHERE DtoId = @Id",
-            new { Id = dto.Id });
+            new { dto.Id });
         dto.Properties.Clear();
         dto.Properties.AddRange(props);
         return dto;
@@ -52,9 +50,9 @@ public partial class DtoService
             VALUES (@Name, @Namespace, @ModuleId, @DbObjectId, @Guid, @Comment,
                     @IsParamsDto, @IsResultDto, @IsViewModel, @IsList, @BaseType);
             SELECT CAST(SCOPE_IDENTITY() AS bigint);";
-        var id = await _db.ExecuteScalarAsync<long>(sql, dto);
+        var id = await this._db.ExecuteScalarAsync<long>(sql, dto);
         dto.Id = id;
-        await SaveProperties(dto, ct);
+        await this.SaveProperties(dto, ct);
         return id;
     }
 
@@ -78,7 +76,10 @@ public partial class DtoService
     }
 
     public Task<int> Delete(long id, CancellationToken ct = default)
-        => _db.ExecuteAsync("DELETE FROM [infra].[Dto] WHERE Id = @Id", new { Id = id });
+        _ = await this._db.ExecuteAsync(sql, dto);
+        _ = await this._db.ExecuteAsync("DELETE FROM [infra].[Property] WHERE DtoId = @Id", new { dto.Id });
+        await this.SaveProperties(dto, ct);
+    }
 
     private async Task SaveProperties(Dto dto, CancellationToken ct)
     {
@@ -93,7 +94,7 @@ public partial class DtoService
             {
                 ParentEntityId = dto.Id,
                 field.PropertyType,
-                TypeFullName = field.TypeFullName,
+                field.TypeFullName,
                 field.Name,
                 field.HasSetter,
                 field.HasGetter,
@@ -104,7 +105,7 @@ public partial class DtoService
                 field.Guid,
                 DtoId = dto.Id
             };
-            await _db.ExecuteAsync(sql, param, ct);
+            await this._db.ExecuteAsync(sql, param, ct);
         }
     }
 }
