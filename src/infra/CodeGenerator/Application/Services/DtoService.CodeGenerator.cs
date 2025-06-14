@@ -1,6 +1,5 @@
-using System;
-using CodeGenerator.Application.Domain;
 ﻿using CodeGenerator.Application.Domain;
+
 using Library.CodeGenLib.Back;
 using Library.CodeGenLib.CodeGenerators;
 using Library.CodeGenLib.Models;
@@ -30,9 +29,9 @@ public partial class DtoService
             foreach (var field in dto.Properties)
             {
                 var prop = IProperty.New(field.Name, TypePath.New(field.TypeFullName ?? "object"));
-                cls.AddProperty(prop);
+                _ = cls.AddProperty(prop);
             }
-            ns.AddType(cls);
+            _ = ns.AddType(cls);
 
             var codeResult = ns.GenerateCode<RoslynCodeGenerator>();
             var code = new Code(dto.Name, Languages.CSharp, codeResult.Value!, isPartial: true);
@@ -42,4 +41,5 @@ public partial class DtoService
         {
             return Result.Fail<Code>(ex);
         }
+    }
 }
