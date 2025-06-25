@@ -18,4 +18,7 @@
   <Folder Name="/src/prj/">
     <Project Path="src/prj/HanyCoMES/HanyCoMES.csproj" />
   </Folder>
+  <Folder Name="/src/test/">
+    <Project Path="src/test/ConApp/ConApp.csproj" Id="693c36ef-d8fe-4168-a696-a58c96f3a9a5" />
+  </Folder>
 </Solution>

@@ -1,93 +1,35 @@
 ﻿using System.Collections;
 using System.Collections.Immutable;
-using System.Threading.Tasks;
 
 namespace Library.Extensions;
 
 public static class EnumerableExtension
 {
-    /// <summary>
-    /// Adds a range of items to the specified collection.
-    /// </summary>
-    /// <typeparam name="TList"> The type of the collection to which items will be added. </typeparam>
-    /// <typeparam name="TItem"> The type of the items to be added. </typeparam>
-    /// <param name="list">  The collection to which the items will be added. </param>
-    /// <param name="items"> The items to be added to the collection. </param>
-    /// <returns> The updated collection with added items. </returns>
-    /// <remarks>
-    /// This extension method allows adding a range of items to a collection that implements
-    /// ICollection. The method checks if the 'items' enumerable is not null and contains items
-    /// before performing the addition.
-    /// </remarks>
-    public static TList AddRange<TList, TItem>([DisallowNull] this TList list, in IEnumerable<TItem> items)
-        where TList : ICollection<TItem>
-    {
-        if (items?.Any() is true)
-        {
-            // Iterate through each item in the 'items' enumerable and add it to the collection.
-            foreach (var item in items)
-            {
-                list.Add(item);
-            }
-        }
-        return list; // Return the updated collection with added items.
-    }
-
-    public static IEnumerable<T> AsEnumerable<T>(T item)
-    {
-        yield return item;
-    }
-
-    /// <summary>
-    /// Creates an empty array of the specified type.
-    /// </summary>
-    /// <typeparam name="T"> The type of the array elements. </typeparam>
-    /// <returns> An empty array of type T. </returns>
-    public static T[] EmptyArray<T>()
-        => [];
-
-    /// <summary>
-    /// Selects all elements from a sequence of sequences.
-    /// </summary>
-    /// <param name="values"> The sequence of sequences. </param>
-    /// <returns> A sequence containing all elements of the input sequences. </returns>
-    public static IEnumerable<T> SelectAll<T>(this IEnumerable<IEnumerable<T>> values)
-    {
-        Check.MustBeArgumentNotNull(values);
-        foreach (var value in values)
-        {
-            foreach (var item in value)
-            {
-                yield return item;
-            }
-        }
-    }
-
-    public static async Task<List<TItem>> ToListAsync<TItem>(this Task<IEnumerable<TItem>> itemsTask, CancellationToken cancellationToken = default)
-    {
-        var items = await itemsTask.ConfigureAwait(false);
-        cancellationToken.ThrowIfCancellationRequested();
-        var result = items.ToList();
-        return result;
-    }
-
-    extension(IEnumerable source)
+    extension(IEnumerable @this)
     {
         // 'source' refers to receiver
-        public bool IsEmpty => source switch
+        public bool IsEmpty => @this switch
         {
             null => true,
             Array a => a.Length == 0,
             ICollection list => list.Count == 0,
-            _ => source.GetEnumerator().MoveNext()
+            _ => @this.GetEnumerator().MoveNext()
         };
     }
 
-    extension<TItem>(IEnumerable<TItem> source)
+    extension<TItem>(IEnumerable<TItem> @this)
     {
+        public bool IsEmpty => @this switch
+        {
+            null => true,
+            Array a => a.Length == 0,
+            ICollection list => list.Count == 0,
+            _ => !@this.Any()
+        };
+
         public void ForEach(Action<TItem> action)
         {
-            var items = source.ToImmutableArray();
+            var items = @this.ToImmutableArray();
             foreach (var item in items)
             {
                 action(item);
@@ -96,7 +38,7 @@ public static class EnumerableExtension
 
         public IEnumerable<TItem> AddRangeImmuted(params TItem[] items)
         {
-            foreach (var item in source)
+            foreach (var item in @this)
             {
                 yield return item;
             }
@@ -107,11 +49,11 @@ public static class EnumerableExtension
         }
 
         public IEnumerable<TItem> Compact() =>
-            source?.Where(x => x is not null) ?? [];
+            @this?.Where(x => x is not null) ?? [];
 
         public IEnumerable<TItem> AddImmuted(TItem item)
         {
-            foreach (var i in source)
+            foreach (var i in @this)
             {
                 yield return i;
             }
@@ -126,16 +68,16 @@ public static class EnumerableExtension
         {
             Check.MustBeArgumentNotNull(exceptor);
 
-            return source.Where(x => !exceptor(x));
+            return @this.Where(x => !exceptor(x));
         }
 
         public TResult? SelectImmutable<TResult>(in Func<TItem?, TResult?, TResult?> selector, in TResult? defaultResult = default)
         {
             var result = defaultResult;
-            if (source is { } && source.Any())
+            if (@this is { } && @this.Any())
             {
                 Check.MustBeArgumentNotNull(selector);
-                foreach (var item in source)
+                foreach (var item in @this)
                 {
                     result = selector(item, result);
                 }
@@ -143,13 +85,14 @@ public static class EnumerableExtension
             return result;
         }
     }
-    extension<TKey, TValue>(IEnumerable<(TKey Key, TValue Value)> source)
+
+    extension<TKey, TValue>(IEnumerable<(TKey Key, TValue Value)> @this)
     {
         /// <summary>
         /// Checks if the given IEnumerable contains a key-value pair with the specified key.
         /// </summary>
         public bool ContainsKey(TKey key) =>
-            source.ArgumentNotNull().Any(kv => kv.Key?.Equals(key) ?? key is null);
+            @this.ArgumentNotNull().Any(kv => kv.Key?.Equals(key) ?? key is null);
 
         /// <summary>
         /// Gets the value from the given source by the specified key.
@@ -160,6 +103,75 @@ public static class EnumerableExtension
         /// <param name="key">    The key. </param>
         /// <returns> The value. </returns>
         public TValue GetValueByKey(TKey key) =>
-            source.ArgumentNotNull().First(kv => kv.Key?.Equals(key) ?? key is null).Value;
+            @this.ArgumentNotNull().First(kv => kv.Key?.Equals(key) ?? key is null).Value;
+    }
+
+    extension(Enumerable)
+    {
+        public static IEnumerable<T> ToEnumerable<T>(T item)
+        {
+            yield return item;
+        }
+
+        public static IEnumerable<TItem> Iterate<TItem>(IEnumerable<TItem> items)
+        {
+            using var enumerator = items.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                yield return enumerator.Current;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Adds a range of items to the specified collection.
+    /// </summary>
+    /// <typeparam name="TList"> The type of the collection to which items will be added. </typeparam>
+    /// <typeparam name="TItem"> The type of the items to be added. </typeparam>
+    /// <param name="this">  The collection to which the items will be added. </param>
+    /// <param name="items"> The items to be added to the collection. </param>
+    /// <returns> The updated collection with added items. </returns>
+    /// <remarks>
+    /// This extension method allows adding a range of items to a collection that implements
+    /// ICollection. The method checks if the 'items' enumerable is not null and contains items
+    /// before performing the addition.
+    /// </remarks>
+    public static TList AddRange<TList, TItem>([DisallowNull] this TList @this, in IEnumerable<TItem> items)
+        where TList : ICollection<TItem>
+    {
+        if (items?.Any() is true)
+        {
+            // Iterate through each item in the 'items' enumerable and add it to the collection.
+            foreach (var item in items)
+            {
+                @this.Add(item);
+            }
+        }
+        return @this; // Return the updated collection with added items.
+    }
+
+    /// <summary>
+    /// Selects all elements from a sequence of sequences.
+    /// </summary>
+    /// <param name="this"> The sequence of sequences. </param>
+    /// <returns> A sequence containing all elements of the input sequences. </returns>
+    public static IEnumerable<TItem> SelectAll<TItem>(this IEnumerable<IEnumerable<TItem>> @this)
+    {
+        Check.MustBeArgumentNotNull(@this);
+        foreach (var value in @this)
+        {
+            foreach (var item in value)
+            {
+                yield return item;
+            }
+        }
+    }
+
+    public static async Task<List<TItem>> ToListAsync<TItem>(this Task<IEnumerable<TItem>> itemsTask, CancellationToken cancellationToken = default)
+    {
+        var items = await itemsTask.ConfigureAwait(false);
+        cancellationToken.ThrowIfCancellationRequested();
+        var result = items.ToList();
+        return result;
     }
 }

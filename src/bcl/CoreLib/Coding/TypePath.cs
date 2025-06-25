@@ -75,7 +75,7 @@ public sealed class TypePath : IEquatable<TypePath>
     }
 
     public static string Combine(in string? part1, params string?[] parts)
-        => StringExtension.Merge(EnumerableExtension.AsEnumerable(part1).AddRangeImmuted(parts).Compact().Select(x => x.Trim('.')), '.');
+        => StringExtension.Merge(Enumerable.ToEnumerable(part1).AddRangeImmuted(parts).Compact().Select(x => x.Trim('.')), '.');
 
     public static TypePath FromKeyword(in string keyword)
     {

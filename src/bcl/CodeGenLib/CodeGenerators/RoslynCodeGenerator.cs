@@ -24,7 +24,7 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine<INamespace>, ICod
     {
         // Validation checks
         Check.MustBeArgumentNotNull(nameSpace);
-        if (!nameSpace.Validate().TryParse(out var vr))
+        if (!nameSpace.Validate().IfSucceed(out var vr))
         {
             return vr.WithValue(string.Empty);
         }

@@ -29,7 +29,7 @@ public sealed class Namespace(string name) : INamespace
         }
         foreach (var type in this.Types)
         {
-            if (!type.Validate().TryParse(out var vr))
+            if (!type.Validate().IfSucceed(out var vr))
             {
                 return vr;
             }

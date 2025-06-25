@@ -1,14 +1,14 @@
-namespace Library.Extensions;
+﻿namespace Library.Extensions;
 
-public static class SqlTypeExtensions
+public static class SqlTypeExtension
 {
     public static string FormatDate(DateTime date, in string onNull = "NULL", bool isForInterpolation = false) =>
         DBNull.Value.Equals(date)
             ? onNull
             : isForInterpolation ? $"{date:yyyy-MM-dd HH:mm:ss}" : $"'{date:yyyy-MM-dd HH:mm:ss}'";
 
-    public static string FormatDate(this DateTime? date, in string onNull = "NULL", bool isForInterpolation = false) =>
-        (date == null || DBNull.Value.Equals(date)) ? onNull : FormatDate(date.Value, onNull, isForInterpolation);
+    public static string FormatDate(DateTime? date, in string onNull = "NULL", bool isForInterpolation = false) =>
+        date == null || DBNull.Value.Equals(date) ? onNull : FormatDate(date.Value, onNull, isForInterpolation);
 
     public static string FormatDate(object? data, in string onNull = "null", bool isForInterpolation = false) =>
         data switch
@@ -35,8 +35,8 @@ public static class SqlTypeExtensions
     /// <summary>
     /// Converts a SQL type name to its corresponding .NET type.
     /// </summary>
-    /// <param name="typeName">The SQL type name to be converted.</param>
-    /// <returns>The corresponding .NET Type for the given SQL type name.</returns>
+    /// <param name="typeName"> The SQL type name to be converted. </param>
+    /// <returns> The corresponding .NET Type for the given SQL type name. </returns>
     public static Type SqlTypeToNetType(string typeName) =>
         typeName?.ToLower(System.Globalization.CultureInfo.CurrentCulture) switch
         {

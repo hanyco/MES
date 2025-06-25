@@ -38,35 +38,20 @@ public static class CodeHelper
     /// <param name="throwException"></param>
     /// <returns></returns>
     public static Exception? Catch(
-        in Action tryMethod,
-        in Action<Exception>? catchMethod = null,
-        in Action? finallyMethod = null,
-        in ExceptionHandling? handling = null,
-        in bool throwException = false)
+        Action tryMethod,
+        Action<Exception>? catchMethod = null,
+        Action? finallyMethod = null,
+        ExceptionHandling? handling = null,
+        bool throwException = false)
     {
         Check.MustBeArgumentNotNull(tryMethod);
 
         handling?.Reset();
-        try
-        {
-            tryMethod();
-            return null;
-        }
-        catch (Exception ex)
+        return Action.Catch(tryMethod, ex =>
         {
             catchMethod?.Invoke(ex);
             handling?.HandleException(ex);
-            if (throwException)
-            {
-                throw;
-            }
-
-            return ex;
-        }
-        finally
-        {
-            finallyMethod?.Invoke();
-        }
+        }, finallyMethod, throwException);
     }
 
     /// <summary>
