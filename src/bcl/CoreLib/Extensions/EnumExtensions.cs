@@ -17,15 +17,29 @@ public static class EnumExtensions
     /// <summary>
     /// Adds a flag to the given enumeration.
     /// </summary>
-    public static TEnum AddFlag<TEnum>(this TEnum enumeration, in TEnum item)
-            where TEnum : Enum => (TEnum)Enum.ToObject(typeof(TEnum), Caster.Cast(enumeration).ToInt() | Caster.Cast(item).ToInt());
+    extension<TEnum>(TEnum enumeration)
+        where TEnum : Enum
+    {
+        public TEnum AddFlag(in TEnum item) =>
+            (TEnum)Enum.ToObject(typeof(TEnum), Caster.Cast(enumeration).ToInt() | Caster.Cast(item).ToInt());
+    }
+
     /// <summary>
     /// Checks if the given enumeration contains the specified item.
     /// </summary>
-    public static bool Contains<TEnum>(this Enum enumeration, TEnum item)
+    extension(Enum enumeration)
+    {
+        public bool Contains<TEnum>(TEnum item)
             where TEnum : Enum => Caster.Cast(item).ToInt() is 0
-            ? Caster.Cast(enumeration).ToInt() == 0
-            : (Caster.Cast(enumeration).ToInt() | Caster.Cast(item).ToInt()) == Caster.Cast(enumeration).ToInt();
+                ? Caster.Cast(enumeration).ToInt() == 0
+                : (Caster.Cast(enumeration).ToInt() | Caster.Cast(item).ToInt()) == Caster.Cast(enumeration).ToInt();
+
+        /// <summary>
+        /// Checks if the given Enum value is contained in the given range of Enum values.
+        /// </summary>
+        public bool IsIn(params Enum[] range) =>
+            range.Contains(enumeration);
+    }
 
     /// <summary>
     /// Converts an enum of type TSourceEnum to an enum of type TDestinationEnum.
@@ -169,11 +183,6 @@ public static class EnumExtensions
         return pairs?.ToDictionary(t => t.Value, t => t.Text);
     }
 
-    /// <summary>
-    /// Checks if the given Enum value is contained in the given range of Enum values.
-    /// </summary>
-    public static bool IsIn(this Enum value, params Enum[] range)
-        => range.Contains(value);
 
     /// <summary>
     /// Checks if the given value is a member of the specified enum type.
