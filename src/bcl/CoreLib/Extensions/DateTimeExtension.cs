@@ -62,6 +62,16 @@ public static class DateTimeExtension
 
         public bool IsBetween(in DateTime start, in DateTime end) =>
             @this >= start && @this < end;
+
+        public bool IsWeekend(CultureInfo? culture = null) =>
+            (culture ?? CultureInfo.CurrentCulture).GetWeekdayState(@this.ArgumentNotNull().DayOfWeek)
+                is CultureInfoHelper.WeekdayState.Weekend or CultureInfoHelper.WeekdayState.WorkdayMorning;
+
+        public PersianDateTime ToPersian() =>
+            @this;
+
+        public TimeSpan ToTimeSpan() =>
+            new(@this.Ticks);
     }
 
     extension(DateTime? @this)
@@ -86,19 +96,6 @@ public static class DateTimeExtension
         /// Converts to datetime.
         /// </summary>
         public DateTime ToDateTime() =>
-            new(@this.Ticks);
-    }
-
-    extension(DateTime @this)
-    {
-        public bool IsWeekend(CultureInfo? culture = null) =>
-            (culture ?? CultureInfo.CurrentCulture).GetWeekdayState(@this.ArgumentNotNull().DayOfWeek)
-                is CultureInfoHelper.WeekdayState.Weekend or CultureInfoHelper.WeekdayState.WorkdayMorning;
-
-        public PersianDateTime ToPersian() =>
-            @this;
-
-        public TimeSpan ToTimeSpan() =>
             new(@this.Ticks);
     }
 
