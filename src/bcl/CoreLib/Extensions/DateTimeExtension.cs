@@ -68,58 +68,47 @@ public static class DateTimeExtension
     {
     }
 
-    /// <summary>
-    /// Determines whether this instance start is between.
-    /// </summary>
-    /// <param name="this">  The source. </param>
-    /// <param name="start"> The start. </param>
-    /// <param name="end">   The end. </param>
-    /// <returns> <c> true </c> if the specified start is between; otherwise, <c> false </c>. </returns>
-    public static bool IsBetween(this TimeSpan @this, in TimeSpan start, in TimeSpan end) =>
-        @this >= start && @this <= end;
+    extension(TimeSpan @this)
+    {
+        /// <summary>
+        /// Determines whether this instance start is between the given range.
+        /// </summary>
+        public bool IsBetween(in TimeSpan start, in TimeSpan end) =>
+            @this >= start && @this <= end;
 
-    /// <summary>
-    /// Determines whether this instance is between.
-    /// </summary>
-    /// <param name="this">  The source. </param>
-    /// <param name="start"> The start. </param>
-    /// <param name="end">   The end. </param>
-    /// <returns> <c> true </c> if the specified start is between; otherwise, <c> false </c>. </returns>
-    public static bool IsBetween(this TimeSpan @this, in string start, in string end) =>
-        @this.IsBetween(ToTimeSpan(start), ToTimeSpan(end));
+        /// <summary>
+        /// Determines whether this instance start is between the specified string range.
+        /// </summary>
+        public bool IsBetween(in string start, in string end) =>
+            @this.IsBetween(ToTimeSpan(start), ToTimeSpan(end));
+
+        /// <summary>
+        /// Converts to datetime.
+        /// </summary>
+        public DateTime ToDateTime() =>
+            new(@this.Ticks);
+    }
+
+    extension(DateTime @this)
+    {
+        public bool IsWeekend(CultureInfo? culture = null) =>
+            (culture ?? CultureInfo.CurrentCulture).GetWeekdayState(@this.ArgumentNotNull().DayOfWeek)
+                is CultureInfoHelper.WeekdayState.Weekend or CultureInfoHelper.WeekdayState.WorkdayMorning;
+
+        public PersianDateTime ToPersian() =>
+            @this;
+
+        public TimeSpan ToTimeSpan() =>
+            new(@this.Ticks);
+    }
 
     /// <summary>
     /// Returns true if dateTime format is valid.
     /// </summary>
     /// <param name="dateTime"> The date time. </param>
-    /// <returns> <c> true </c> if the specified date time is valid; otherwise, <c> false </c>. </returns>
+    /// <returns> <c>true</c> if the specified date time is valid; otherwise, <c>false</c>. </returns>
     public static bool IsValid(in string dateTime) =>
         DateTime.TryParse(dateTime, out _);
-
-    /// <summary>
-    /// Checks if the given dateTime is a weekend day according to the given culture.
-    /// </summary>
-    /// <param name="this">    The dateTime to check. </param>
-    /// <param name="culture">
-    /// The culture to use for the check. If not specified, the current culture is used.
-    /// </param>
-    /// <returns>
-    /// True if the given dateTime is a weekend day according to the given culture, false otherwise.
-    /// </returns>
-    public static bool IsWeekend([DisallowNull] this DateTime @this, CultureInfo? culture = null) =>
-        (culture ?? CultureInfo.CurrentCulture).GetWeekdayState(@this.ArgumentNotNull().DayOfWeek)
-            is CultureInfoHelper.WeekdayState.Weekend or CultureInfoHelper.WeekdayState.WorkdayMorning;
-
-    /// <summary>
-    /// Converts to datetime.
-    /// </summary>
-    /// <param name="this"> The source. </param>
-    /// <returns> </returns>
-    public static DateTime ToDateTime(this TimeSpan @this) =>
-        new(@this.Ticks);
-
-    public static PersianDateTime ToPersian(this DateTime @this) =>
-        @this;
 
     /// <summary>
     /// Converts to timespan.
@@ -129,11 +118,4 @@ public static class DateTimeExtension
     public static TimeSpan ToTimeSpan(in string @this) =>
         TimeSpan.Parse(@this, CultureInfo.CurrentCulture);
 
-    /// <summary>
-    /// Converts to timespan.
-    /// </summary>
-    /// <param name="this"> The source. </param>
-    /// <returns> </returns>
-    public static TimeSpan ToTimeSpan(this DateTime @this) =>
-        new(@this.Ticks);
 }
