@@ -2,38 +2,12 @@
 using System.Collections.ObjectModel;
 
 using Library.Coding;
-using Library.Validations;
 
 namespace Library.CodeGenLib.Models;
 
 public interface IMemberInfo
 {
     string Name { get; }
-}
-
-public sealed class PropertyInfo(
-    in string type,
-    in string name,
-    in MemberAttributes? accessModifier = null,
-    in PropertyAccessor? getter = null,
-    in PropertyAccessor? setter = null) : IMemberInfo
-{
-    public PropertyInfo()
-        : this(string.Empty, string.Empty)
-    {
-    }
-
-    public MemberAttributes? AccessModifier { get; init; } = accessModifier;
-    public Collection<string> Attributes { get; } = [];
-    public string? BackingFieldName { get; init; }
-    public string? Comment { get; init; }
-    public PropertyAccessor? Getter { get; init; } = getter;
-    public bool HasBackingField { get; init; }
-    public string? InitCode { get; init; }
-    public bool IsNullable { get; init; }
-    public string Name { get; init; } = name;
-    public PropertyAccessor? Setter { get; init; } = setter;
-    public TypePath Type { get; init; } = type;
 }
 
 public readonly struct FieldInfo(
@@ -85,6 +59,31 @@ public readonly struct MethodArgument(in TypePath type, in string? name) : IEqua
 
     public override int GetHashCode() =>
         HashCode.Combine(this.Type, this.Name);
+}
+
+public sealed class PropertyInfo(
+    in string type,
+    in string name,
+    in MemberAttributes? accessModifier = null,
+    in PropertyAccessor? getter = null,
+    in PropertyAccessor? setter = null) : IMemberInfo
+{
+    public PropertyInfo()
+        : this(string.Empty, string.Empty)
+    {
+    }
+
+    public MemberAttributes? AccessModifier { get; init; } = accessModifier;
+    public Collection<string> Attributes { get; } = [];
+    public string? BackingFieldName { get; init; }
+    public string? Comment { get; init; }
+    public PropertyAccessor? Getter { get; init; } = getter;
+    public bool HasBackingField { get; init; }
+    public string? InitCode { get; init; }
+    public bool IsNullable { get; init; }
+    public string Name { get; init; } = name;
+    public PropertyAccessor? Setter { get; init; } = setter;
+    public TypePath Type { get; init; } = type;
 }
 
 public readonly struct PropertyAccessor(in bool has = true, in bool? isPrivate = null, in string? code = null)

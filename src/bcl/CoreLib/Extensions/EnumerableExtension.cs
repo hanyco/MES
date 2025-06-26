@@ -5,9 +5,19 @@ namespace Library.Extensions;
 
 public static class EnumerableExtension
 {
-    extension(IEnumerable @this)
+    extension([AllowNull] IEnumerable? @this)
     {
-        // 'source' refers to receiver
+        public bool IsEmpty => @this switch
+        {
+            null => true,
+            Array a => a.Length == 0,
+            ICollection list => list.Count == 0,
+            _ => @this.GetEnumerator().MoveNext()
+        };
+    }
+
+    extension<TItem>([AllowNull] IEnumerable<TItem>? @this)
+    {
         public bool IsEmpty => @this switch
         {
             null => true,
@@ -19,14 +29,6 @@ public static class EnumerableExtension
 
     extension<TItem>(IEnumerable<TItem> @this)
     {
-        public bool IsEmpty => @this switch
-        {
-            null => true,
-            Array a => a.Length == 0,
-            ICollection list => list.Count == 0,
-            _ => !@this.Any()
-        };
-
         public void ForEach(Action<TItem> action)
         {
             var items = @this.ToImmutableArray();

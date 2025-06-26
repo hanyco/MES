@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel;
 using System.Globalization;
 
+using Library.Coding;
 using Library.Globalization.Attributes;
 
-namespace Library.Globalization.DataTypes;
+namespace Library.Globalization;
 
 public interface INumericFormat
 {
@@ -708,4 +709,22 @@ public enum TimeBand
     MorningRush,
     Daytime,
     Eveningrush
+}
+
+public enum WeekdayState
+{
+    /// <summary>
+    /// A work day.
+    /// </summary>
+    Workday,
+
+    /// <summary>
+    /// A weekend.
+    /// </summary>
+    Weekend,
+
+    /// <summary>
+    /// Morning is a workday, afternoon is the start of the weekend.
+    /// </summary>
+    WorkdayMorning
 }

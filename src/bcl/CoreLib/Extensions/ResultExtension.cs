@@ -6,7 +6,7 @@ namespace Library.Extensions;
 
 [DebuggerStepThrough]
 [StackTraceHidden]
-public static partial class ResultExtension
+public static class ResultExtension
 {
     extension(IResult @this)
     {
@@ -220,10 +220,7 @@ public static partial class ResultExtension
     {
 
     }
-}
 
-public static partial class ResultExtension
-{
     /// <summary>
     /// Breaks the execution if the given Result is not successful.
     /// </summary>

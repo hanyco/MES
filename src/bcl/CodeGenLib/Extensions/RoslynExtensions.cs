@@ -14,7 +14,9 @@ using RosMember = Microsoft.CodeAnalysis.CSharp.Syntax.MemberDeclarationSyntax;
 using RosMethod = Microsoft.CodeAnalysis.CSharp.Syntax.BaseMethodDeclarationSyntax;
 using RosProp = Microsoft.CodeAnalysis.CSharp.Syntax.PropertyDeclarationSyntax;
 
+#pragma warning disable IDE0130 // Namespace does not match folder structure
 namespace Library.Extensions;
+#pragma warning restore IDE0130 // Namespace does not match folder structure
 
 public static class RoslynHelper
 {

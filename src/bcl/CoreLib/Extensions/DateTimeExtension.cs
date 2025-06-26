@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 
+using Library.Exceptions;
 using Library.Globalization;
-using Library.Globalization.DataTypes;
 
 namespace Library.Extensions;
 
@@ -65,10 +65,7 @@ public static class DateTimeExtension
 
         public bool IsWeekend(CultureInfo? culture = null) =>
             (culture ?? CultureInfo.CurrentCulture).GetWeekdayState(@this.ArgumentNotNull().DayOfWeek)
-                is CultureInfoHelper.WeekdayState.Weekend or CultureInfoHelper.WeekdayState.WorkdayMorning;
-
-        public PersianDateTime ToPersian() =>
-            @this;
+                is WeekdayState.Weekend or WeekdayState.WorkdayMorning;
 
         public TimeSpan ToTimeSpan() =>
             new(@this.Ticks);
@@ -90,7 +87,7 @@ public static class DateTimeExtension
         /// Determines whether this instance start is between the specified string range.
         /// </summary>
         public bool IsBetween(in string start, in string end) =>
-            @this.IsBetween(ToTimeSpan(start), ToTimeSpan(end));
+            @this.IsBetween(TimeSpan.Parse(start), TimeSpan.Parse(end));
 
         /// <summary>
         /// Converts to datetime.
@@ -98,21 +95,4 @@ public static class DateTimeExtension
         public DateTime ToDateTime() =>
             new(@this.Ticks);
     }
-
-    /// <summary>
-    /// Returns true if dateTime format is valid.
-    /// </summary>
-    /// <param name="dateTime"> The date time. </param>
-    /// <returns> <c>true</c> if the specified date time is valid; otherwise, <c>false</c>. </returns>
-    public static bool IsValid(in string dateTime) =>
-        DateTime.TryParse(dateTime, out _);
-
-    /// <summary>
-    /// Converts to timespan.
-    /// </summary>
-    /// <param name="this"> The source. </param>
-    /// <returns> </returns>
-    public static TimeSpan ToTimeSpan(in string @this) =>
-        TimeSpan.Parse(@this, CultureInfo.CurrentCulture);
-
 }

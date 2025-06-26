@@ -1,13 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Frozen;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Text;
 using System.Text.RegularExpressions;
-
-using Library.Extensions;
-using Library.Validations;
 
 namespace Library.Coding;
 
@@ -75,7 +69,7 @@ public sealed class TypePath : IEquatable<TypePath>
     }
 
     public static string Combine(in string? part1, params string?[] parts)
-        => StringExtension.Merge(Enumerable.ToEnumerable(part1).AddRangeImmuted(parts).Compact().Select(x => x.Trim('.')), '.');
+        => Enumerable.ToEnumerable(part1).AddRangeImmuted(parts).Compact().Select(x => x.Trim('.')).Merge('.');
 
     public static TypePath FromKeyword(in string keyword)
     {
@@ -227,7 +221,7 @@ public sealed class TypePath : IEquatable<TypePath>
     }
 
     public override int GetHashCode()
-            => this.FullName.GetHashCode(StringComparison.Ordinal);
+        => this.FullName.GetHashCode(StringComparison.Ordinal);
 
     [return: NotNull]
     public IEnumerable<string> GetNameSpaces()
@@ -374,7 +368,7 @@ public sealed class TypePath : IEquatable<TypePath>
 
             return result;
 
-            static string removeNullableSign(string fullType) => fullType.RemoveEnd("?");
+            static string removeNullableSign(string fullType) => fullType.RemoveEnd("?")!;
 
             static string mergeGenerics(IEnumerable<string> generics) => string.Join(',', generics);
 
@@ -445,7 +439,6 @@ internal static class TypPathHelpers
         => RemoveByRegEx(input, @"`\d");
 
     private static string? RemoveExtraData(this string? input)
-    //=> RemoveByRegEx(input, @",\s*Version=.*?(?=\]|\>)");
     {
         if (input == null)
         {

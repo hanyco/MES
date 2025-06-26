@@ -1,6 +1,5 @@
-﻿using Library.DesignPatterns.Markers;
-using Library.Globalization.DataTypes;
-using Library.Helpers;
+﻿using Library.Coding;
+using Library.DesignPatterns.Markers;
 using Library.Resulting;
 using Library.Validations;
 
@@ -209,13 +208,13 @@ public readonly struct PersianDateTime :
     /// Gets the days of week names.
     /// </summary>
     /// <value>The month names.</value>
-    public static IEnumerable<string> DaysOfWeek => EnumExtensions.GetDescriptions(EnumExtensions.GetItems<PersianDayOfWeek>())!;
+    public static IEnumerable<string> DaysOfWeek => EnumExtensions.GetDescriptions(Enum.GetItems<PersianDayOfWeek>())!;
 
     /// <summary>
     /// Gets the month names.
     /// </summary>
     /// <value>The month names.</value>
-    public static IEnumerable<string> MonthNames => EnumExtensions.GetDescriptions(EnumExtensions.GetItems<PersianMonth>())!;
+    public static IEnumerable<string> MonthNames => EnumExtensions.GetDescriptions(Enum.GetItems<PersianMonth>())!;
 
     /// <summary>
     /// Gets a PersianDateTime object that is set to the current date and time on this computer, expressed as the local time.
@@ -722,11 +721,8 @@ public readonly struct PersianDateTime :
     public static PersianDateTime Subtract(in PersianDateTime PersianDateTime1, in PersianDateTime PersianDateTime2)
         => PersianDateTime1 - PersianDateTime2;
 
-    /// <summary>
-    /// Converts a DateTime object to a PersianDateTime string.
-    /// </summary>
-    public static string ToPersian(in DateTime dateTime)
-        => ParseDateTime(dateTime).ToString()!;
+    public static PersianDateTime ToPersianDateTime(in DateTime dateTime)
+        => ParseDateTime(dateTime);
 
     /// <summary>
     /// Tries to parse a Persian date and time string into a PersianDateTime object.

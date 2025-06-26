@@ -9,8 +9,8 @@ public static class StringExtension
 {
     private static readonly char[] _standardSeparators = ['\0', '\n', '\r', '\t', '_', '-'];
 
-    extension(string? str)
-    {//ولی من خیلی دوستدارم حتی با خشم
+    extension([AllowNull] string? str)
+    {
         public int Length => str?.Length ?? 0;
 
         public string AsNotNull() =>
@@ -102,6 +102,7 @@ public static class StringExtension
             static (bool IsSeparator, bool ShouldIgnore) determineSeparator(char c, char[] separators) =>
                 separators.Contains(c) ? (true, true) : (char.IsUpper(c), false);
         }
+
         /// <summary>
         /// Compares two strings and returns a boolean value indicating whether they are equal.
         /// </summary>
@@ -137,7 +138,7 @@ public static class StringExtension
         public string Merge(string separator = ", ") =>
             string.Join(separator, text.Where(t => t is not null));
 
-        public string Merge(char separator = ',') =>
+        public string Merge(char separator) =>
             string.Join(separator, text.Where(t => t is not null));
     }
 

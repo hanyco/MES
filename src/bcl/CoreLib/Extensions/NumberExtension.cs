@@ -28,45 +28,8 @@ public static class NumberExtension
             (@this ?? defaultValue).ToString(format);
     }
 
-    extension(int)
+    extension(Random)
     {
-        /// <summary>
-        /// Checks if a given number is a prime number.
-        /// </summary>
-        /// <param name="number"> The number to check. </param>
-        /// <returns> True if the number is a prime number, false otherwise. </returns>
-        public static bool IsPrime(int number)
-        {
-            //Check if number is equal to 2, if so return true
-            if (number == 2)
-            {
-                return true;
-            }
-            //Check if number is less than or equal to 1, if so return false
-            if (number <= 1)
-            {
-                return false;
-            }
-            //Check if number is divisible by 2, if so return false
-            if (number % 2 == 0)
-            {
-                return false;
-            }
-
-            //Loop through all numbers from 3 to the square root of the given number
-            for (var i = 3; i <= Math.Sqrt(number); i += 2)
-            {
-                //Check if the given number is divisible by the current number in the loop, if so return false
-                if (number % i == 0)
-                {
-                    return false;
-                }
-            }
-
-            //If the number passes all the checks, return true
-            return true;
-        }
-
         /// <summary>
         /// Generates a random number between the given min and max values. If no min or max values
         /// are provided, the default min and max values are used.
@@ -89,7 +52,10 @@ public static class NumberExtension
         /// <returns> A sequence of random numbers within the specified range. </returns>
         public static IEnumerable<int> RandomNumbers(int count, int? min = null, int? max = null) =>
             Range(1, count).Select(_ => RandomNumber(min, max));
+    }
 
+    extension(int)
+    {
         /// <summary>
         /// Generates a sequence of integers within a specified range.
         /// </summary>
@@ -101,6 +67,7 @@ public static class NumberExtension
         {
             // Check if step is not equal to 0
             Check.MustBe(step != 0, () => new ArgumentOutOfRangeException(nameof(step)));
+
             // Throw exception if step is positive and start is greater than end
             if (step > 0 && start > end)
             {
@@ -152,7 +119,9 @@ public static class NumberExtension
         /// Converts a long value to a standard metric scale.
         /// </summary>
         /// <param name="this">          The value to be converted. </param>
-        /// <param name="measure">       The measure to use for conversion (defaults to 1000). </param>
+        /// <param name="measure">      
+        /// The measure to use for conversion (defaults to 1000).
+        /// </param>
         /// <param name="decimalPlaces"> The number of decimal places to use (defaults to 1). </param>
         /// <returns> A string with the converted value and the corresponding size suffix. </returns>
         public string ToStandardMetricScale(int measure = 1000, int decimalPlaces = 1)

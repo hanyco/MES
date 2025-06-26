@@ -75,7 +75,7 @@ public static class DateTimeFamiliar
         return span < new TimeSpan(2, 0, 0, 0)
             ? "دیروز"
             : span < new TimeSpan(5, 0, 0, 0)
-                ? (int)DateTime.Now.Subtract(dateTime).TotalDays + " روز قبل "
+                ? (int)DateTime.Now.Subtract(dateTime).TotalDays + " روز پیش "
                 : string.Format("{1}- {0} ", dateTime.ToString("M/Y"),
                 dateTime.GetPersianDayOfMonth());
     }

@@ -1,4 +1,5 @@
 ﻿using Library.Dynamics;
+
 namespace Library.CodeGenLib.Models;
 
 [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
@@ -34,6 +35,12 @@ public class Code([DisallowNull] in string name, [DisallowNull] in Language lang
     /// </summary>
     public static Code Empty { get; } = _empty ??= new(string.Empty, Languages.None, string.Empty);
 
+    /// <summary>
+    /// Gets a collection of additional properties that can be dynamically added or accessed at runtime.
+    /// </summary>
+    /// <remarks>This property is useful for scenarios where flexible, runtime-defined data needs to be
+    /// associated with an object. Properties can be added or accessed using dynamic syntax. Ensure proper validation
+    /// when using dynamic properties to avoid runtime errors.</remarks>
     public dynamic ExtraProperties { get; } = new Expando();
 
     /// <summary>
@@ -62,18 +69,6 @@ public class Code([DisallowNull] in string name, [DisallowNull] in Language lang
     /// </summary>
     public string Statement { get; init; } = statement;
 
-    /// <summary>
-    /// Constructor for the <see cref="Code" /> with parameters.
-    /// </summary>
-    /// <param name="name">      Name of the code. </param>
-    /// <param name="language">  Language of the code. </param>
-    /// <param name="statement"> Statement of the code. </param>
-    /// <param name="isPartial"> Whether the code is partial or not. </param>
-    /// <param name="fileName">  File name of the code. </param>
-    /// <returns> An instance of the <see cref="Code" />. </returns>
-    public static Code Create((string Name, Language Language, string Statement, bool IsPartial) data) =>
-        new(data.Name, data.Language, data.Statement, data.IsPartial);
-
     public static implicit operator Code(in (string Name, Language language, string Statement, bool IsPartial) codeData) =>
         new(codeData);
 
@@ -82,12 +77,6 @@ public class Code([DisallowNull] in string name, [DisallowNull] in Language lang
 
     public static implicit operator string?(in Code? code) =>
         code?.Statement;
-
-    public static Code New(in string name, in Language language, in string statement, in bool isPartial = false, in string? fileName = null) =>
-        new(name, language, statement, isPartial, fileName);
-
-    public static Code NewEmpty() =>
-            new(string.Empty, Languages.None, string.Empty);
 
     public static bool operator !=(Code? left, Code? right) =>
         !(left == right);
@@ -106,23 +95,8 @@ public class Code([DisallowNull] in string name, [DisallowNull] in Language lang
     public int CompareTo(Code? other) =>
         other is null ? 1 : other.Name.CompareTo(this.Name);
 
-    public void Deconstruct(out string name, out string statement) =>
-                    (name, statement) = (this.Name, this.Statement);
-
-    public void Deconstruct(out string name, out string statement, out bool isPartial) =>
-        (name, statement, isPartial) = (this.Name, this.Statement, this.IsPartial);
-
-    public void Deconstruct(out string name, out Language language, out string statement, out bool isPartial) =>
-        (name, language, statement, isPartial) = (this.Name, this.Language, this.Statement, this.IsPartial);
-
-    public void Deconstruct(out string name, out Language language, out string statement, out bool isPartial, out string fileName) =>
-        (name, language, statement, isPartial, fileName) = (this.Name, this.Language, this.Statement, this.IsPartial, this.FileName);
-
     public virtual bool Equals(Code? other) =>
         this.GetHashCode() == other?.GetHashCode();
-
-    public bool Equals(string name) =>
-        this.Name == name;
 
     public override bool Equals(object? obj) =>
         this.Equals(obj as Code);
@@ -138,37 +112,4 @@ public class Code([DisallowNull] in string name, [DisallowNull] in Language lang
 
     private string GetDebuggerDisplay() =>
         this.Name;
-}
-
-public static class SourceCodeHelpers
-{
-    public static Codes GatherAll(this IEnumerable<Codes> codes) =>
-        Codes.Create(codes);
-
-    public static bool IsNullOrEmpty([NotNullWhen(false)] this Code? code) =>
-        code is null || code.Equals(Code.Empty);
-
-    [return: NotNull]
-    public static Codes ToCodes(this IEnumerable<Code> codes) =>
-        Codes.Create(codes);
-
-    [return: NotNull]
-    public static Codes ToCodes(params Code[] codes) =>
-        Codes.Create(codes);
-
-    [return: NotNull]
-    public static Codes ToCodes(this IEnumerable<Codes> codes) =>
-         Codes.Create(codes);
-
-    [return: NotNull]
-    public static Codes ToCodes(params Codes[] codes) =>
-         Codes.Create(codes);
-
-    [return: NotNull]
-    public static Codes ToCodes(this Code code) =>
-        new(code);
-
-    [return: NotNull]
-    public static Code WithStatement(this Code code, [DisallowNull] string statement) =>
-        new(code) { Statement = statement };
 }

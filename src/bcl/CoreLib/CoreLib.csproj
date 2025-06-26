@@ -4,5 +4,8 @@
     <RootNamespace>Library</RootNamespace>
     <Title>Core Library</Title>
   </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Globalization\DataTypes\" />
+  </ItemGroup>
 
 </Project>
