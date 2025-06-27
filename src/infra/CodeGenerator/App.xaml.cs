@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 
-using CodeGenerator.Designer.UI.ViewModels;
 
 namespace CodeGenerator;
 
@@ -12,9 +11,6 @@ public partial class App : System.Windows.Application
 
     protected override void OnStartup(StartupEventArgs e)
     {
-        var shell = new ShellViewModel();
-
-        var wnd = new MainWindow { DataContext = shell };
-        wnd.Show();
+        
     }
 }
