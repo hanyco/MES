@@ -18,6 +18,9 @@
 		<PackageVersion Include="EntityFramework" Version="6.5.1" />
 		<PackageVersion Include="Microsoft.AspNetCore.Components.WebView.Wpf" Version="9.0.70" />
 		<PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="9.0.5" />
-		<PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
-	</ItemGroup>
+                <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+                <PackageVersion Include="WindowsAPICodePack-Core" Version="1.1.2" />
+                <PackageVersion Include="WindowsAPICodePack-Shell" Version="1.1.1" />
+                <PackageVersion Include="CommunityToolkit.WinUI.Notifications" Version="7.1.2" />
+        </ItemGroup>
 </Project>
