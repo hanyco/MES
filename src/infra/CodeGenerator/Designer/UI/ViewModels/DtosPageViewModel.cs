@@ -22,15 +22,19 @@ public class DtosPageViewModel : INotifyPropertyChanged
 
         this.RefreshCommand = new RelayCommand(async _ => await this.LoadDtosAsync());
         this.AddCommand = new RelayCommand(_ => this.AddDto());
+        this.EditCommand = new RelayCommand(_ => this.EditDto(), _ => this.SelectedDto != null);
         this.SaveCommand = new RelayCommand(async _ => await this.SaveDtoAsync(), _ => this.SelectedDto != null);
         this.DeleteCommand = new RelayCommand(async _ => await this.DeleteDtoAsync(), _ => this.SelectedDto != null);
+        this.GenerateCodeCommand = new RelayCommand(_ => this.GenerateCode(), _ => this.SelectedDto != null);
 
         // initial load
         _ = this.LoadDtosAsync();
     }
 
     public ICommand AddCommand { get; }
+    public ICommand EditCommand { get; }
     public ICommand DeleteCommand { get; }
+    public ICommand GenerateCodeCommand { get; }
     public ObservableCollection<Dto> Dtos { get; }
 
     public ICommand RefreshCommand { get; }
@@ -48,6 +52,8 @@ public class DtosPageViewModel : INotifyPropertyChanged
                 this.OnPropertyChanged(nameof(this.SelectedDto));
                 ((RelayCommand)this.SaveCommand).RaiseCanExecuteChanged();
                 ((RelayCommand)this.DeleteCommand).RaiseCanExecuteChanged();
+                ((RelayCommand)this.EditCommand).RaiseCanExecuteChanged();
+                ((RelayCommand)this.GenerateCodeCommand).RaiseCanExecuteChanged();
             }
         }
     }
@@ -63,6 +69,21 @@ public class DtosPageViewModel : INotifyPropertyChanged
         };
         this.Dtos.Add(newDto);
         this.SelectedDto = newDto;
+    }
+
+    private void EditDto()
+    {
+        // DataGrid provides inline editing, this method exists for command wiring
+    }
+
+    private void GenerateCode()
+    {
+        if (this.SelectedDto is null)
+        {
+            return;
+        }
+
+        _ = this._service.GenerateCode(this.SelectedDto);
     }
 
     private async Task DeleteDtoAsync()
