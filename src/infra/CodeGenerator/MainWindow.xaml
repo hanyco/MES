@@ -1,9 +1,15 @@
-﻿<Window
+<Window
     x:Class="CodeGenerator.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Code Generator"
     Width="900"
     Height="600">
-    <Grid />
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="مدیریت DTO" Click="OnManageDto" />
+            <MenuItem Header="مدیریت CQRS" Click="OnManageCqrs" />
+            <MenuItem Header="تنظیمات" Click="OnSettings" />
+        </Menu>
+    </DockPanel>
 </Window>
