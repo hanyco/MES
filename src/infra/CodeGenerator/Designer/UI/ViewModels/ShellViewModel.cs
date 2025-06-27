@@ -1,47 +1,57 @@
-﻿using System.ComponentModel;
-using System.Windows.Input;
-
-using CodeGenerator.Designer.UI.Common;
+using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 
 namespace CodeGenerator.Designer.UI.ViewModels;
 
 /// <summary>
-/// Hosts application-level state and navigation.
+/// میزبان وضعیت کلی برنامه و مدیریت ناوبری است.
 /// </summary>
-public class ShellViewModel : INotifyPropertyChanged
+public partial class ShellViewModel : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    public ShellViewModel(DtosPageViewModel dtosPage)
+    public ShellViewModel()
     {
-        // Set initial page
-        this.CurrentPageViewModel = dtosPage;
+        var features = new List<FeatureItem>();
+        var asm = Assembly.GetExecutingAssembly();
+        foreach (var type in asm.GetTypes())
+        {
+            var attr = type.GetCustomAttribute<FeatureAttribute>();
+            if (attr is not null)
+            {
+                if (Activator.CreateInstance(type) is { } vm)
+                {
+                    features.Add(new FeatureItem(attr.Title, vm));
+                }
+            }
+        }
 
-        // Navigation commands
-        this.NavigateDtosCommand = new RelayCommand(_ => this.CurrentPageViewModel = dtosPage);
+        this.Features = new ObservableCollection<FeatureItem>(features);
+        this.SelectedFeature = this.Features.FirstOrDefault();
     }
 
-    /// <summary>
-    /// The currently displayed page's view model.
-    /// </summary>
-    public object CurrentPageViewModel
+    public ObservableCollection<FeatureItem> Features { get; }
+
+    private FeatureItem? _selectedFeature;
+    public FeatureItem? SelectedFeature
     {
-        get;
+        get => this._selectedFeature;
         set
         {
-            if (field != value)
+            if (this._selectedFeature != value)
             {
-                field = value;
-                this.OnPropertyChanged(nameof(this.CurrentPageViewModel));
+                this._selectedFeature = value;
+                this.OnPropertyChanged(nameof(this.SelectedFeature));
+                this.OnPropertyChanged(nameof(this.SelectedViewModel));
             }
         }
     }
 
-    public ICommand NavigateDtosCommand { get; }
+    public object? SelectedViewModel => this.SelectedFeature?.ViewModel;
 
-    /// <summary>
-    /// Status message shown in the StatusBar.
-    /// </summary>
     public string StatusMessage
     {
         get;
@@ -56,5 +66,5 @@ public class ShellViewModel : INotifyPropertyChanged
     } = string.Empty;
 
     private void OnPropertyChanged(string propertyName)
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }
