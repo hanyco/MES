@@ -1,6 +1,6 @@
 ﻿namespace Library.Extensions;
 
-public static class SqlTypeExtension
+public static class SqlType
 {
     public static string FormatDate(DateTime date, in string onNull = "NULL", bool isForInterpolation = false) =>
         DBNull.Value.Equals(date)

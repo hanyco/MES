@@ -1,69 +1,69 @@
-﻿using Microsoft.WindowsAPICodePack.Dialogs;
+﻿using System.ComponentModel;
+
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace CodeGenerator.UI;
 
-public sealed class MsgBox
+[EditorBrowsable(EditorBrowsableState.Never)]
+public static class TaskDialogExtension
 {
-    private MsgBoxData _data;
-
-    private MsgBox()
-        => this._data = new();
-
-    public static MsgBox Create()
+    extension(TaskDialog)
+    {
+        public static TaskDialog Create()
             => new();
 
-    public static void ShowInfo(string message, string? caption = null)
-        => Create()
-            .WithMessage(message)
-            .WithCaption(caption)
-            .WithIcon(TaskDialogStandardIcon.Information)
-            .Show();
-
-    public TaskDialogResult Show()
-    {
-        using var dialog = new TaskDialog
+        public static void Info(string instructionText, string? caption = null)
         {
-            Caption = this._data.Caption ?? "Information",
-            InstructionText = this._data.Message,
-            StandardButtons = this._data.Buttons,
-            Icon = this._data.Icon
-        };
-        return dialog.Show();
-    }
-
-    public MsgBox WithButtons(TaskDialogStandardButtons buttons)
-    {
-        this._data.Buttons = buttons;
-        return this;
-    }
-
-    public MsgBox WithCaption(string? caption)
-    {
-        this._data.Caption = caption;
-        return this;
-    }
-
-    public MsgBox WithIcon(TaskDialogStandardIcon icon)
-    {
-        this._data.Icon = icon;
-        return this;
-    }
-
-    public MsgBox WithMessage(string? message)
-    {
-        this._data.Message = message;
-        return this;
-    }
-
-    private struct MsgBoxData
-    {
-        public MsgBoxData()
-        {
+            using var dialog = Create()
+                .WithInstructionText(instructionText)
+                .WithCaption(caption ?? "Information")
+                .WithIcon(TaskDialogStandardIcon.Information);
+            _ = dialog.Show();
         }
+        public static void Error(string instructionText, string? caption = null)
+        {
+            using var dialog = Create()
+                .WithInstructionText(instructionText)
+                .WithCaption(caption ?? "Error")
+                .WithIcon(TaskDialogStandardIcon.Error);
+            _ = dialog.Show();
+        }
+        public static void Warning(string instructionText, string? caption = null)
+        {
+            using var dialog = Create()
+                .WithInstructionText(instructionText)
+                .WithCaption(caption ?? "Warning")
+                .WithIcon(TaskDialogStandardIcon.Warning);
+            _ = dialog.Show();
+        }
+    }
 
-        public TaskDialogStandardButtons Buttons { get; set; } = TaskDialogStandardButtons.Ok;
-        public string? Caption { get; set; }
-        public TaskDialogStandardIcon Icon { get; set; } = TaskDialogStandardIcon.Information;
-        public string? Message { get; set; }
+    extension(TaskDialog @this)
+    {
+        public TaskDialog WithCaption(string? caption)
+        {
+            @this.Caption = caption ?? "Information";
+            return @this;
+        }
+        public TaskDialog WithInstructionText(string? instructionText)
+        {
+            @this.InstructionText = instructionText;
+            return @this;
+        }
+        public TaskDialog WithIcon(TaskDialogStandardIcon icon)
+        {
+            @this.Icon = icon;
+            return @this;
+        }
+        public TaskDialog WithText(string? message)
+        {
+            @this.Text = message;
+            return @this;
+        }
+        public TaskDialog WithButtons(TaskDialogStandardButtons buttons)
+        {
+            @this.StandardButtons = buttons;
+            return @this;
+        }
     }
 }
