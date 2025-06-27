@@ -37,6 +37,7 @@
 - [`GeneralGuidelines.fa.md`](./GeneralGuidelines.fa.md) – نکات کلی و اصول توسعه.
 - [`QuickStart.fa.md`](./QuickStart.fa.md) – مراحل راه‌اندازی اولیه.
 - [`AGENTS.fa.md`](./AGENTS.fa.md) – راهنمای ابزارهای خودکار تولید کد.
+- [`DTO_Lifecycle.fa.md`](./DTO_Lifecycle.fa.md) – مراحل مدیریت کامل DTO.
 
 ---
 
