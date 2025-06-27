@@ -1,15 +1,25 @@
-<Window
-    x:Class="CodeGenerator.MainWindow"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Code Generator"
-    Width="900"
-    Height="600">
+﻿<Window x:Class="CodeGenerator.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Code Generator" Height="450" Width="800">
     <DockPanel>
         <Menu DockPanel.Dock="Top">
-            <MenuItem Header="مدیریت DTO" Click="OnManageDto" />
-            <MenuItem Header="مدیریت CQRS" Click="OnManageCqrs" />
-            <MenuItem Header="تنظیمات" Click="OnSettings" />
+            <MenuItem Header="Backend">
+                <MenuItem Header="Manage Models..." Click="ManageModels_Click"/>
+                <MenuItem Header="Manage CQRS Queries..." Click="ManageCqrsQueries_Click"/>
+                <MenuItem Header="Manage CQRS Commands..." Click="ManageCqrsCommands_Click"/>
+            </MenuItem>
+            <MenuItem Header="Frontend">
+                <MenuItem Header="Blazor Components..." Click="BlazorComponents_Click"/>
+                <MenuItem Header="Blazor Pages..." Click="BlazorPages_Click"/>
+            </MenuItem>
+            <MenuItem Header="Tools">
+                <MenuItem Header="Settings..." Click="Settings_Click"/>
+            </MenuItem>
+            <MenuItem Header="Help">
+                <MenuItem Header="About..." Click="About_Click"/>
+            </MenuItem>
         </Menu>
+        <!-- You can add the rest of your layout here -->
     </DockPanel>
 </Window>
