@@ -9,7 +9,7 @@ using CodeGenerator.Application.Services;
 
 namespace CodeGenerator.Designer.UI.ViewModels;
 
-public class DtosPageViewModel : INotifyPropertyChanged
+public partial class DtosPageViewModel : INotifyPropertyChanged
 {
     private readonly DtoService _service;
 

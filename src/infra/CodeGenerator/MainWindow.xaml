@@ -7,33 +7,33 @@
     Title="Code Generator"
     Width="900"
     Height="600">
-    <Window.Resources>
-        <DataTemplate DataType="{x:Type vm:DtosPageViewModel}">
-            <views:DtosPage />
-        </DataTemplate>
-    </Window.Resources>
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <!--  Top menu  -->
-            <RowDefinition Height="Auto" />
-            <!--  Main content  -->
             <RowDefinition Height="*" />
-            <!--  Status bar  -->
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!--  Navigation Menu  -->
-        <Menu Grid.Row="0">
-            <MenuItem Command="{Binding NavigateDtosCommand}" Header="DTOs" />
-            <MenuItem Command="{Binding NavigateFunctionalitiesCommand}" Header="Functionalities" />
-            <!--  add more menu items as needed  -->
-        </Menu>
+        <!-- لیست ویژگی‌ها -->
+        <ListBox Grid.Column="0"
+                 ItemsSource="{Binding Features}"
+                 SelectedItem="{Binding SelectedFeature}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Title}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
 
-        <!--  Content Frame / MVVM Shell  -->
-        <ContentControl Grid.Row="1" Content="{Binding CurrentPageViewModel}" />
+        <!-- محتوای ویژگی انتخاب‌شده -->
+        <ContentControl Grid.Column="1"
+                        Content="{Binding SelectedViewModel}" />
 
-        <!--  Status Bar  -->
-        <StatusBar Grid.Row="2">
+        <!-- Status Bar -->
+        <StatusBar Grid.Row="1" Grid.ColumnSpan="2">
             <TextBlock Text="{Binding StatusMessage}" />
         </StatusBar>
     </Grid>
