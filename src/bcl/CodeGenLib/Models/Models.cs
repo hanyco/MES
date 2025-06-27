@@ -11,12 +11,12 @@ public interface IMemberInfo
 }
 
 public readonly struct FieldInfo(
-        in TypePath type,
-        in string name,
-        in string? comment = null,
-        in MemberAttributes? accessModifier = null,
-        in bool isReadOnly = false,
-        in bool isPartial = false) : IMemberInfo
+    in TypePath type,
+    in string name,
+    in string? comment = null,
+    in MemberAttributes? accessModifier = null,
+    in bool isReadOnly = false,
+    in bool isPartial = false) : IMemberInfo
 {
     public MemberAttributes? AccessModifier { get; } = accessModifier;
     public string? Comment { get; } = comment;

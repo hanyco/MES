@@ -10,8 +10,13 @@ namespace CodeGenerator.Designer.UI.ViewModels;
 /// </summary>
 public class ShellViewModel : INotifyPropertyChanged
 {
+    /// <inheritdoc />
     public event PropertyChangedEventHandler? PropertyChanged;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ShellViewModel" /> class.
+    /// </summary>
+    /// <param name="dtosPage"> The view model for the DTOs page. </param>
     public ShellViewModel(DtosPageViewModel dtosPage)
     {
         // Set initial page
@@ -22,7 +27,7 @@ public class ShellViewModel : INotifyPropertyChanged
     }
 
     /// <summary>
-    /// The currently displayed page's view model.
+    /// Gets or sets the currently displayed page's view model.
     /// </summary>
     public object CurrentPageViewModel
     {
@@ -37,10 +42,13 @@ public class ShellViewModel : INotifyPropertyChanged
         }
     }
 
+    /// <summary>
+    /// Gets the command to navigate to the DTOs page.
+    /// </summary>
     public ICommand NavigateDtosCommand { get; }
 
     /// <summary>
-    /// Status message shown in the StatusBar.
+    /// Gets or sets the status message shown in the StatusBar.
     /// </summary>
     public string StatusMessage
     {
@@ -55,6 +63,10 @@ public class ShellViewModel : INotifyPropertyChanged
         }
     } = string.Empty;
 
+    /// <summary>
+    /// Raises the <see cref="PropertyChanged" /> event for the specified property.
+    /// </summary>
+    /// <param name="propertyName"> The name of the property that changed. </param>
     private void OnPropertyChanged(string propertyName)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }
