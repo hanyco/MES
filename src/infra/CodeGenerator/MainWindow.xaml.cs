@@ -14,36 +14,36 @@ public partial class MainWindow : Window
 
     private void ManageModels_Click(object sender, RoutedEventArgs e)
     {
-        DialogService.ShowInfo("Manage Models selected", "Info");
+        MsgBox.ShowInfo("Manage Models selected");
     }
 
     private void ManageCqrsQueries_Click(object sender, RoutedEventArgs e)
     {
-        DialogService.ShowInfo("Manage CQRS Queries selected", "Info");
+        MsgBox.ShowInfo("Manage CQRS Queries selected");
     }
 
     private void ManageCqrsCommands_Click(object sender, RoutedEventArgs e)
     {
-        DialogService.ShowInfo("Manage CQRS Commands selected", "Info");
+        MsgBox.ShowInfo("Manage CQRS Commands selected");
     }
 
     private void BlazorComponents_Click(object sender, RoutedEventArgs e)
     {
-        DialogService.ShowInfo("Blazor Components selected", "Info");
+        MsgBox.ShowInfo("Blazor Components selected");
     }
 
     private void BlazorPages_Click(object sender, RoutedEventArgs e)
     {
-        DialogService.ShowInfo("Blazor Pages selected", "Info");
+        MsgBox.ShowInfo("Blazor Pages selected");
     }
 
     private void Settings_Click(object sender, RoutedEventArgs e)
     {
-        DialogService.ShowInfo("Settings selected", "Info");
+        MsgBox.ShowInfo("Settings selected");
     }
 
     private void About_Click(object sender, RoutedEventArgs e)
     {
-        DialogService.ShowInfo("About selected", "Info");
+        MsgBox.ShowInfo("About selected");
     }
 }
