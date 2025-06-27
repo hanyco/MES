@@ -1,14 +1,19 @@
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Reflection;
 
 namespace CodeGenerator.Designer.UI.ViewModels;
 
 /// <summary>
-/// میزبان وضعیت کلی برنامه و مدیریت ناوبری است.
+/// Represents the view model for the shell of the application, managing features and their
+/// associated view models.
 /// </summary>
+/// <remarks>
+/// The <see cref="ShellViewModel" /> class is responsible for discovering features within the
+/// application assembly, initializing them, and exposing them as a collection. It also tracks the
+/// currently selected feature and its associated view model, providing a mechanism for property
+/// change notifications.
+/// </remarks>
 public partial class ShellViewModel : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -35,15 +40,14 @@ public partial class ShellViewModel : INotifyPropertyChanged
 
     public ObservableCollection<FeatureItem> Features { get; }
 
-    private FeatureItem? _selectedFeature;
     public FeatureItem? SelectedFeature
     {
-        get => this._selectedFeature;
+        get;
         set
         {
-            if (this._selectedFeature != value)
+            if (field != value)
             {
-                this._selectedFeature = value;
+                field = value;
                 this.OnPropertyChanged(nameof(this.SelectedFeature));
                 this.OnPropertyChanged(nameof(this.SelectedViewModel));
             }
