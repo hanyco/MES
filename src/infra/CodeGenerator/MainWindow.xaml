@@ -23,6 +23,6 @@
                 <MenuItem Click="About_Click" Header="About..." />
             </MenuItem>
         </Menu>
-        <!--  You can add the rest of your layout here  -->
+        <ContentControl x:Name="MainContent" />
     </DockPanel>
 </Window>

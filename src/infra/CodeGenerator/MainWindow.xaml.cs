@@ -16,7 +16,7 @@ public partial class MainWindow : Window
 
     private void ManageModels_Click(object sender, RoutedEventArgs e)
     {
-        TaskDialog.Error("Manage Models selected", "Manage Models selected");
+        MainContent.Content = new CodeGenerator.Designer.UI.Pages.DtoManagementPage();
     }
 
     private void ManageCqrsQueries_Click(object sender, RoutedEventArgs e)

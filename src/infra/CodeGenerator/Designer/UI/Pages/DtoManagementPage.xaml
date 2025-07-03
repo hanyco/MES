@@ -1,49 +1,63 @@
-﻿<UserControl x:Class="CodeGenerator.Designer.UI.Pages.DtoManagementPage"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:CodeGenerator.Designer.UI.Pages" xmlns:bases="clr-namespace:CodeGenerator.Designer.UI.Bases"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <bases:BasePage>
-        <bases:BasePage.SidebarContent>
-            <!-- Sidebar: لیست DTOها -->
-            <ListBox x:Name="DtoList"
-                     MinWidth="120"
-                     Margin="4"
-                     DisplayMemberPath="Name" />
-        </bases:BasePage.SidebarContent>
-
-        <bases:BasePage.ToolbarContent>
-            <!-- Toolbar: دکمه‌های CRUD -->
-            <StackPanel Orientation="Horizontal" Margin="4">
-                <Button Content="New" Margin="2"/>
-                <Button Content="Edit" Margin="2"/>
-                <Button Content="Delete" Margin="2"/>
-                <Button Content="Generate" Margin="2"/>
-            </StackPanel>
-        </bases:BasePage.ToolbarContent>
-
-        <bases:BasePage.EntityDesignerContent>
-            <!-- Tab اول: طراحی DTO -->
-            <StackPanel Margin="8">
-                <TextBlock Text="DTO Designer" FontWeight="Bold" FontSize="16" Margin="0,0,0,8"/>
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                    <TextBlock Text="Name:" Width="50" VerticalAlignment="Center"/>
-                    <TextBox Width="150"/>
-                    <TextBlock Text="Namespace:" Width="80" VerticalAlignment="Center" Margin="16,0,0,0"/>
-                    <TextBox Width="200"/>
-                </StackPanel>
-                <!-- در آینده می‌تونی PropertyGrid، ListView یا هر کنترل دیگری اضافه کنی -->
-                <TextBlock Text="Properties..." FontStyle="Italic"/>
-            </StackPanel>
-        </bases:BasePage.EntityDesignerContent>
-
-        <bases:BasePage.SourceCodeContent>
-            <!-- Tab دوم: نمایش سورس کد -->
-            <TextBlock Text="Generated Source Code will be shown here." Margin="12" FontStyle="Italic"/>
-            <!-- بعداً SourceCodeView رو اینجا embed می‌کنی -->
-        </bases:BasePage.SourceCodeContent>
-    </bases:BasePage>
+﻿<UserControl
+    x:Class="CodeGenerator.Designer.UI.Pages.DtoManagementPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:bases="clr-namespace:CodeGenerator.Designer.UI.Bases"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:CodeGenerator.Designer.UI.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Grid>
+        <bases:BasePage>
+            <bases:BasePage.ToolbarContent>
+                <ToolBar>
+                    <Button Content="_New…" />
+                    <Button Content="_Edit…" />
+                    <Button Content="_Delete…" />
+                    <Separator />
+                    <Button Content="_Generate Code…" />
+                    <Separator />
+                    <Button Content="_Save to Disk…" />
+                    <Button Content="Save to _Database…" />
+                </ToolBar>
+            </bases:BasePage.ToolbarContent>
+            <bases:BasePage.SidebarContent>
+                <ListBox />
+            </bases:BasePage.SidebarContent>
+            <bases:BasePage.EntityDesignerContent>
+                <TabControl TabStripPlacement="Left" HorizontalContentAlignment="Left">
+                    <TabItem Header="General">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Name:" Width="75"/>
+                                <TextBox Width="180"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Grid.Row="1">
+                                <TextBlock Text="Namespace:" Width="75"/>
+                                <TextBox Width="180"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Grid.Row="2">
+                                <TextBlock Text="Module:" Width="75"/>
+                                <ComboBox Width="180"/>
+                            </StackPanel>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Source Code"></TabItem>
+                </TabControl>
+            </bases:BasePage.EntityDesignerContent>
+        </bases:BasePage>
+    </Grid>
 </UserControl>

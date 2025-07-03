@@ -11,14 +11,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace CodeGenerator.Designer.UI.Pages;
-/// <summary>
-/// Interaction logic for DtoManagementPage.xaml
-/// </summary>
-public partial class DtoManagementPage : UserControl
+namespace CodeGenerator.Designer.UI.Pages
 {
-    public DtoManagementPage()
+    /// <summary>
+    /// Interaction logic for DtoManagementPage.xaml
+    /// </summary>
+    public partial class DtoManagementPage : UserControl
     {
-        InitializeComponent();
+        public DtoManagementPage()
+        {
+            InitializeComponent();
+        }
     }
 }
