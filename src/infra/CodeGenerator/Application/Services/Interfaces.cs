@@ -13,14 +13,13 @@ public interface ICodeGenerator<TCodeGeneratorDto>
 
 public interface ICodeGeneratorDto : IDto;
 
-public interface ICrud<TCrudDto>
+public interface ICodeGeneratorService<TCodeGeneratorDto> : ICodeGenerator<TCodeGeneratorDto>, IService
+    where TCodeGeneratorDto : ICodeGeneratorDto;
+
+public interface ICrud<TCrudDto> : IView<TCrudDto>
     where TCrudDto : IDto
 {
     [return: NotNull] IResult DeleteById(int id);
-
-    [return: NotNull] IEnumerable<TCrudDto> GetAll();
-
-    TCrudDto? GetById(int id);
 
     [return: NotNull] IResult<int> Insert(TCrudDto dto);
 
@@ -36,5 +35,13 @@ public interface IDto;
 
 public interface IService;
 
-public interface ICodeGeneratorService<TCodeGeneratorDto> : ICodeGenerator<TCodeGeneratorDto>, IService
-    where TCodeGeneratorDto : ICodeGeneratorDto;
+public interface IView<TViewDto>
+    where TViewDto : IDto
+{
+    [return: NotNull] IResult<IReadOnlyCollection<TViewDto>> GetAll();
+
+    [return: NotNull] IResult<TViewDto> GetById(int id);
+}
+
+public interface IViewService<TViewDto> : IView<TViewDto>, IService
+    where TViewDto : IDto;
