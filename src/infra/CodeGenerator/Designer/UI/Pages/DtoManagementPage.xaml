@@ -13,49 +13,138 @@
         <bases:BasePage>
             <bases:BasePage.ToolbarContent>
                 <ToolBar>
-                    <Button Content="_New…" />
-                    <Button Content="_Edit…" />
-                    <Button Content="_Delete…" />
+                    <Button Content="New…" />
+                    <Button Content="Edit" />
+                    <Button Content="Delete…" />
                     <Separator />
-                    <Button Content="_Generate Code…" />
+                    <Button Content="Generate Code…" />
                     <Separator />
-                    <Button Content="_Save to Disk…" />
-                    <Button Content="Save to _Database…" />
+                    <Button Content="Save to Disk…" />
+                    <Button Content="Save to Database…" />
                 </ToolBar>
             </bases:BasePage.ToolbarContent>
             <bases:BasePage.SidebarContent>
                 <ListBox />
             </bases:BasePage.SidebarContent>
             <bases:BasePage.EntityDesignerContent>
-                <TabControl TabStripPlacement="Left" HorizontalContentAlignment="Left">
+                <TabControl HorizontalContentAlignment="Left" TabStripPlacement="Left">
                     <TabItem Header="General">
                         <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
                             </Grid.RowDefinitions>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Name:" Width="75"/>
-                                <TextBox Width="180"/>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Grid.Row="1">
-                                <TextBlock Text="Namespace:" Width="75"/>
-                                <TextBox Width="180"/>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Grid.Row="2">
-                                <TextBlock Text="Module:" Width="75"/>
-                                <ComboBox Width="180"/>
-                            </StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                                    <TextBlock Width="75" Text="Name:" />
+                                    <TextBox Width="180" />
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                                    <TextBlock Width="75" Text="Namespace:" />
+                                    <TextBox Width="180" />
+                                </StackPanel>
+                                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                                    <TextBlock Width="75" Text="Module:" />
+                                    <ComboBox Width="180" />
+                                </StackPanel>
+                                <StackPanel
+                                    Grid.Row="0"
+                                    Grid.RowSpan="3"
+                                    Grid.Column="1"
+                                    Orientation="Horizontal">
+                                    <TextBlock Width="75" Text="Comments:" />
+                                    <RichTextBox MinWidth="180" />
+                                </StackPanel>
+                                <StackPanel
+                                    Grid.Row="0"
+                                    Grid.RowSpan="3"
+                                    Grid.Column="2">
+                                    <CheckBox Content="Is Params" />
+                                    <CheckBox Content="Is Result" />
+                                    <CheckBox Content="Is ViewModel" />
+                                    <CheckBox Content="Is List" />
+                                </StackPanel>
+                            </Grid>
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Properties" />
+                                <Separator Grid.Column="1" />
+                            </Grid>
+                            <Grid Grid.Row="2">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ToolBar>
+                                    <Button Content="New" />
+                                    <Button Content="Delete" />
+                                </ToolBar>
+                                <DataGrid
+                                    Grid.Row="1"
+                                    AutoGenerateColumns="False"
+                                    CanUserAddRows="False"
+                                    CanUserDeleteRows="True"
+                                    CanUserReorderColumns="False"
+                                    CanUserResizeRows="False"
+                                    CanUserSortColumns="False">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Width="*" Header="Name" />
+                                        <DataGridTextColumn Width="*" Header="Model" />
+                                        <DataGridTextColumn Width="*" Header="Type" />
+                                        <DataGridTextColumn Width="2*" Header="Comments" />
+                                        <DataGridCheckBoxColumn Width="Auto" Header="Is Nullable" />
+                                        <DataGridCheckBoxColumn Width="Auto" Header="Is ReadOnly" />
+                                        <DataGridCheckBoxColumn Width="Auto" Header="Is List" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                                <Grid Grid.Row="1" Grid.Column="1">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Width="75" Text="Name:" />
+                                        <TextBox Width="120" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="1" Orientation="Horizontal">
+                                        <CheckBox Content="Is Nullable" />
+                                        <CheckBox Content="Is List" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="2" Orientation="Horizontal">
+                                        <TextBlock Width="75" Text="Type:" />
+                                        <ComboBox Width="100" />
+                                        <Button Content="..." />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="3" Orientation="Horizontal">
+                                        <TextBlock Width="75" Text="Comments:" />
+                                        <RichTextBox MinWidth="120" />
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
                         </Grid>
                     </TabItem>
-                    <TabItem Header="Source Code"></TabItem>
+                    <TabItem Header="Source Code" />
                 </TabControl>
             </bases:BasePage.EntityDesignerContent>
         </bases:BasePage>
