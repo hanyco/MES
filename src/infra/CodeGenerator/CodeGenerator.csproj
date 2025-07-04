@@ -28,4 +28,12 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Designer\Services\" />
+    <Folder Include="Designer\UI\Controls\" />
+    <Folder Include="Designer\UI\Resources\" />
+    <Folder Include="Designer\UI\Styles\" />
+    <Folder Include="Designer\UI\ViewModels\" />
+  </ItemGroup>
+
 </Project>

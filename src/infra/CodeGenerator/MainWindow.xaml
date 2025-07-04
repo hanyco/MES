@@ -7,22 +7,26 @@
     Height="450">
     <DockPanel>
         <Menu DockPanel.Dock="Top">
-            <MenuItem Header="Backend">
-                <MenuItem Click="ManageModels_Click" Header="Manage Models..." />
-                <MenuItem Click="ManageCqrsQueries_Click" Header="Manage CQRS Queries..." />
-                <MenuItem Click="ManageCqrsCommands_Click" Header="Manage CQRS Commands..." />
+            <MenuItem Header="_File">
+                <MenuItem Header="_Backend">
+                    <MenuItem Click="ManageModels_Click" Header="Manage _Models..." />
+                    <MenuItem Click="ManageCqrsQueries_Click" Header="Manage CQRS _Queries..." />
+                    <MenuItem Click="ManageCqrsCommands_Click" Header="Manage CQRS _Commands..." />
+                </MenuItem>
+                <MenuItem Header="_Frontend">
+                    <MenuItem Click="BlazorComponents_Click" Header="Blazor _Components..." />
+                    <MenuItem Click="BlazorPages_Click" Header="Blazor _Pages..." />
+                </MenuItem>
+                <Separator />
+                <MenuItem Header="E_xit…" />
             </MenuItem>
-            <MenuItem Header="Frontend">
-                <MenuItem Click="BlazorComponents_Click" Header="Blazor Components..." />
-                <MenuItem Click="BlazorPages_Click" Header="Blazor Pages..." />
+            <MenuItem Header="_Tools">
+                <MenuItem Click="Settings_Click" Header="_Settings..." />
             </MenuItem>
-            <MenuItem Header="Tools">
-                <MenuItem Click="Settings_Click" Header="Settings..." />
-            </MenuItem>
-            <MenuItem Header="Help">
-                <MenuItem Click="About_Click" Header="About..." />
+            <MenuItem Header="_Help">
+                <MenuItem Click="About_Click" Header="_About..." />
             </MenuItem>
         </Menu>
-        <!--  You can add the rest of your layout here  -->
+        <ContentControl x:Name="MainContent" />
     </DockPanel>
 </Window>
