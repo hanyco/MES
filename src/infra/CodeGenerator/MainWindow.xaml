@@ -18,7 +18,7 @@
                     <MenuItem Header="Blazor _Pages..." />
                 </MenuItem>
                 <Separator />
-                <MenuItem Header="E_xit…" />
+                <MenuItem Header="E_xit…" Command="{Binding ExitCommand}" />
             </MenuItem>
             <MenuItem Header="_Tools">
                 <MenuItem Header="_Settings..." />
