@@ -23,7 +23,8 @@ public partial class SelectTableDialog : Window
     public static IResult<Table> Ask()
     {
         var dlg = Create();
-        return dlg.ShowDialog() == true && dlg.TableTreeView.SelectedItem is Table table
+        var ok = dlg.ShowDialog();
+        return ok is true && dlg.SelectedTable is Table table
                 ? Result.Success(table)
                 : Result.Fail<Table>("No table selected.");
     }

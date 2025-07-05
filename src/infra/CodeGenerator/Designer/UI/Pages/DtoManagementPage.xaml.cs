@@ -1,6 +1,7 @@
 ﻿using System.Windows.Controls;
 
 using CodeGenerator.Designer.UI.Dialogs;
+using CodeGenerator.Designer.UI.ViewModels;
 
 namespace CodeGenerator.Designer.UI.Pages;
 
@@ -13,7 +14,6 @@ public partial class DtoManagementPage : UserControl
     {
         this.InitializeComponent();
         this.DataContextChanged += this.DtoManagementPage_DataContextChanged;
-
     }
 
     private void DtoManagementPage_DataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
@@ -21,6 +21,11 @@ public partial class DtoManagementPage : UserControl
 
     private void NewDtoButton_Click(object sender, System.Windows.RoutedEventArgs e)
     {
-        var result = SelectTableDialog.Ask();
+        var response = SelectTableDialog.Ask();
+        if (response.IsFailure)
+        {
+            return;
+        }
+        this.DataContext = DtoManagementPageViewModel.CrateByTable(response.GetValue());
     }
 }
