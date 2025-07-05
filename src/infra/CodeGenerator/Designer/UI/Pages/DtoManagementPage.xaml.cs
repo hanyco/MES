@@ -1,5 +1,7 @@
 ﻿using System.Windows.Controls;
 
+using CodeGenerator.Designer.UI.Dialogs;
+
 namespace CodeGenerator.Designer.UI.Pages;
 
 /// <summary>
@@ -16,4 +18,9 @@ public partial class DtoManagementPage : UserControl
 
     private void DtoManagementPage_DataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
         => this.EntityDesignerGrid.IsEnabled = e.NewValue is not null;
+
+    private void NewDtoButton_Click(object sender, System.Windows.RoutedEventArgs e)
+    {
+        var result = SelectTableDialog.Ask();
+    }
 }

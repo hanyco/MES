@@ -40,7 +40,7 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine<INamespace>, ICod
         {
             var modifiers = GeneratorHelper.ToModifiers(type.AccessModifier, type.InheritanceModifier);
             // Create type
-            var rosType = CreateType(TypePath.New(type.Name), modifiers);
+            var rosType = CreateType(TypePath.Parse(type.Name), modifiers);
 
             // Add base class or interfaces to type
             foreach (var baseType in type.BaseTypes)
@@ -52,7 +52,7 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine<INamespace>, ICod
             // Add attributes
             foreach (var attribute in type.Attributes.Compact())
             {
-                var attributeType = TypePath.New(attribute.Name);
+                var attributeType = TypePath.Parse(attribute.Name);
                 foreach (var ns in attributeType.GetNameSpaces().Compact())
                 {
                     root = root.AddUsingNameSpace(ns);
@@ -123,7 +123,7 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine<INamespace>, ICod
 
         foreach (var attribute in method.Attributes.Compact())
         {
-            var attributeType = TypePath.New(attribute.Name);
+            var attributeType = TypePath.Parse(attribute.Name);
             foreach (var ns in attributeType.GetNameSpaces().Compact())
             {
                 root = root.AddUsingNameSpace(ns);

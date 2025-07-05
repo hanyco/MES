@@ -9,7 +9,7 @@ public static class SqlExtension
 {
     extension(SqlConnection connection)
     {
-        public async IAsyncEnumerable<TResult> ReadAsync<TResult>(string query, Func<SqlDataReader, TResult> getFunc, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<TResult> ReadAsync<TResult>(string sql, Func<SqlDataReader, TResult> getFunc, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var was_open = false;
             if (connection.State != ConnectionState.Open)
@@ -19,7 +19,7 @@ public static class SqlExtension
             }
 
             using var cmd = connection.CreateCommand();
-            cmd.CommandText = query;
+            cmd.CommandText = sql;
 
             await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
             while (await reader.ReadAsync(cancellationToken))
@@ -30,6 +30,22 @@ public static class SqlExtension
             {
                 await connection.CloseAsync();
             }
+        }
+
+        public SqlCommand CreateCommand(string commandText)
+        {
+            var cmd = connection.CreateCommand();
+            cmd.CommandText = commandText;
+            return cmd;
+        }
+
+        public async Task<DataTable> LoadTable(string sql, CancellationToken cancellationToken)
+        {
+            using var cmd = connection.CreateCommand(sql);
+            await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+            var table = new DataTable();
+            table.Load(reader);
+            return table;
         }
     }
 
