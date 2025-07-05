@@ -28,7 +28,7 @@ public partial class DtoService
             var cls = IClass.New(dto.Name);
             foreach (var field in dto.Properties)
             {
-                var prop = IProperty.New(field.Name, TypePath.New(field.TypeFullName ?? "object"));
+                var prop = IProperty.New(field.Name, TypePath.Parse(field.TypeFullName ?? "object"));
                 _ = cls.AddProperty(prop);
             }
             _ = ns.AddType(cls);

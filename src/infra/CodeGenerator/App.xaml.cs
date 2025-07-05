@@ -1,5 +1,8 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
+
+using CodeGenerator.Application.Services;
+
+using Microsoft.Extensions.Configuration;
 
 namespace CodeGenerator;
 
@@ -10,24 +13,41 @@ public partial class App : System.Windows.Application
 {
     private ResourceDictionary? _currentTheme;
 
-    protected override void OnStartup(StartupEventArgs e)
-    {
-        base.OnStartup(e);
-        if (this.Resources.MergedDictionaries.Count > 0)
-        {
-            UseLightTheme();
-        }
-    }
-
-    public void UseLightTheme() => this.ApplyTheme("LightTheme.xaml");
+    public IConfiguration? Configuration { get; private set; }
 
     public void UseDarkTheme() => this.ApplyTheme("DarkTheme.xaml");
 
+    public void UseLightTheme() => this.ApplyTheme("LightTheme.xaml");
+
+    protected override void OnStartup(StartupEventArgs e)
+    {
+        base.OnStartup(e);
+
+        // Setup configuration using appsettings.json file.
+        var builder = new ConfigurationBuilder()
+            .SetBasePath(AppContext.BaseDirectory)
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+        this.Configuration = builder.Build();
+
+        Settings.Configure(this.Configuration.GetConnectionString("DefaultConnection")!);
+
+        // Use theme based on configuration "Theme" value.
+        var theme = this.Configuration["Theme"];
+        if (!string.IsNullOrEmpty(theme) && theme.Equals("dark", StringComparison.OrdinalIgnoreCase))
+        {
+            this.UseDarkTheme();
+        }
+        else
+        {
+            this.UseLightTheme();
+        }
+    }
+
     private void ApplyTheme(string themeFile)
     {
-        if (_currentTheme is not null)
+        if (this._currentTheme is not null)
         {
-            this.Resources.MergedDictionaries.Remove(_currentTheme);
+            _ = this.Resources.MergedDictionaries.Remove(this._currentTheme);
         }
 
         var dict = new ResourceDictionary
@@ -36,7 +56,7 @@ public partial class App : System.Windows.Application
         };
 
         this.Resources.MergedDictionaries.Insert(0, dict);
-        _currentTheme = dict;
+        this._currentTheme = dict;
         this.OnThemeApplied(themeFile);
     }
 

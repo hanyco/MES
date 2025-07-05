@@ -13,7 +13,7 @@
         <bases:BasePage>
             <bases:BasePage.ToolbarContent>
                 <ToolBar>
-                    <Button Content="New…" />
+                    <Button Content="New…" Click="NewDtoButton_Click"/>
                     <Button Content="Edit" />
                     <Button Content="Delete…" />
                     <Separator />

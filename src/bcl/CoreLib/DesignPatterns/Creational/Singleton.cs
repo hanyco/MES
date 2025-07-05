@@ -8,21 +8,21 @@ namespace Library.DesignPatterns.Creational;
 /// <summary>
 /// A Singleton using an StaticAllocator used just to simplify the inheritance syntax.
 /// </summary>
-public class Singleton<T> : ISingleton<T>
-    where T : class, ISingleton<T>
+public abstract class Singleton<TSelf> : ISingleton<TSelf>
+    where TSelf : class, ISingleton<TSelf>
 {
-    private static readonly Lazy<T> _instance = GenerateLazySingletonInstance(initializeInstance: InitializeInstance);
+    private static readonly Lazy<TSelf> _instance = GenerateLazySingletonInstance(initializeInstance: InitializeInstance);
 
     /// <summary>
     /// Gets the instance.
     /// </summary>
     /// <value>The instance.</value>
-    public static T Instance => _instance.Value;
+    public static TSelf Instance => _instance.Value;
 
     /// <summary>
     /// The instance initializer
     /// </summary>
-    protected static Action<T>? InitializeInstance { get; set; }
+    protected static Action<TSelf>? InitializeInstance { get; set; }
 
     /// <summary>
     /// Generates the lazy singleton instance.
@@ -55,7 +55,9 @@ public class Singleton<T> : ISingleton<T>
     /// "InitializeComponents". If found will be called.
     /// </remarks>
     [return: NotNull]
-    public static TSingleton GenerateSingletonInstance<TSingleton>(Func<TSingleton>? createInstance = null, Action<TSingleton>? initializeInstance = null)
+    public static TSingleton GenerateSingletonInstance<TSingleton>(
+        Func<TSingleton>? createInstance = null,
+        Action<TSingleton>? initializeInstance = null)
         where TSingleton : class, ISingleton<TSingleton>
     {
         //! If (T) has implemented CreateInstance as a static method, use it to create an instance

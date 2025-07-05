@@ -6,9 +6,9 @@
     xmlns:local="clr-namespace:CodeGenerator.Designer.UI.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="SelectTableDialog"
-    Width="450"
-    Height="800"
-    Owner="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+    Width="400"
+    Height="600"
+    Loaded="Window_Loaded"
     ResizeMode="NoResize"
     mc:Ignorable="d">
     <Grid>
@@ -21,7 +21,7 @@
             Grid.Row="0"
             Margin="10"
             Text="Please select a table from the list below:" />
-        <TreeView x:Name="TableTreeView" Grid.Row="1" />
+        <TreeView x:Name="TableTreeView" Grid.Row="1" MouseDoubleClick="TableTreeView_MouseDoubleClick"/>
         <StackPanel
             Grid.Row="2"
             HorizontalAlignment="Right"
@@ -29,11 +29,13 @@
             <Button
                 x:Name="OkButton"
                 Click="OkButton_Click"
-                Content="OK" />
+                Content="OK"
+                IsDefault="True" />
             <Button
                 x:Name="CancelButton"
                 Click="CancelButton_Click"
-                Content="Cancel" />
+                Content="Cancel"
+                IsCancel="False" />
         </StackPanel>
     </Grid>
 </Window>
