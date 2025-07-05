@@ -1,5 +1,6 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows;
+
 using CodeGenerator.Designer.UI.Common;
 using CodeGenerator.UI;
 
@@ -12,51 +13,43 @@ namespace CodeGenerator;
 /// </summary>
 public partial class MainWindow : Window
 {
-    private bool _allowClose;
-    public RelayCommand ExitCommand { get; }
+    private bool _allowClose = true;
 
     public MainWindow()
     {
-        InitializeComponent();
-        DataContext = this;
-        ExitCommand = new RelayCommand(_ => ExitApplication());
+        this.InitializeComponent();
+        this.DataContext = this;
+
+        this.ExitCommand = new RelayCommand(_ => this.ExitApplication(), _ => this._allowClose);
     }
 
-    partial void OnExitConfirmed();
+    public RelayCommand ExitCommand { get; }
 
-    private bool ConfirmExit()
+    protected override void OnClosing(CancelEventArgs e)
     {
-        using var dialog = TaskDialogExtension.Create()
-            .WithInstructionText("Are you sure you want to exit?")
-            .WithCaption("Confirm Exit")
-            .WithButtons(TaskDialogStandardButtons.Yes | TaskDialogStandardButtons.No)
-            .WithIcon(TaskDialogStandardIcon.Warning);
-        if (dialog.Show() is TaskDialogResult.Yes)
+        if (this.ExitCommand.CanExecute(null) && ConfirmExit())
         {
-            OnExitConfirmed();
-            return true;
+            e.Cancel = false;
         }
-        return false;
+        else
+        {
+            e.Cancel = true;
+        }
+        base.OnClosing(e);
+    }
+
+    private static bool ConfirmExit()
+    {
+        var response = TaskDialog.AskWithWarning("Are you sure you want to exit?", "Confirm Exit");
+        return response is TaskDialogResult.Yes;
     }
 
     private void ExitApplication()
     {
         if (ConfirmExit())
         {
-            _allowClose = true;
-            Application.Current.Shutdown();
+            this._allowClose = true;
+            System.Windows.Application.Current.Shutdown();
         }
-    }
-
-    protected override void OnClosing(CancelEventArgs e)
-    {
-        if (!_allowClose)
-        {
-            e.Cancel = !ConfirmExit();
-            if (!e.Cancel)
-                _allowClose = true;
-        }
-        base.OnClosing(e);
     }
 }
-

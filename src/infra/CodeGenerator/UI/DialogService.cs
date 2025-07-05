@@ -36,6 +36,15 @@ public static class TaskDialogExtension
                 .WithIcon(TaskDialogStandardIcon.Warning);
             _ = dialog.Show();
         }
+        public static TaskDialogResult AskWithWarning(string instructionText, string? caption = null)
+        {
+            using var dialog = Create()
+                .WithInstructionText(instructionText)
+                .WithCaption(caption ?? "Warning")
+                .WithIcon(TaskDialogStandardIcon.Warning)
+                .WithButtons(TaskDialogStandardButtons.Yes | TaskDialogStandardButtons.No);
+            return dialog.Show();
+        }
     }
 
     extension(TaskDialog @this)
