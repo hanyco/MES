@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows;
 
 namespace CodeGenerator;
@@ -6,7 +6,7 @@ namespace CodeGenerator;
 /// <summary>
 /// Interaction logic for App.xaml
 /// </summary>
-public partial class App : Application
+public partial class App : System.Windows.Application
 {
     private ResourceDictionary? _currentTheme;
 
@@ -15,8 +15,7 @@ public partial class App : Application
         base.OnStartup(e);
         if (this.Resources.MergedDictionaries.Count > 0)
         {
-            _currentTheme = this.Resources.MergedDictionaries[0];
-            this.OnThemeApplied("LightTheme.xaml");
+            UseLightTheme();
         }
     }
 

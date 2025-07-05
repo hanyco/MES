@@ -13,7 +13,7 @@
         <bases:BasePage>
             <bases:BasePage.ToolbarContent>
                 <ToolBar>
-                    <Button Content="New…" Click="NewButton_Click"/>
+                    <Button Click="NewButton_Click" Content="New…" />
                     <Button Content="Edit" />
                     <Button Content="Delete…" />
                     <Separator />
@@ -46,24 +46,24 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <StackPanel Grid.Row="0" Orientation="Horizontal">
-                            <TextBlock Width="75" Text="Name:" />
-                            <TextBox Width="180" />
+                            <TextBlock Text="Name:" />
+                            <TextBox />
                         </StackPanel>
                         <StackPanel Grid.Row="1" Orientation="Horizontal">
-                            <TextBlock Width="75" Text="Namespace:" />
-                            <TextBox Width="180" />
+                            <TextBlock Text="Namespace:" />
+                            <TextBox />
                         </StackPanel>
                         <StackPanel Grid.Row="2" Orientation="Horizontal">
-                            <TextBlock Width="75" Text="Module:" />
-                            <ComboBox Width="180" />
+                            <TextBlock Text="Module:" />
+                            <ComboBox />
                         </StackPanel>
                         <StackPanel
                             Grid.Row="0"
                             Grid.RowSpan="3"
                             Grid.Column="1"
                             Orientation="Horizontal">
-                            <TextBlock Width="75" Text="Comments:" />
-                            <RichTextBox MinWidth="180" />
+                            <TextBlock Text="Comments:" />
+                            <RichTextBox />
                         </StackPanel>
                         <StackPanel
                             Grid.Row="0"
@@ -122,21 +122,21 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Width="75" Text="Name:" />
-                                <TextBox Width="120" />
+                                <TextBlock Text="Name:" />
+                                <TextBox />
                             </StackPanel>
                             <StackPanel Grid.Row="1" Orientation="Horizontal">
                                 <CheckBox Content="Is Nullable" />
                                 <CheckBox Content="Is List" />
                             </StackPanel>
                             <StackPanel Grid.Row="2" Orientation="Horizontal">
-                                <TextBlock Width="75" Text="Type:" />
-                                <ComboBox Width="100" />
-                                <Button Content="..." />
+                                <TextBlock Text="Type:" />
+                                <ComboBox />
+                                <Button Content="..."/>
                             </StackPanel>
                             <StackPanel Grid.Row="3" Orientation="Horizontal">
-                                <TextBlock Width="75" Text="Comments:" />
-                                <RichTextBox MinWidth="120" />
+                                <TextBlock Text="Comments:" />
+                                <RichTextBox />
                             </StackPanel>
                         </Grid>
                     </Grid>
