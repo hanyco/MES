@@ -2,6 +2,7 @@
 using System.Windows;
 
 using CodeGenerator.Designer.UI.Common;
+using CodeGenerator.Designer.UI.Pages;
 using CodeGenerator.UI;
 
 using Microsoft.WindowsAPICodePack.Dialogs;
@@ -13,8 +14,6 @@ namespace CodeGenerator;
 /// </summary>
 public partial class MainWindow : Window
 {
-    private bool _allowClose = true;
-
     public MainWindow()
     {
         this.InitializeComponent();
@@ -23,6 +22,9 @@ public partial class MainWindow : Window
         this.ExitCommand = new RelayCommand(_ => this.ExitApplication(), _ => this._allowClose);
     }
 
+    #region Exit Application
+
+    private bool _allowClose = true;
     public RelayCommand ExitCommand { get; }
 
     protected override void OnClosing(CancelEventArgs e)
@@ -52,4 +54,9 @@ public partial class MainWindow : Window
             System.Windows.Application.Current.Shutdown();
         }
     }
+
+    #endregion Exit Application
+
+    private void MenuItem_Click(object sender, RoutedEventArgs e)
+        => this.MainContent.Content = new DtoManagementPage();
 }

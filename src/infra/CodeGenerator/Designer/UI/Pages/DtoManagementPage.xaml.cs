@@ -1,26 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows.Controls;
 
-namespace CodeGenerator.Designer.UI.Pages
+namespace CodeGenerator.Designer.UI.Pages;
+
+/// <summary>
+/// Interaction logic for DtoManagementPage.xaml
+/// </summary>
+public partial class DtoManagementPage : UserControl
 {
-    /// <summary>
-    /// Interaction logic for DtoManagementPage.xaml
-    /// </summary>
-    public partial class DtoManagementPage : UserControl
+    public DtoManagementPage()
     {
-        public DtoManagementPage()
-        {
-            InitializeComponent();
-        }
+        this.InitializeComponent();
+        this.DataContextChanged += this.DtoManagementPage_DataContextChanged;
+
+    }
+
+    private void DtoManagementPage_DataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
+        => this.EntityDesignerGrid.IsEnabled = e.NewValue is not null;
+
+    private void NewButton_Click(object sender, System.Windows.RoutedEventArgs e)
+    {
+        
     }
 }

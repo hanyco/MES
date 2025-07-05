@@ -9,16 +9,16 @@
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
                 <MenuItem Header="_Backend">
-                    <MenuItem Header="Manage _Models..." />
+                    <MenuItem Click="MenuItem_Click" Header="Manage _Models..." />
                     <MenuItem Header="Manage CQRS _Queries..." />
-                    <MenuItem  Header="Manage CQRS _Commands..." />
+                    <MenuItem Header="Manage CQRS _Commands..." />
                 </MenuItem>
                 <MenuItem Header="_Frontend">
-                    <MenuItem  Header="Blazor _Components..." />
+                    <MenuItem Header="Blazor _Components..." />
                     <MenuItem Header="Blazor _Pages..." />
                 </MenuItem>
                 <Separator />
-                <MenuItem Header="E_xit…" Command="{Binding ExitCommand}" />
+                <MenuItem Command="{Binding ExitCommand}" Header="E_xit…" />
             </MenuItem>
             <MenuItem Header="_Tools">
                 <MenuItem Header="_Settings..." />
