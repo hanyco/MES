@@ -13,14 +13,14 @@
         <bases:BasePage>
             <bases:BasePage.ToolbarContent>
                 <ToolBar>
-                    <Button Click="NewButton_Click" Content="New…" />
+                    <Button Content="New…" />
                     <Button Content="Edit" />
                     <Button Content="Delete…" />
                     <Separator />
-                    <Button Content="Generate Code…" />
+                    <Button Content="Generate Code…" Style="{StaticResource LongToolbarButton}" />
                     <Separator />
-                    <Button Content="Save to Disk…" />
-                    <Button Content="Save to Database…" />
+                    <Button Content="Save to Disk…" Style="{StaticResource LongToolbarButton}" />
+                    <Button Content="Save to DB…" Style="{StaticResource LongToolbarButton}" />
                 </ToolBar>
             </bases:BasePage.ToolbarContent>
             <bases:BasePage.SidebarContent>
@@ -105,10 +105,10 @@
                             CanUserResizeRows="False"
                             CanUserSortColumns="False">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Width="*" Header="Name" />
-                                <DataGridTextColumn Width="*" Header="Model" />
-                                <DataGridTextColumn Width="*" Header="Type" />
-                                <DataGridTextColumn Width="2*" Header="Comments" />
+                                <DataGridTextColumn Width="Auto" Header="Name" />
+                                <DataGridTextColumn Width="Auto" Header="Model" />
+                                <DataGridTextColumn Width="Auto" Header="Type" />
+                                <DataGridTextColumn Width="*" Header="Comments" />
                                 <DataGridCheckBoxColumn Width="Auto" Header="Is Nullable" />
                                 <DataGridCheckBoxColumn Width="Auto" Header="Is ReadOnly" />
                                 <DataGridCheckBoxColumn Width="Auto" Header="Is List" />
@@ -132,7 +132,7 @@
                             <StackPanel Grid.Row="2" Orientation="Horizontal">
                                 <TextBlock Text="Type:" />
                                 <ComboBox />
-                                <Button Content="..." Style="{StaticResource ShortButton}"/>
+                                <Button Content="..." Style="{StaticResource ShortButton}" />
                             </StackPanel>
                             <StackPanel Grid.Row="3" Orientation="Horizontal">
                                 <TextBlock Text="Comments:" />

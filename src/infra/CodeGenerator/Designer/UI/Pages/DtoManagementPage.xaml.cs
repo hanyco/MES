@@ -16,9 +16,4 @@ public partial class DtoManagementPage : UserControl
 
     private void DtoManagementPage_DataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
         => this.EntityDesignerGrid.IsEnabled = e.NewValue is not null;
-
-    private void NewButton_Click(object sender, System.Windows.RoutedEventArgs e)
-    {
-        
-    }
 }
