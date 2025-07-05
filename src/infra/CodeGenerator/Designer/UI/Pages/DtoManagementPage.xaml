@@ -132,7 +132,7 @@
                             <StackPanel Grid.Row="2" Orientation="Horizontal">
                                 <TextBlock Text="Type:" />
                                 <ComboBox />
-                                <Button Content="..."/>
+                                <Button Content="..." Style="{StaticResource ShortButton}"/>
                             </StackPanel>
                             <StackPanel Grid.Row="3" Orientation="Horizontal">
                                 <TextBlock Text="Comments:" />
