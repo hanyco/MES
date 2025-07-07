@@ -1,3 +1,5 @@
+﻿using CodeGenerator.Application.Services;
+
 namespace CodeGenerator.Application.Domain;
 
 public class Property

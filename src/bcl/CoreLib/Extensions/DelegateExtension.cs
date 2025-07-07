@@ -91,10 +91,10 @@ public static class DelegateExtension
         }
 
         /// <summary>
-        /// Catch the result of a function and return the result value in <see cref="Result"/> class.
+        /// Catch the result of a function and return the result value in <see cref="Result" /> class.
         /// </summary>
-        /// <param name="action"></param>
-        /// <returns></returns>
+        /// <param name="action"> </param>
+        /// <returns> </returns>
         public static async Task<Result> CatchAsync(Func<Task> action)
         {
             Check.MustBeArgumentNotNull(action);
@@ -111,13 +111,13 @@ public static class DelegateExtension
         }
 
         /// <summary>
-        /// Catch the result of a function and return the result value in <see cref="Result"/> class.
+        /// Catch the result of a function and return the result value in <see cref="Result" /> class.
         /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <typeparam name="TException"></typeparam>
-        /// <param name="action"></param>
-        /// <param name="pickException"></param>
-        /// <returns></returns>
+        /// <typeparam name="TResult"> </typeparam>
+        /// <typeparam name="TException"> </typeparam>
+        /// <param name="action">        </param>
+        /// <param name="pickException"> </param>
+        /// <returns> </returns>
         public static TResult? CatchFunc<TResult, TException>(in Func<TResult> action, in Func<TException, bool> pickException)
             where TException : Exception
         {
@@ -132,28 +132,28 @@ public static class DelegateExtension
         }
 
         /// <summary>
-        ///  Converts an action to an other action.
+        /// Converts an action to an other action.
         /// </summary>
-        /// <param name="action"></param>
-        /// <returns></returns>
+        /// <param name="action"> </param>
+        /// <returns> </returns>
         public static Action ToAction(Action action)
             => action;
 
         /// <summary>
         /// Converts a function to an other function.
         /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="action"></param>
-        /// <returns></returns>
+        /// <typeparam name="TResult"> </typeparam>
+        /// <param name="action"> </param>
+        /// <returns> </returns>
         public static Func<TResult> ToFunc<TResult>(Func<TResult> action)
             => action;
 
         /// <summary>
         /// Executes an action using a disposable object.
         /// </summary>
-        /// <typeparam name="TDisposable"></typeparam>
-        /// <param name="getItem"></param>
-        /// <param name="action"></param>
+        /// <typeparam name="TDisposable"> </typeparam>
+        /// <param name="getItem"> </param>
+        /// <param name="action">  </param>
         public static void Using<TDisposable>(Func<TDisposable> getItem, Action<TDisposable> action)
                     where TDisposable : IDisposable
         {
@@ -164,16 +164,55 @@ public static class DelegateExtension
         /// <summary>
         /// Executes an action using a disposable object.
         /// </summary>
-        /// <typeparam name="TDisposable"></typeparam>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="getItem"></param>
-        /// <param name="action"></param>
-        /// <returns></returns>
+        /// <typeparam name="TDisposable"> </typeparam>
+        /// <typeparam name="TResult"> </typeparam>
+        /// <param name="getItem"> </param>
+        /// <param name="action">  </param>
+        /// <returns> </returns>
         public static TResult Using<TDisposable, TResult>(Func<TDisposable> getItem, Func<TDisposable, TResult> action)
             where TDisposable : IDisposable
         {
             using var item = getItem();
             return action(item);
+        }
+    }
+
+    public static async Task<IResult> ToResult(Func<Task> @this)
+    {
+        try
+        {
+            await @this();
+            return Result.Success();
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex);
+        }
+    }
+
+    public static async Task<IResult<TResult>> ToResult<TResult>(Func<Task<TResult>> @this)
+    {
+        try
+        {
+            var value = await @this();
+            return Result.Success(value);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail<TResult>(ex);
+        }
+    }
+
+    public static async Task<IResult<TResult>> ToResult<TResult>(Func<CancellationToken, Task<TResult>> @this, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var value = await @this(cancellationToken);
+            return Result.Success(value);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail<TResult>(ex);
         }
     }
 }

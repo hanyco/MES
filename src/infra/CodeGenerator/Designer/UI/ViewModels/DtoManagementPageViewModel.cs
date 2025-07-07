@@ -113,6 +113,19 @@ public sealed class DtoManagementPageViewModel : INotifyPropertyChanged
         }
     }
 
+    public IEnumerable<ModuleViewModel> Modules
+    {
+        get;
+        set
+        {
+            if (field != value)
+            {
+                field = value;
+                this.OnPropertyChanged();
+            }
+        }
+    }
+
     public string Name
     {
         get;

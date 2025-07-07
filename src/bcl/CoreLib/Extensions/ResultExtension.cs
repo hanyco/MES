@@ -234,7 +234,7 @@ public static class ResultExtension
         return result.BreakOnFail();
     }
 
-    public static async Task<TValue> GetValueAsync<TValue>(this Task<Result<TValue>> @this)
+    public static async Task<TValue> GetValueAsync<TValue>(this Task<IResult<TValue>> @this)
     {
         var result = await @this;
         return result.Value;
@@ -373,6 +373,19 @@ public static class ResultExtension
 
     public static Task<TResult> ToAsync<TResult>(this TResult @this) where TResult : IResult
         => Task.FromResult(@this);
+
+    public static async Task<TValue> ToAsync<TValue>(this Task<IResult<TValue>> @this)
+    {
+        var result = await @this;
+        return result.GetValue();
+    }
+
+    public static async Task<TValue> ToAsync<TResult, TValue>(this Task<TResult> @this)
+        where TResult : IResult<TValue>
+    {
+        var result = await @this;
+        return result.GetValue();
+    }
 
     public static async Task<Result<TValue1>> ToResultAsync<TValue, TValue1>(this Task<Result<TValue>> @this, Func<TValue, TValue1> getNewValue)
     {

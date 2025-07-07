@@ -1,29 +1,28 @@
-﻿using CodeGenerator.Application.Domain;
+﻿using System.Diagnostics.CodeAnalysis;
+
+using CodeGenerator.Application.Domain;
 
 using Library.CodeGenLib.Back;
 using Library.CodeGenLib.CodeGenerators;
+using Library.CodeGenLib.Extensions;
 using Library.CodeGenLib.Models;
 using Library.Coding;
+using Library.Exceptions;
 using Library.Resulting;
+using Library.Validations;
 
 namespace CodeGenerator.Application.Services;
 
-public partial class DtoService
+public partial class DtoService : IDtoService
 {
-    public IResult<Code> GenerateCode(Dto dto)
+    [return: NotNull]
+    public IResult<Codes> GenerateCodes(Dto dto, CancellationToken ct = default)
     {
-        if (dto is null)
-        {
-            return Result.Fail<Code>(new ArgumentNullException(nameof(dto)));
-        }
-
-        if (string.IsNullOrWhiteSpace(dto.Name) || string.IsNullOrWhiteSpace(dto.Namespace))
-        {
-            return Result.Fail<Code>("invalid dto name or namespace");
-        }
-
         try
         {
+            Check.MustBeNotNull(dto);
+            Check.MustBe(!string.IsNullOrWhiteSpace(dto.Name) && !string.IsNullOrWhiteSpace(dto.Namespace), () => new ValidationException("invalid dto name or namespace"));
+
             var ns = INamespace.New(dto.Namespace);
             var cls = IClass.New(dto.Name);
             foreach (var field in dto.Properties)
@@ -33,12 +32,16 @@ public partial class DtoService
             }
             _ = ns.AddType(cls);
             var codeResult = ns.GenerateCode<RoslynCodeGenerator>();
+            if (codeResult?.IsSucceed is not true)
+            {
+                throw new Exception();
+            }
             var code = new Code(dto.Name, Languages.CSharp, codeResult.Value!, isPartial: true);
-            return Result.From(codeResult, code);
+            return Result.Success(code.ToCodes());
         }
         catch (Exception ex)
         {
-            return Result.Fail<Code>(ex);
+            return Result.Fail<Codes>(ex);
         }
     }
 }

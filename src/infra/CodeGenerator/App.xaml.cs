@@ -3,6 +3,8 @@
 using CodeGenerator.Application.Services;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace CodeGenerator;
 
@@ -11,7 +13,18 @@ namespace CodeGenerator;
 /// </summary>
 public partial class App : System.Windows.Application
 {
+    private readonly IHost _host;
     private ResourceDictionary? _currentTheme;
+
+    public App() => this._host = Host.CreateDefaultBuilder()
+            .ConfigureServices((context, services) =>
+            {
+                // Register services
+                _ = services.AddSingleton<MainWindow>();
+
+                _ = services.AddTransient<IModuleService, ModuleService>();
+            })
+            .Build();
 
     public IConfiguration? Configuration { get; private set; }
 
@@ -19,9 +32,20 @@ public partial class App : System.Windows.Application
 
     public void UseLightTheme() => this.ApplyTheme("LightTheme.xaml");
 
-    protected override void OnStartup(StartupEventArgs e)
+    protected override async void OnExit(ExitEventArgs e)
+    {
+        using (this._host)
+        {
+            await this._host.StopAsync(System.Threading.CancellationToken.None);
+        }
+        base.OnExit(e);
+    }
+
+    protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+
+        await this._host.StartAsync();
 
         // Setup configuration using appsettings.json file.
         var builder = new ConfigurationBuilder()
@@ -41,6 +65,9 @@ public partial class App : System.Windows.Application
         {
             this.UseLightTheme();
         }
+
+        var mainWindow = this._host.Services.GetService<MainWindow>()!;
+        mainWindow.Show();
     }
 
     private void ApplyTheme(string themeFile)
