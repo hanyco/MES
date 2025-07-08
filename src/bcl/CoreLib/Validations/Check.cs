@@ -53,12 +53,14 @@ public static class Check
             return obj;
         }
 
+        [return: NotNull]
         public T NotNull([CallerMemberName] string? argumentName = null)
         {
             MustBeNotNull(obj, () => new ValidationException($"{argumentName} cannot be null"));
             return obj;
         }
 
+        [return: NotNull]
         public T NotNull(Func<string> getMessage)
         {
             MustBeNotNull(obj, getMessage);

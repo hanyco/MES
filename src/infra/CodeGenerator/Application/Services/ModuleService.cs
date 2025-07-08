@@ -26,19 +26,20 @@ internal sealed class ModuleService(SqlConnection connection) : IModuleService
         Action.ToResult(() => connection.QueryFirstOrDefaultAsync<Module>("SELECT * FROM [infra].[Module] WHERE Id = @Id", new { Id = id }));
 }
 
-public static class ModuleConverter
+public static class ModelConverter
 {
     [return: NotNullIfNotNull(nameof(model))]
-    public static ModuleViewModel ToViewModel(this Module model)
+    public static ModuleViewModel ToViewModel(this Module model) => new()
     {
-
-    }
+        Id = model.Id,
+        Name = model.Name,
+    };
 
     [return: NotNull]
-    public static IEnumerable<ModuleViewModel> ToViewModel([AllowNull]this IEnumerable<Module> models)
+    public static IEnumerable<ModuleViewModel> ToViewModel([AllowNull] this IEnumerable<Module> models)
         => models?.Select(ToViewModel) ?? [];
 
-    internal static async Task<IEnumerable<ModuleViewModel>> ToViewModel(this Task<IEnumerable<Module>> task)
+    public static async Task<IEnumerable<ModuleViewModel>> ToViewModel(this Task<IEnumerable<Module>> task)
     {
         var value = await task;
         return value.ToViewModel();

@@ -1,4 +1,6 @@
-﻿using System.Runtime.ExceptionServices;
+﻿using System;
+using System.Runtime.ExceptionServices;
+using System.Threading.Tasks;
 
 using Library.Exceptions;
 
@@ -234,7 +236,7 @@ public static class ResultExtension
         return result.BreakOnFail();
     }
 
-    public static async Task<TValue> GetValueAsync<TValue>(this Task<IResult<TValue>> @this)
+    public static async Task<TValue> GetValue<TValue>(this Task<IResult<TValue>> @this)
     {
         var result = await @this;
         return result.Value;
@@ -285,15 +287,31 @@ public static class ResultExtension
         return result!;
     }
 
-    public static async Task<TResult?> OnSucceedAsync<TResult>(this TResult? @this, [DisallowNull] Func<TResult, CancellationToken, Task<TResult>> next, CancellationToken token = default) where TResult : IResult
+    public static async Task<TResult?> OnSucceed<TResult>(this TResult? @this, [DisallowNull] Func<TResult, CancellationToken, Task<TResult>> next, CancellationToken token = default) where TResult : IResult
         => @this?.IsSucceed == true
             ? await next.ArgumentNotNull()(@this, token)
             : @this;
 
-    public static async Task<TResult> OnSucceedAsync<TResult>(this Task<TResult> @this, [DisallowNull] Func<TResult, CancellationToken, Task<TResult>> next, CancellationToken token = default) where TResult : IResult
+    public static async Task<TResult> OnSucceed<TResult>(this Task<TResult> @this, [DisallowNull] Func<TResult, CancellationToken, Task<TResult>> next, CancellationToken token = default) where TResult : IResult
     {
         var r = await @this;
         return r.IsSucceed ? await next.ArgumentNotNull()(r, token) : r;
+    }
+
+    /// <summary>
+    /// Executes the specified function if the result of the preceding task is successful.
+    /// </summary>
+    /// <typeparam name="TValue">The type of the value contained in the result.</typeparam>
+    /// <typeparam name="TOutput">The type of the output produced by the <paramref name="next"/> function.</typeparam>
+    /// <param name="this">The task representing an asynchronous operation that produces a result.</param>
+    /// <param name="next">A function to execute if the result is successful. The function receives the value of the result as input.</param>
+    /// <returns>A task that represents the asynchronous operation. If the result is successful, the task returns the output of
+    /// the <paramref name="next"/> function. Otherwise, it returns the default value for <typeparamref
+    /// name="TOutput"/>.</returns>
+    public static async Task<TOutput> OnSucceed<TValue, TOutput>(this Task<IResult<TValue>> @this, Func<TValue, TOutput> next)
+    {
+        var r = await @this;
+        return r.IsSucceed ? next.ArgumentNotNull()(r.Value) : default!;
     }
 
     /// <summary>
@@ -304,7 +322,7 @@ public static class ResultExtension
     /// <param name="owner">       The owner of the result. </param>
     /// <param name="instruction"> The instruction associated with the result. </param>
     /// <returns> The result of the provided Task. </returns>
-    public static async Task<Result<TValue>> ThrowOnFailAsync<TValue>(this Task<Result<TValue>> @this, object? owner = null, string? instruction = null, CancellationToken cancellationToken = default)
+    public static async Task<Result<TValue>> ThrowOnFail<TValue>(this Task<Result<TValue>> @this, object? owner = null, string? instruction = null, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         var result = await @this;
@@ -318,7 +336,7 @@ public static class ResultExtension
     /// <param name="this">              </param>
     /// <param name="cancellationToken"> </param>
     /// <returns> </returns>
-    public static async Task<Result<TValue>> ThrowOnFailAsync<TValue>(this Task<Result<TValue>> @this, CancellationToken cancellationToken)
+    public static async Task<Result<TValue>> ThrowOnFail<TValue>(this Task<Result<TValue>> @this, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
         var result = await @this;
@@ -334,7 +352,7 @@ public static class ResultExtension
     /// <param name="instruction">       </param>
     /// <param name="cancellationToken"> </param>
     /// <returns> </returns>
-    public static async Task<TResult> ThrowOnFailAsync<TResult>(this Task<TResult> @this, object? owner = null, string? instruction = null, CancellationToken cancellationToken = default)
+    public static async Task<TResult> ThrowOnFail<TResult>(this Task<TResult> @this, object? owner = null, string? instruction = null, CancellationToken cancellationToken = default)
         where TResult : IResult
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -350,7 +368,7 @@ public static class ResultExtension
     /// <param name="instruction">       </param>
     /// <param name="cancellationToken"> </param>
     /// <returns> </returns>
-    public static async Task<Result> ThrowOnFailAsync(this Task<Result> @this, object? owner = null, string? instruction = null, CancellationToken cancellationToken = default)
+    public static async Task<Result> ThrowOnFail(this Task<Result> @this, object? owner = null, string? instruction = null, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         var result = await @this;
@@ -399,7 +417,7 @@ public static class ResultExtension
     public static async Task<Result> ToResultAsync<TValue>(this Task<Result<TValue>> @this)
         => await @this;
 
-    private static TResult InnerThrowOnFail<TResult>([DisallowNull] TResult result, object? owner, string? instruction = null)
+    private static TResult InnerThrowOnFail<TResult>([DisallowNull] in TResult result, object? owner, string? instruction = null)
         where TResult : IResult
     {
         Check.MustBeArgumentNotNull(result);

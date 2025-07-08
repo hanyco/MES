@@ -1,12 +1,10 @@
 ﻿using System.Windows.Controls;
 
-using CodeGenerator.Application.Domain;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Designer.UI.Dialogs;
 using CodeGenerator.Designer.UI.ViewModels;
 
 using Library.Coding;
-using Library.Resulting;
 
 namespace CodeGenerator.Designer.UI.Pages;
 
@@ -20,6 +18,7 @@ public partial class DtoManagementPage : UserControl
     public DtoManagementPage(IModuleService moduleService)
     {
         this.InitializeComponent();
+
         this.DataContextChanged += this.DtoManagementPage_DataContextChanged;
         this._moduleService = moduleService;
     }
@@ -27,7 +26,7 @@ public partial class DtoManagementPage : UserControl
     private void DtoManagementPage_DataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
         => this.EntityDesignerGrid.IsEnabled = e.NewValue is not null;
 
-    private async void NewDtoButton_Click(object sender, System.Windows.RoutedEventArgs e)
+    private void NewDtoButton_Click(object sender, System.Windows.RoutedEventArgs e)
     {
         var response = SelectTableDialog.Ask();
         if (response.IsFailure)
@@ -35,7 +34,11 @@ public partial class DtoManagementPage : UserControl
             return;
         }
         var model = DtoManagementPageViewModel.CrateByTable(response.GetValue())
-            .With(async x => x.Modules = await this._moduleService.GetAll().GetValueAsync().ToViewModel());
+            .With(async x =>
+                x.Modules = await this._moduleService
+                    .GetAll().ThrowOnFail()
+                    .GetValue()
+                    .ToViewModel());
 
         this.DataContext = model;
     }

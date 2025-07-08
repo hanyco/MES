@@ -30,6 +30,16 @@ public interface IService;
 
 public interface IView<TViewDto>
 {
+    /// <summary>
+    /// Retrieves all items as a collection of view DTOs.
+    /// </summary>
+    /// <remarks>This method returns a task that represents the asynchronous operation. The result contains an
+    /// <see cref="IResult{T}"/> wrapping an enumerable of view DTOs. If no items are found, the enumerable will be
+    /// empty.</remarks>
+    /// <param name="ct">A <see cref="CancellationToken"/> that can be used to cancel the operation. Defaults to <see
+    /// langword="default"/> if not provided.</param>
+    /// <returns>A task representing the asynchronous operation. The result contains an <see cref="IResult{T}"/> wrapping an
+    /// enumerable of <typeparamref name="TViewDto"/> objects. The enumerable will be empty if no items are available.</returns>
     [return: NotNull] Task<IResult<IEnumerable<TViewDto>>> GetAll(CancellationToken ct = default);
 
     [return: NotNull] Task<IResult<TViewDto?>> GetById(long id, CancellationToken ct = default);
