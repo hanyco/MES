@@ -13,6 +13,7 @@
 برای درک ساختار پروژه و معماری، لطفاً به فایل‌های زیر مراجعه شود:
 - [`PROPOSAL.fa.md`](./PROPOSAL.fa.md)
 - [`ARCHITECTURE.fa.md`](./ARCHITECTURE.fa.md)
+- [`ViewModelNaming.fa.md`](./ViewModelNaming.fa.md)
 
 ---
 
