@@ -5,8 +5,9 @@
     xmlns:bases="clr-namespace:CodeGenerator.Designer.UI.Bases"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:CodeGenerator.Designer.UI.Pages"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="clr-namespace:CodeGenerator.Designer.UI.ViewModels"
+    x:Name="Me"
     d:DataContext="{d:DesignInstance Type=viewmodels:DtoManagementPageViewModel}"
     d:DesignHeight="950"
     d:DesignWidth="800"
@@ -38,7 +39,7 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
+                            <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
@@ -57,16 +58,19 @@
                         </StackPanel>
                         <StackPanel Grid.Row="2" Orientation="Horizontal">
                             <TextBlock Text="Module:" />
-                            <ComboBox SelectedItem="{Binding Module}" />
+                            <ComboBox ItemsSource="{Binding ElementName=Me, Path=StaticViewModel.Modules}" SelectedItem="{Binding Module}" />
                         </StackPanel>
-                        <StackPanel
+                        <Grid
                             Grid.Row="0"
                             Grid.RowSpan="3"
-                            Grid.Column="1"
-                            Orientation="Horizontal">
+                            Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
                             <TextBlock Text="Comments:" />
-                            <RichTextBox />
-                        </StackPanel>
+                            <RichTextBox Grid.Column="1" />
+                        </Grid>
                         <StackPanel
                             Grid.Row="0"
                             Grid.RowSpan="3"

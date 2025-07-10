@@ -1,6 +1,4 @@
-﻿using System;
-using System.Runtime.ExceptionServices;
-using System.Threading.Tasks;
+﻿using System.Runtime.ExceptionServices;
 
 using Library.Exceptions;
 
@@ -146,6 +144,9 @@ public static class ResultExtension
         /// </returns>
         public bool IsSuccessful() =>
             @this != null && @this.IsSucceed;
+
+        public void Deconstruct(out bool IsSucceed, out TValue Value) =>
+            (IsSucceed, Value) = (@this.ArgumentNotNull().IsSucceed, @this.Value);
     }
 
     extension(Result @this)
@@ -166,9 +167,6 @@ public static class ResultExtension
 
     extension<TValue>(Result<TValue> @this)
     {
-        public void Deconstruct(out bool IsSucceed, out TValue Value) =>
-            (IsSucceed, Value) = (@this.ArgumentNotNull().IsSucceed, @this.Value);
-
         /// <summary>
         /// Throws an exception if the given <see cref="ResultTValue" /> is a failure.
         /// </summary>
@@ -220,7 +218,6 @@ public static class ResultExtension
 
     extension<TValue>(Result<TValue>)
     {
-
     }
 
     /// <summary>
@@ -301,13 +298,20 @@ public static class ResultExtension
     /// <summary>
     /// Executes the specified function if the result of the preceding task is successful.
     /// </summary>
-    /// <typeparam name="TValue">The type of the value contained in the result.</typeparam>
-    /// <typeparam name="TOutput">The type of the output produced by the <paramref name="next"/> function.</typeparam>
-    /// <param name="this">The task representing an asynchronous operation that produces a result.</param>
-    /// <param name="next">A function to execute if the result is successful. The function receives the value of the result as input.</param>
-    /// <returns>A task that represents the asynchronous operation. If the result is successful, the task returns the output of
-    /// the <paramref name="next"/> function. Otherwise, it returns the default value for <typeparamref
-    /// name="TOutput"/>.</returns>
+    /// <typeparam name="TValue"> The type of the value contained in the result. </typeparam>
+    /// <typeparam name="TOutput">
+    /// The type of the output produced by the <paramref name="next" /> function.
+    /// </typeparam>
+    /// <param name="this"> The task representing an asynchronous operation that produces a result. </param>
+    /// <param name="next">
+    /// A function to execute if the result is successful. The function receives the value of the
+    /// result as input.
+    /// </param>
+    /// <returns>
+    /// A task that represents the asynchronous operation. If the result is successful, the task
+    /// returns the output of the <paramref name="next" /> function. Otherwise, it returns the
+    /// default value for <typeparamref name="TOutput" />.
+    /// </returns>
     public static async Task<TOutput> OnSucceed<TValue, TOutput>(this Task<IResult<TValue>> @this, Func<TValue, TOutput> next)
     {
         var r = await @this;

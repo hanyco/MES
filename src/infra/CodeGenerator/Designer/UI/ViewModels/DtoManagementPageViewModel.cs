@@ -1,16 +1,12 @@
 ﻿using System.Collections.Immutable;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 using DataLib;
 
 namespace CodeGenerator.Designer.UI.ViewModels;
 
-public sealed class DtoManagementPageViewModel : INotifyPropertyChanged
+public sealed class DtoManagementPageViewModel : ViewModelBase
 {
-    public event PropertyChangedEventHandler? PropertyChanged;
-
     public string? Comments
     {
         get;
@@ -24,20 +20,9 @@ public sealed class DtoManagementPageViewModel : INotifyPropertyChanged
         }
     }
 
-    public ObservableCollection<Field> Fields
-    {
-        get;
-        set
-        {
-            if (!field.Equals(value))
-            {
-                field = value;
-                this.OnPropertyChanged();
-            }
-        }
-    } = [];
+    public ObservableCollection<Field> Fields { get; set; } = [];
 
-    public long Id
+    public bool IsList
     {
         get;
         set
@@ -88,18 +73,7 @@ public sealed class DtoManagementPageViewModel : INotifyPropertyChanged
             }
         }
     }
-    public bool IsList
-    {
-        get;
-        set
-        {
-            if (field != value)
-            {
-                field = value;
-                this.OnPropertyChanged();
-            }
-        }
-    }
+
     public ModuleViewModel? Module
     {
         get;
@@ -112,32 +86,6 @@ public sealed class DtoManagementPageViewModel : INotifyPropertyChanged
             }
         }
     }
-
-    public IEnumerable<ModuleViewModel> Modules
-    {
-        get;
-        set
-        {
-            if (field != value)
-            {
-                field = value;
-                this.OnPropertyChanged();
-            }
-        }
-    }
-
-    public string Name
-    {
-        get;
-        set
-        {
-            if (field != value)
-            {
-                field = value;
-                this.OnPropertyChanged();
-            }
-        }
-    } = string.Empty;
 
     public string NameSpace
     {
@@ -193,7 +141,4 @@ public sealed class DtoManagementPageViewModel : INotifyPropertyChanged
         Schema = this.Schema,
         ObjectId = this.ObjectId,
     };
-
-    private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }

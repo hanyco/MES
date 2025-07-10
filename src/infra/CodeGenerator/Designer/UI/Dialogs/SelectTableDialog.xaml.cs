@@ -41,13 +41,18 @@ public partial class SelectTableDialog : Window
 
     private void CancelButton_Click(object sender, RoutedEventArgs e)
     {
+        this.DialogResult = false;
+        this.SelectedTable = null;
+        this.Close();
     }
 
-    private void OkButton_Click(object sender, RoutedEventArgs e)
-    {
-    }
+    private void OkButton_Click(object sender, RoutedEventArgs e) =>
+        this.ValidateAndlose();
 
-    private void TableTreeView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    private void TableTreeView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e) =>
+        this.ValidateAndlose();
+
+    private void ValidateAndlose()
     {
         if (this.OkButton.IsEnabled && this.TableTreeView.GetSelectedItem<Table>() is Table table)
         {
