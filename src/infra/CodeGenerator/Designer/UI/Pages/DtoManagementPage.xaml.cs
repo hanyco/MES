@@ -1,6 +1,7 @@
 ﻿using System.Windows.Controls;
 
 using CodeGenerator.Designer.UI.Dialogs;
+using CodeGenerator.Designer.UI.ViewModels;
 
 namespace CodeGenerator.Designer.UI.Pages;
 
@@ -13,6 +14,7 @@ public partial class DtoManagementPage : UserControl
     {
         this.InitializeComponent();
         this.DataContextChanged += this.DtoManagementPage_DataContextChanged;
+        this.DataContext = new DtoManagementPageViewModel();
 
     }
 
@@ -24,3 +26,4 @@ public partial class DtoManagementPage : UserControl
         var result = SelectTableDialog.Ask();
     }
 }
+

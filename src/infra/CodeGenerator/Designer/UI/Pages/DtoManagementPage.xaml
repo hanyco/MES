@@ -5,6 +5,7 @@
     xmlns:bases="clr-namespace:CodeGenerator.Designer.UI.Bases"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:CodeGenerator.Designer.UI.Pages"
+    xmlns:common="clr-namespace:CodeGenerator.Designer.UI.Common"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="950"
     d:DesignWidth="800"
@@ -94,7 +95,7 @@
                         </Grid.ColumnDefinitions>
                         <ToolBar>
                             <Button Content="New" />
-                            <Button Content="Delete" />
+                            <Button Content="Delete" Command="{Binding DeletePropertiesCommand}" />
                         </ToolBar>
                         <DataGrid
                             Grid.Row="1"
@@ -103,7 +104,10 @@
                             CanUserDeleteRows="True"
                             CanUserReorderColumns="False"
                             CanUserResizeRows="False"
-                            CanUserSortColumns="False">
+                            CanUserSortColumns="False"
+                            SelectionMode="Extended"
+                            ItemsSource="{Binding Properties}"
+                            common:DataGridSelectedItemsBehavior.SelectedItems="{Binding SelectedProperties}">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Width="Auto" Header="Name" />
                                 <DataGridTextColumn Width="Auto" Header="Model" />
