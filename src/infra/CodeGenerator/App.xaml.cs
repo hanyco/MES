@@ -1,46 +1,51 @@
 ﻿using System.Windows;
 
 using CodeGenerator.Application.Services;
+using CodeGenerator.Designer.UI.Pages;
 
+using Library.Validations;
+
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace CodeGenerator;
 
-/// <summary>
-/// Interaction logic for App.xaml
-/// </summary>
 public partial class App : System.Windows.Application
 {
-    private ResourceDictionary? _currentTheme;
+    private IConfiguration _configuration = default!;
+    private ResourceDictionary _currentTheme = default!;
+    private IHost _host = default!;
 
-    public IConfiguration? Configuration { get; private set; }
+    public App() =>
+        this.Instance = this;
 
-    public void UseDarkTheme() => this.ApplyTheme("DarkTheme.xaml");
+    public App Instance { get; }
 
-    public void UseLightTheme() => this.ApplyTheme("LightTheme.xaml");
+    public void UseDarkTheme() =>
+        this.ApplyTheme("DarkTheme.xaml");
 
-    protected override void OnStartup(StartupEventArgs e)
+    public void UseLightTheme() =>
+        this.ApplyTheme("LightTheme.xaml");
+
+    protected override async void OnExit(ExitEventArgs e)
+    {
+        using (this._host)
+        {
+            await this._host!.StopAsync(CancellationToken.None);
+        }
+        base.OnExit(e);
+    }
+
+    protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
 
-        // Setup configuration using appsettings.json file.
-        var builder = new ConfigurationBuilder()
-            .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-        this.Configuration = builder.Build();
-
-        Settings.Configure(this.Configuration.GetConnectionString("DefaultConnection")!);
-
-        // Use theme based on configuration "Theme" value.
-        var theme = this.Configuration["Theme"];
-        if (!string.IsNullOrEmpty(theme) && theme.Equals("dark", StringComparison.OrdinalIgnoreCase))
-        {
-            this.UseDarkTheme();
-        }
-        else
-        {
-            this.UseLightTheme();
-        }
+        this.SetupConfiguration();
+        await this.SetupServices();
+        this.SetupLayout();
+        this.ShowMainWindow();
     }
 
     private void ApplyTheme(string themeFile)
@@ -57,8 +62,50 @@ public partial class App : System.Windows.Application
 
         this.Resources.MergedDictionaries.Insert(0, dict);
         this._currentTheme = dict;
-        this.OnThemeApplied(themeFile);
     }
 
-    partial void OnThemeApplied(string themeFile);
+    private void SetupConfiguration()
+    {
+        var builder = new ConfigurationBuilder()
+                    .SetBasePath(AppContext.BaseDirectory)
+                    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+        this._configuration = builder.Build();
+        Settings.Configure(this._configuration.GetConnectionString("DefaultConnection")!);
+    }
+
+    private void SetupLayout()
+    {
+        var theme = this._configuration["Theme"];
+        if (!string.IsNullOrEmpty(theme) && theme.Equals("dark", StringComparison.OrdinalIgnoreCase))
+        {
+            this.UseDarkTheme();
+        }
+        else
+        {
+            this.UseLightTheme();
+        }
+    }
+
+    private async Task SetupServices()
+    {
+        this._host = Host.CreateDefaultBuilder()
+                    .ConfigureServices((context, services) =>
+                    {
+                        // Register services
+                        _ = services.AddSingleton<MainWindow>()
+                            .AddTransient<DtoManagementPage>();
+
+                        _ = services.AddTransient(x => new SqlConnection(Settings.Default.ConnectionString));
+
+                        _ = services.AddTransient<IModuleService, ModuleService>();
+                    })
+                    .Build();
+        await this._host.StartAsync();
+    }
+
+    private void ShowMainWindow()
+    {
+        var mainWindow = this._host!.Services.GetService<MainWindow>()!;
+        mainWindow.Show();
+    }
 }

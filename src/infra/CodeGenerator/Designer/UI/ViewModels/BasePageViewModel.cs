@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
-namespace CodeGenerator.Designer.UI.Bases;
+namespace CodeGenerator.Designer.UI.ViewModels;
 
 public class BasePageViewModel : INotifyPropertyChanged
 {
@@ -66,6 +67,6 @@ public class BasePageViewModel : INotifyPropertyChanged
         }
     }
 
-    protected void OnPropertyChanged(string propertyName) =>
+    protected void OnPropertyChanged([CallerMemberName]string? propertyName = null) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }

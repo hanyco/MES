@@ -21,7 +21,10 @@
             Grid.Row="0"
             Margin="10"
             Text="Please select a table from the list below:" />
-        <TreeView x:Name="TableTreeView" Grid.Row="1" MouseDoubleClick="TableTreeView_MouseDoubleClick"/>
+        <TreeView
+            x:Name="TableTreeView"
+            Grid.Row="1"
+            MouseDoubleClick="TableTreeView_MouseDoubleClick" />
         <StackPanel
             Grid.Row="2"
             HorizontalAlignment="Right"

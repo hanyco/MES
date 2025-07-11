@@ -13,3 +13,6 @@ public interface IResult<TValue> : IResult
 {
     TValue Value { get; init; }
 }
+
+public interface IAsyncResultEnumerable : IAsyncEnumerable<IResult>;
+public interface IAsyncResultEnumerable<TValue> : IAsyncEnumerable<IResult<TValue>>;

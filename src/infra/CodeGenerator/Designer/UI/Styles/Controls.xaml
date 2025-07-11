@@ -21,13 +21,13 @@
     </Style>
 
     <Style TargetType="{x:Type TextBox}">
-        <Setter Property="Width" Value="150" />
+        <Setter Property="Width" Value="200" />
         <Setter Property="Height" Value="28" />
         <Setter Property="Margin" Value="3,0,0,0" />
     </Style>
 
     <Style TargetType="{x:Type ComboBox}">
-        <Setter Property="Width" Value="150" />
+        <Setter Property="Width" Value="200" />
         <Setter Property="Height" Value="28" />
         <Setter Property="Margin" Value="3,0,0,0" />
     </Style>
@@ -39,7 +39,7 @@
     </Style>
 
     <Style TargetType="{x:Type RichTextBox}">
-        <Setter Property="MinWidth" Value="150" />
+        <Setter Property="MinWidth" Value="200" />
         <Setter Property="MinHeight" Value="28" />
         <Setter Property="Margin" Value="3,0,0,0" />
     </Style>

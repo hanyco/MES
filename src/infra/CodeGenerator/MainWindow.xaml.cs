@@ -5,6 +5,7 @@ using CodeGenerator.Designer.UI.Common;
 using CodeGenerator.Designer.UI.Pages;
 using CodeGenerator.UI;
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace CodeGenerator;
@@ -14,16 +15,18 @@ namespace CodeGenerator;
 /// </summary>
 public partial class MainWindow : Window
 {
-    public MainWindow()
+    public MainWindow(IServiceProvider services)
     {
         this.InitializeComponent();
         this.DataContext = this;
 
         this.ExitCommand = new RelayCommand(_ => this.ExitApplication(), _ => this._allowClose);
+        this._services = services;
     }
 
     #region Exit Application
 
+    private readonly IServiceProvider _services;
     private bool _allowClose = true;
     public RelayCommand ExitCommand { get; }
 
@@ -58,5 +61,5 @@ public partial class MainWindow : Window
     #endregion Exit Application
 
     private void MenuItem_Click(object sender, RoutedEventArgs e)
-        => this.MainContent.Content = new DtoManagementPage();
+        => this.MainContent.Content = this._services.GetService<DtoManagementPage>();
 }

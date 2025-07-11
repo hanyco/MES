@@ -10,8 +10,11 @@
   <ItemGroup>
     <PackageReference Include="Dapper" />
     <PackageReference Include="Microsoft.Data.SqlClient" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration" />
+	  <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
     <PackageReference Include="WindowsAPICodePack-Core" />
 	  <PackageReference Include="WindowsAPICodePack-Shell" />
 	  <!--<PackageReference Include="Microsoft.WindowsAPICodePack.Dialogs" />-->
@@ -34,7 +37,6 @@
     <Folder Include="Designer\UI\Controls\" />
     <Folder Include="Designer\UI\Resources\" />
     <Folder Include="Designer\UI\Styles\" />
-    <Folder Include="Designer\UI\ViewModels\" />
   </ItemGroup>
 
 </Project>

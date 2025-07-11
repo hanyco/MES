@@ -1,6 +1,9 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 
+using CodeGenerator.Application.Services;
 using CodeGenerator.Designer.UI.Dialogs;
+using CodeGenerator.Designer.UI.ViewModels;
 
 namespace CodeGenerator.Designer.UI.Pages;
 
@@ -9,18 +12,52 @@ namespace CodeGenerator.Designer.UI.Pages;
 /// </summary>
 public partial class DtoManagementPage : UserControl
 {
-    public DtoManagementPage()
+    // Using a DependencyProperty as the backing store for StaticViewModel. This enables animation,
+    // styling, binding, etc...
+    public static readonly DependencyProperty StaticViewModelProperty =
+        DependencyProperty.Register("StaticViewModel", typeof(DtoManagementPageStaticViewModel), typeof(DtoManagementPage), new PropertyMetadata(null));
+
+    private readonly IModuleService _moduleService;
+
+    public DtoManagementPage(IModuleService moduleService)
     {
+        this._moduleService = moduleService;
+        this.SetStaticViewModel();
+
         this.InitializeComponent();
+
         this.DataContextChanged += this.DtoManagementPage_DataContextChanged;
-
     }
 
-    private void DtoManagementPage_DataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
-        => this.EntityDesignerGrid.IsEnabled = e.NewValue is not null;
-
-    private void NewDtoButton_Click(object sender, System.Windows.RoutedEventArgs e)
+    public DtoManagementPageStaticViewModel StaticViewModel
     {
-        var result = SelectTableDialog.Ask();
+        get => (DtoManagementPageStaticViewModel)this.GetValue(StaticViewModelProperty);
+        set => this.SetValue(StaticViewModelProperty, value);
     }
+
+    private void DtoManagementPage_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e) =>
+        this.EntityDesignerGrid.IsEnabled = e.NewValue is not null;
+
+    private void NewDtoButton_Click(object sender, RoutedEventArgs e)
+    {
+        var (isOk, value) = SelectTableDialog.Ask();
+        if (!isOk)
+        {
+            return;
+        }
+        var model = DtoManagementPageViewModel.CrateByTable(value);
+
+        this.DataContext = model;
+    }
+
+    private async void SetStaticViewModel()
+    {
+        var modules = await this._moduleService.GetAll().ThrowOnFail().GetValue().ToViewModel();
+        this.StaticViewModel = new(modules);
+    }
+}
+
+public sealed class DtoManagementPageStaticViewModel(IEnumerable<ModuleViewModel> modules)
+{
+    public IEnumerable<ModuleViewModel> Modules { get; set; } = modules;
 }

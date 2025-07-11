@@ -23,7 +23,8 @@ public partial class SelectTableDialog : Window
     public static IResult<Table> Ask()
     {
         var dlg = Create();
-        return dlg.ShowDialog() == true && dlg.TableTreeView.SelectedItem is Table table
+        var ok = dlg.ShowDialog();
+        return ok is true && dlg.SelectedTable is Table table
                 ? Result.Success(table)
                 : Result.Fail<Table>("No table selected.");
     }
@@ -40,13 +41,18 @@ public partial class SelectTableDialog : Window
 
     private void CancelButton_Click(object sender, RoutedEventArgs e)
     {
+        this.DialogResult = false;
+        this.SelectedTable = null;
+        this.Close();
     }
 
-    private void OkButton_Click(object sender, RoutedEventArgs e)
-    {
-    }
+    private void OkButton_Click(object sender, RoutedEventArgs e) =>
+        this.ValidateAndlose();
 
-    private void TableTreeView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    private void TableTreeView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e) =>
+        this.ValidateAndlose();
+
+    private void ValidateAndlose()
     {
         if (this.OkButton.IsEnabled && this.TableTreeView.GetSelectedItem<Table>() is Table table)
         {
