@@ -3,6 +3,8 @@ using System.Collections.ObjectModel;
 
 using DataLib;
 
+using Library.Validations;
+
 namespace CodeGenerator.Designer.UI.ViewModels;
 
 public sealed class DtoManagementPageViewModel : ViewModelBase
@@ -137,7 +139,7 @@ public sealed class DtoManagementPageViewModel : ViewModelBase
     public Table BuildTable() => new()
     {
         Fields = ImmutableArray.Create(this.Fields.ToArray()),
-        Name = this.Name,
+        Name = this.Name.NotNull(),
         Schema = this.Schema,
         ObjectId = this.ObjectId,
     };

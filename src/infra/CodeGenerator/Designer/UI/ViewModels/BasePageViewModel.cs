@@ -3,17 +3,15 @@ using System.Runtime.CompilerServices;
 
 namespace CodeGenerator.Designer.UI.ViewModels;
 
-public class BasePageViewModel : INotifyPropertyChanged
+public class BasePageViewModel : ViewModelBase
 {
-    public event PropertyChangedEventHandler? PropertyChanged;
-
     public object? EntityDesignerContent
     {
         get;
         set
         {
             field = value;
-            this.OnPropertyChanged(nameof(this.EntityDesignerContent));
+            this.OnPropertyChanged();
         }
     }
 
@@ -23,7 +21,7 @@ public class BasePageViewModel : INotifyPropertyChanged
         set
         {
             field = value;
-            this.OnPropertyChanged(nameof(this.Progress));
+            this.OnPropertyChanged();
         }
     } = 0;
 
@@ -33,7 +31,7 @@ public class BasePageViewModel : INotifyPropertyChanged
         set
         {
             field = value;
-            this.OnPropertyChanged(nameof(this.SidebarContent));
+            this.OnPropertyChanged();
         }
     }
 
@@ -43,7 +41,7 @@ public class BasePageViewModel : INotifyPropertyChanged
         set
         {
             field = value;
-            this.OnPropertyChanged(nameof(this.SourceCodeContent));
+            this.OnPropertyChanged();
         }
     }
 
@@ -53,7 +51,7 @@ public class BasePageViewModel : INotifyPropertyChanged
         set
         {
             field = value;
-            this.OnPropertyChanged(nameof(this.StatusMessage));
+            this.OnPropertyChanged();
         }
     } = string.Empty;
 
@@ -63,10 +61,7 @@ public class BasePageViewModel : INotifyPropertyChanged
         set
         {
             field = value;
-            this.OnPropertyChanged(nameof(this.ToolbarContent));
+            this.OnPropertyChanged();
         }
     }
-
-    protected void OnPropertyChanged([CallerMemberName]string? propertyName = null) =>
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }
