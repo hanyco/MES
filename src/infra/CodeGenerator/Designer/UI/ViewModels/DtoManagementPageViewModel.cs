@@ -1,11 +1,17 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Linq;
+using System.Windows;
+using System.Windows.Input;
 
 using DataLib;
+using CodeGenerator.Designer.UI.Common;
 
 namespace CodeGenerator.Designer.UI.ViewModels;
 
-public sealed class DtoManagementPageViewModel : ViewModelBase
+public sealed partial class DtoManagementPageViewModel : ViewModelBase
 {
     public string? Comments
     {
@@ -21,6 +27,8 @@ public sealed class DtoManagementPageViewModel : ViewModelBase
     }
 
     public ObservableCollection<Field> Fields { get; set; } = [];
+
+    public IList<Field> SelectedProperties { get; } = new ObservableCollection<Field>();
 
     public bool IsList
     {
@@ -124,6 +132,37 @@ public sealed class DtoManagementPageViewModel : ViewModelBase
                 this.OnPropertyChanged();
             }
         }
+    }
+
+    public RelayCommand DeletePropertiesCommand { get; }
+
+    public DtoManagementPageViewModel()
+    {
+        this.DeletePropertiesCommand = new(_ => this.DeleteSelectedProperties(), _ => this.SelectedProperties.Count > 0);
+        if (this.SelectedProperties is INotifyCollectionChanged collection)
+        {
+            collection.CollectionChanged += (_, _) => this.DeletePropertiesCommand.RaiseCanExecuteChanged();
+        }
+    }
+
+    private void DeleteSelectedProperties()
+    {
+        if (this.SelectedProperties.Count == 0)
+        {
+            return;
+        }
+
+        var message = $"Delete {this.SelectedProperties.Count} selected properties?";
+        if (MessageBox.Show(message, "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+        {
+            return;
+        }
+
+        foreach (var field in this.SelectedProperties.Cast<Field>().ToList())
+        {
+            _ = this.Fields.Remove(field);
+        }
+        this.SelectedProperties.Clear();
     }
 
     public static DtoManagementPageViewModel CrateByTable(Table table) => new()
