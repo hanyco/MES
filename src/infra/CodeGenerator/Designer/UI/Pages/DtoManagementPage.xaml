@@ -7,6 +7,7 @@
     xmlns:local="clr-namespace:CodeGenerator.Designer.UI.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="clr-namespace:CodeGenerator.Designer.UI.ViewModels"
+    xmlns:common="clr-namespace:CodeGenerator.Designer.UI.Common"
     x:Name="Me"
     d:DataContext="{d:DesignInstance Type=viewmodels:DtoManagementPageViewModel}"
     d:DesignHeight="950"
@@ -100,7 +101,7 @@
                         </Grid.ColumnDefinitions>
                         <ToolBar>
                             <Button Content="New" />
-                            <Button Content="Delete" />
+                            <Button Content="Delete" Command="{Binding DeletePropertiesCommand}" />
                         </ToolBar>
                         <DataGrid
                             Grid.Row="1"
@@ -109,7 +110,10 @@
                             CanUserDeleteRows="True"
                             CanUserReorderColumns="False"
                             CanUserResizeRows="False"
-                            CanUserSortColumns="False">
+                            CanUserSortColumns="False"
+                            ItemsSource="{Binding Fields}"
+                            SelectionMode="Extended"
+                            common:DataGridExtensions.SelectedItems="{Binding SelectedProperties}">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Width="Auto" Header="Name" />
                                 <DataGridTextColumn Width="Auto" Header="Model" />
