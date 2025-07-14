@@ -1,20 +1,27 @@
-﻿using System.Collections;
-using System.Collections.Immutable;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Windows;
-using System.Windows.Input;
+
+using CodeGenerator.Application.Domain;
+using CodeGenerator.Designer.UI.Common;
 
 using DataLib;
-using CodeGenerator.Designer.UI.Common;
 
 using Library.Validations;
 
 namespace CodeGenerator.Designer.UI.ViewModels;
 
-public sealed partial class DtoManagementPageViewModel : ViewModelBase
+public sealed partial class DtoViewModel : ViewModelBase
 {
+    public DtoViewModel()
+    {
+        this.DeletePropertiesCommand = new(_ => this.DeleteSelectedProperties(), _ => this.SelectedProperties.Count > 0);
+        if (this.SelectedProperties is INotifyCollectionChanged collection)
+        {
+            collection.CollectionChanged += (_, _) => this.DeletePropertiesCommand.RaiseCanExecuteChanged();
+        }
+    }
+
     public string? Comments
     {
         get;
@@ -28,9 +35,7 @@ public sealed partial class DtoManagementPageViewModel : ViewModelBase
         }
     }
 
-    public ObservableCollection<Field> Fields { get; set; } = [];
-
-    public IList<Field> SelectedProperties { get; } = new ObservableCollection<Field>();
+    public RelayCommand DeletePropertiesCommand { get; }
 
     public bool IsList
     {
@@ -123,6 +128,8 @@ public sealed partial class DtoManagementPageViewModel : ViewModelBase
         }
     }
 
+    public ObservableCollection<Property> Properties { get; set; } = [];
+
     public string? Schema
     {
         get;
@@ -136,16 +143,15 @@ public sealed partial class DtoManagementPageViewModel : ViewModelBase
         }
     }
 
-    public RelayCommand DeletePropertiesCommand { get; }
+    public IList<Property> SelectedProperties { get; } = new ObservableCollection<Property>();
 
-    public DtoManagementPageViewModel()
+    public static DtoViewModel CrateByTable(Table table) => new()
     {
-        this.DeletePropertiesCommand = new(_ => this.DeleteSelectedProperties(), _ => this.SelectedProperties.Count > 0);
-        if (this.SelectedProperties is INotifyCollectionChanged collection)
-        {
-            collection.CollectionChanged += (_, _) => this.DeletePropertiesCommand.RaiseCanExecuteChanged();
-        }
-    }
+        Properties = new(table.Fields.Select(Property.GetByTableField)),
+        Name = table.Name,
+        ObjectId = table.ObjectId,
+        Schema = table.Schema,
+    };
 
     private void DeleteSelectedProperties()
     {
@@ -160,26 +166,10 @@ public sealed partial class DtoManagementPageViewModel : ViewModelBase
             return;
         }
 
-        foreach (var field in this.SelectedProperties.Cast<Field>().ToList())
+        foreach (var field in this.SelectedProperties.Cast<Property>().ToList())
         {
-            _ = this.Fields.Remove(field);
+            _ = this.Properties.Remove(field);
         }
         this.SelectedProperties.Clear();
     }
-
-    public static DtoManagementPageViewModel CrateByTable(Table table) => new()
-    {
-        Fields = new(table.Fields),
-        Name = table.Name,
-        ObjectId = table.ObjectId,
-        Schema = table.Schema,
-    };
-
-    public Table BuildTable() => new()
-    {
-        Fields = ImmutableArray.Create(this.Fields.ToArray()),
-        Name = this.Name.NotNull(),
-        Schema = this.Schema,
-        ObjectId = this.ObjectId,
-    };
 }

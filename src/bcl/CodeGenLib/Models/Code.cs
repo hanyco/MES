@@ -38,9 +38,11 @@ public class Code([DisallowNull] in string name, [DisallowNull] in Language lang
     /// <summary>
     /// Gets a collection of additional properties that can be dynamically added or accessed at runtime.
     /// </summary>
-    /// <remarks>This property is useful for scenarios where flexible, runtime-defined data needs to be
-    /// associated with an object. Properties can be added or accessed using dynamic syntax. Ensure proper validation
-    /// when using dynamic properties to avoid runtime errors.</remarks>
+    /// <remarks>
+    /// This property is useful for scenarios where flexible, runtime-defined data needs to be
+    /// associated with an object. Properties can be added or accessed using dynamic syntax. Ensure
+    /// proper validation when using dynamic properties to avoid runtime errors.
+    /// </remarks>
     public dynamic ExtraProperties { get; } = new Expando();
 
     /// <summary>
@@ -48,6 +50,8 @@ public class Code([DisallowNull] in string name, [DisallowNull] in Language lang
     /// based on the code's name, language, and partial status.
     /// </summary>
     public string FileName { get => field.IfNullOrEmpty(GenerateFileName(this.Name, this.Language, this.IsPartial)); } = fileName;
+
+    // Backup: public string FileName { get => field.IfNullOrEmpty(GenerateFileName(this.Name, this.Language, this.IsPartial)); } = fileName;
 
     /// <summary>
     /// Gets whether the code is partial or not.

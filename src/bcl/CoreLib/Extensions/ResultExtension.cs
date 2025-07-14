@@ -333,6 +333,9 @@ public static class ResultExtension
         return InnerThrowOnFail(result, owner, instruction);
     }
 
+    public static Task End<TResult>(this Task<TResult> resultTask)
+        where TResult : IResult => resultTask;
+
     /// <summary>
     /// Throws an exception if the result of the provided Task is a failure or the task is cancelled.
     /// </summary>
@@ -363,6 +366,9 @@ public static class ResultExtension
         var result = await @this;
         return InnerThrowOnFail(result, owner, instruction);
     }
+
+    public static Task<TValue> ParseValue<TValue>(this Task<IResult<TValue>> result)
+        => result.ThrowOnFail().GetValue();
 
     /// <summary>
     /// Throws an exception if the result of the provided Task is a failure.

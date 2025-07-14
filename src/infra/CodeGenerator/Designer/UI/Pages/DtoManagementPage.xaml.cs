@@ -45,7 +45,7 @@ public partial class DtoManagementPage : UserControl
         {
             return;
         }
-        var model = DtoManagementPageViewModel.CrateByTable(value);
+        var model = DtoViewModel.CrateByTable(value);
 
         this.DataContext = model;
     }
