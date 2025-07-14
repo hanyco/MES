@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Controls;
 
 using CodeGenerator.Application.Services;
@@ -22,11 +23,11 @@ public partial class DtoManagementPage : UserControl
     public DtoManagementPage(IModuleService moduleService)
     {
         this._moduleService = moduleService;
-        this.SetStaticViewModel();
 
         this.InitializeComponent();
 
         this.DataContextChanged += this.DtoManagementPage_DataContextChanged;
+        this.Loaded += this.DtoManagementPage_Loaded;
     }
 
     public DtoManagementPageStaticViewModel StaticViewModel
@@ -50,14 +51,20 @@ public partial class DtoManagementPage : UserControl
         this.DataContext = model;
     }
 
-    private async void SetStaticViewModel()
+    private async Task LoadStaticViewModelAsync()
     {
         var modules = await this._moduleService.GetAll().ParseValue().ToViewModel();
         this.StaticViewModel = new(modules);
+    }
+
+    private async void DtoManagementPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        this.Loaded -= this.DtoManagementPage_Loaded;
+        await this.LoadStaticViewModelAsync();
     }
 }
 
 public sealed class DtoManagementPageStaticViewModel(IEnumerable<ModuleViewModel> modules)
 {
-    public IEnumerable<ModuleViewModel> Modules { get; set; } = modules;
+    public ObservableCollection<ModuleViewModel> Modules { get; } = new(modules);
 }
