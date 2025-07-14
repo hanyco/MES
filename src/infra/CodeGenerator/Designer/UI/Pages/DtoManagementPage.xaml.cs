@@ -52,7 +52,7 @@ public partial class DtoManagementPage : UserControl
 
     private async void SetStaticViewModel()
     {
-        var modules = await this._moduleService.GetAll().ThrowOnFail().GetValue().ToViewModel();
+        var modules = await this._moduleService.GetAll().ParseValue().ToViewModel();
         this.StaticViewModel = new(modules);
     }
 }
