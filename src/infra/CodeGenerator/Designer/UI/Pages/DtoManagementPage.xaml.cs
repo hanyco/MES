@@ -2,11 +2,10 @@
 using System.Windows;
 using System.Windows.Controls;
 
-using CodeGenerator.Application.Services;
 using CodeGenerator.Designer.UI.Dialogs;
 using CodeGenerator.Designer.UI.ViewModels;
+
 using DataLib.SqlServer;
-using System.Linq;
 
 namespace CodeGenerator.Designer.UI.Pages;
 
@@ -39,6 +38,19 @@ public partial class DtoManagementPage : UserControl
     private void DtoManagementPage_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e) =>
         this.EntityDesignerGrid.IsEnabled = e.NewValue is not null;
 
+    private async void DtoManagementPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        this.Loaded -= this.DtoManagementPage_Loaded;
+        await this.LoadStaticViewModelAsync();
+    }
+
+    private async Task LoadStaticViewModelAsync()
+    {
+        var modules = await this._moduleService.GetAll().ParseValue().ToViewModel();
+        var dataTypes = SqlTypeUtils.GetSqlTypes().Select(x => x.SqlTypeName);
+        this.StaticViewModel = new(modules, dataTypes);
+    }
+
     private void NewDtoButton_Click(object sender, RoutedEventArgs e)
     {
         var (isOk, value) = SelectTableDialog.Ask();
@@ -50,24 +62,10 @@ public partial class DtoManagementPage : UserControl
 
         this.DataContext = model;
     }
-
-    private async Task LoadStaticViewModelAsync()
-    {
-        var modules = await this._moduleService.GetAll().ParseValue().ToViewModel();
-        var dataTypes = SqlTypeUtils.GetSqlTypes().Select(x => x.SqlTypeName);
-        this.StaticViewModel = new(modules, dataTypes);
-    }
-
-    private async void DtoManagementPage_Loaded(object sender, RoutedEventArgs e)
-    {
-        this.Loaded -= this.DtoManagementPage_Loaded;
-        await this.LoadStaticViewModelAsync();
-    }
 }
 
 public sealed partial class DtoManagementPageStaticViewModel(IEnumerable<ModuleViewModel> modules, IEnumerable<string> dataTypes)
 {
-    public ObservableCollection<ModuleViewModel> Modules { get; } = new(modules);
-
     public ObservableCollection<string> DataTypes { get; } = new(dataTypes);
+    public ObservableCollection<ModuleViewModel> Modules { get; } = new(modules);
 }
