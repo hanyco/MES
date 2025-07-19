@@ -94,6 +94,8 @@ public sealed class Field : IEquatable<Field>
 
     public required TypePath Type { get; init; }
 
+    public string? Comment { get; set; }
+
     public static bool operator !=(Field left, Field right) => !left.Equals(right);
 
     public static bool operator ==(Field left, Field right) => left.Equals(right);

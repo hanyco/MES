@@ -8,6 +8,11 @@ internal static class Extensions
     {
         public static Property GetByTableField(Field tableField) => new()
         {
+            DbObjectId = tableField.ObjectId.ToString(),
+            Comment = tableField.Comment,
+            IsNullable = tableField.AllowNull,
+            Name = tableField.Name,
+            TypeFullName = tableField.Type
         };
     }
 }

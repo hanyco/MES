@@ -116,16 +116,40 @@
                             ItemsSource="{Binding Properties}"
                             SelectionMode="Extended">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Width="Auto" Header="Name" Binding="{Binding Name}" />
-                                <DataGridTextColumn Width="Auto" Header="Model" Binding="{Binding DbObjectId}" />
-                                <DataGridTextColumn Width="Auto" Header="Type" Binding="{Binding TypeFullName}" />
-                                <DataGridTextColumn Width="*" Header="Comments" Binding="{Binding Comment}" />
-                                <DataGridCheckBoxColumn Width="Auto" Header="Is Nullable" Binding="{Binding IsNullable}" />
-                                <DataGridCheckBoxColumn Width="Auto" Header="Is ReadOnly" Binding="{Binding HasSetter}" />
-                                <DataGridCheckBoxColumn Width="Auto" Header="Is List" Binding="{Binding IsList}" />
+                                <DataGridTextColumn
+                                    Width="Auto"
+                                    Binding="{Binding Name}"
+                                    Header="Name" />
+                                <DataGridTextColumn
+                                    Width="Auto"
+                                    Binding="{Binding DbObjectId}"
+                                    Header="DB Object ID" />
+                                <DataGridTextColumn
+                                    Width="Auto"
+                                    Binding="{Binding TypeFullName}"
+                                    Header="Type" />
+                                <DataGridTextColumn
+                                    Width="*"
+                                    Binding="{Binding Comment}"
+                                    Header="Comments" />
+                                <DataGridCheckBoxColumn
+                                    Width="Auto"
+                                    Binding="{Binding IsNullable}"
+                                    Header="Is Nullable" />
+                                <DataGridCheckBoxColumn
+                                    Width="Auto"
+                                    Binding="{Binding HasSetter}"
+                                    Header="Is ReadOnly" />
+                                <DataGridCheckBoxColumn
+                                    Width="Auto"
+                                    Binding="{Binding IsList}"
+                                    Header="Is List" />
                             </DataGrid.Columns>
                         </DataGrid>
-                        <Grid Grid.Row="1" Grid.Column="1" DataContext="{Binding SelectedItem, ElementName=PropertiesGrid}">
+                        <Grid
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            DataContext="{Binding SelectedItem, ElementName=PropertiesGrid}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
@@ -142,9 +166,7 @@
                             </StackPanel>
                             <StackPanel Grid.Row="2" Orientation="Horizontal">
                                 <TextBlock Text="Type:" />
-                                <ComboBox
-                                    ItemsSource="{Binding ElementName=Me, Path=StaticViewModel.DataTypes}"
-                                    SelectedItem="{Binding TypeFullName}" />
+                                <ComboBox ItemsSource="{Binding ElementName=Me, Path=StaticViewModel.DataTypes}" SelectedItem="{Binding TypeFullName}" />
                                 <Button Content="..." Style="{StaticResource ShortButton}" />
                             </StackPanel>
                             <StackPanel Grid.Row="3" Orientation="Horizontal">
