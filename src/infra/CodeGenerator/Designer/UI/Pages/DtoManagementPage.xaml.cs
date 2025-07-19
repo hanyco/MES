@@ -5,6 +5,8 @@ using System.Windows.Controls;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Designer.UI.Dialogs;
 using CodeGenerator.Designer.UI.ViewModels;
+using DataLib.SqlServer;
+using System.Linq;
 
 namespace CodeGenerator.Designer.UI.Pages;
 
@@ -54,7 +56,8 @@ public partial class DtoManagementPage : UserControl
     private async Task LoadStaticViewModelAsync()
     {
         var modules = await this._moduleService.GetAll().ParseValue().ToViewModel();
-        this.StaticViewModel = new(modules);
+        var dataTypes = SqlTypeUtils.GetSqlTypes().Select(x => x.SqlTypeName);
+        this.StaticViewModel = new(modules, dataTypes);
     }
 
     private async void DtoManagementPage_Loaded(object sender, RoutedEventArgs e)
@@ -64,7 +67,9 @@ public partial class DtoManagementPage : UserControl
     }
 }
 
-public sealed class DtoManagementPageStaticViewModel(IEnumerable<ModuleViewModel> modules)
+public sealed partial class DtoManagementPageStaticViewModel(IEnumerable<ModuleViewModel> modules, IEnumerable<string> dataTypes)
 {
     public ObservableCollection<ModuleViewModel> Modules { get; } = new(modules);
+
+    public ObservableCollection<string> DataTypes { get; } = new(dataTypes);
 }
