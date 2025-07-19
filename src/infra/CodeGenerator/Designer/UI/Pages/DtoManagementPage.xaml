@@ -112,7 +112,7 @@
                             CanUserReorderColumns="False"
                             CanUserResizeRows="False"
                             CanUserSortColumns="False"
-                            ItemsSource="{Binding Fields}"
+                            ItemsSource="{Binding Properties}"
                             SelectionMode="Extended">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Width="Auto" Header="Name" />
@@ -141,7 +141,9 @@
                             </StackPanel>
                             <StackPanel Grid.Row="2" Orientation="Horizontal">
                                 <TextBlock Text="Type:" />
-                                <ComboBox />
+                                <ComboBox
+                                    ItemsSource="{Binding ElementName=Me, Path=StaticViewModel.DataTypes}"
+                                    SelectedItem="{Binding TypeFullName}" />
                                 <Button Content="..." Style="{StaticResource ShortButton}" />
                             </StackPanel>
                             <StackPanel Grid.Row="3" Orientation="Horizontal">
