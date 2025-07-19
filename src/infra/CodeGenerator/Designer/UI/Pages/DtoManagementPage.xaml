@@ -104,6 +104,7 @@
                             <Button Command="{Binding DeletePropertiesCommand}" Content="Delete" />
                         </ToolBar>
                         <DataGrid
+                            x:Name="PropertiesGrid"
                             Grid.Row="1"
                             common:DataGridExtensions.SelectedItems="{Binding SelectedProperties}"
                             AutoGenerateColumns="False"
@@ -115,16 +116,16 @@
                             ItemsSource="{Binding Properties}"
                             SelectionMode="Extended">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Width="Auto" Header="Name" />
-                                <DataGridTextColumn Width="Auto" Header="Model" />
-                                <DataGridTextColumn Width="Auto" Header="Type" />
-                                <DataGridTextColumn Width="*" Header="Comments" />
-                                <DataGridCheckBoxColumn Width="Auto" Header="Is Nullable" />
-                                <DataGridCheckBoxColumn Width="Auto" Header="Is ReadOnly" />
-                                <DataGridCheckBoxColumn Width="Auto" Header="Is List" />
+                                <DataGridTextColumn Width="Auto" Header="Name" Binding="{Binding Name}" />
+                                <DataGridTextColumn Width="Auto" Header="Model" Binding="{Binding DbObjectId}" />
+                                <DataGridTextColumn Width="Auto" Header="Type" Binding="{Binding TypeFullName}" />
+                                <DataGridTextColumn Width="*" Header="Comments" Binding="{Binding Comment}" />
+                                <DataGridCheckBoxColumn Width="Auto" Header="Is Nullable" Binding="{Binding IsNullable}" />
+                                <DataGridCheckBoxColumn Width="Auto" Header="Is ReadOnly" Binding="{Binding HasSetter}" />
+                                <DataGridCheckBoxColumn Width="Auto" Header="Is List" Binding="{Binding IsList}" />
                             </DataGrid.Columns>
                         </DataGrid>
-                        <Grid Grid.Row="1" Grid.Column="1">
+                        <Grid Grid.Row="1" Grid.Column="1" DataContext="{Binding SelectedItem, ElementName=PropertiesGrid}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
@@ -133,11 +134,11 @@
                             </Grid.RowDefinitions>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Name:" />
-                                <TextBox />
+                                <TextBox Text="{Binding Name}" />
                             </StackPanel>
                             <StackPanel Grid.Row="1" Orientation="Horizontal">
-                                <CheckBox Content="Is Nullable" />
-                                <CheckBox Content="Is List" />
+                                <CheckBox Content="Is Nullable" IsChecked="{Binding IsNullable}" />
+                                <CheckBox Content="Is List" IsChecked="{Binding IsList}" />
                             </StackPanel>
                             <StackPanel Grid.Row="2" Orientation="Horizontal">
                                 <TextBlock Text="Type:" />
@@ -148,7 +149,7 @@
                             </StackPanel>
                             <StackPanel Grid.Row="3" Orientation="Horizontal">
                                 <TextBlock Text="Comments:" />
-                                <RichTextBox />
+                                <TextBox Text="{Binding Comment}" />
                             </StackPanel>
                         </Grid>
                     </Grid>
