@@ -15,8 +15,6 @@ namespace CodeGenerator.Designer.UI.Pages;
 /// </summary>
 public partial class DtoManagementPage : UserControl
 {
-    // Using a DependencyProperty as the backing store for StaticViewModel. This enables animation,
-    // styling, binding, etc...
     public static readonly DependencyProperty StaticViewModelProperty =
         DependencyProperty.Register("StaticViewModel", typeof(DtoManagementPageStaticViewModel), typeof(DtoManagementPage), new PropertyMetadata(null));
 
