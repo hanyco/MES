@@ -9,6 +9,8 @@ using DataLib;
 
 using Library.Validations;
 
+using Microsoft.WindowsAPICodePack.Dialogs;
+
 namespace CodeGenerator.Designer.UI.ViewModels;
 
 public sealed partial class DtoViewModel : ViewModelBase
@@ -161,7 +163,8 @@ public sealed partial class DtoViewModel : ViewModelBase
         }
 
         var message = $"Delete {this.SelectedProperties.Count} selected properties?";
-        if (MessageBox.Show(message, "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+        var resp = TaskDialog.AskWithWarning(message, "Delete Confirmation");
+        if (resp != TaskDialogResult.Yes)
         {
             return;
         }
