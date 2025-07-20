@@ -95,6 +95,8 @@ public partial class App : System.Windows.Application
                         _ = services.AddSingleton<MainWindow>()
                             .AddTransient<DtoManagementPage>();
 
+                        _ = services.AddTransient<IDtoService, DtoService>();
+
                         _ = services.AddTransient(x => new SqlConnection(Settings.Default.ConnectionString));
 
                         _ = services.AddTransient<IModuleService, ModuleService>();
