@@ -1,9 +1,12 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
 using CodeGenerator.Designer.UI.Dialogs;
 using CodeGenerator.Designer.UI.ViewModels;
+using CodeGenerator.Application.Domain;
+using CodeGenerator.Application.Services;
 
 using DataLib.SqlServer;
 
@@ -18,9 +21,11 @@ public partial class DtoManagementPage : UserControl
         DependencyProperty.Register("StaticViewModel", typeof(DtoManagementPageStaticViewModel), typeof(DtoManagementPage), new PropertyMetadata(null));
 
     private readonly IModuleService _moduleService;
+    private readonly IDtoService _dtoService;
 
-    public DtoManagementPage(IModuleService moduleService)
+    public DtoManagementPage(IDtoService dtoService, IModuleService moduleService)
     {
+        this._dtoService = dtoService;
         this._moduleService = moduleService;
 
         this.InitializeComponent();
@@ -61,6 +66,31 @@ public partial class DtoManagementPage : UserControl
         var model = DtoViewModel.CrateByTable(value);
 
         this.DataContext = model;
+    }
+
+    private void GenerateCodeButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (this.DataContext is not DtoViewModel vm)
+        {
+            return;
+        }
+
+        var dto = new Dto
+        {
+            Id = vm.Id ?? 0,
+            Name = vm.Name ?? string.Empty,
+            Namespace = vm.NameSpace,
+            Comment = vm.Comments,
+            IsList = vm.IsList,
+            IsParamsDto = vm.IsParams,
+            IsResultDto = vm.IsResult,
+            IsViewModel = vm.IsViewModel,
+            DbObjectId = vm.ObjectId.ToString(),
+            ModuleId = vm.Module?.Id,
+            Properties = vm.Properties.ToList(),
+        };
+
+        _ = this._dtoService.GenerateCodes(dto);
     }
 }
 
