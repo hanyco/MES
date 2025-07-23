@@ -2,6 +2,9 @@
 
 using CodeGenerator.Application.Services;
 using CodeGenerator.Designer.UI.Pages;
+using Library.CodeGenLib;
+using Library.CodeGenLib.Back;
+using Library.CodeGenLib.CodeGenerators;
 
 using Library.Validations;
 
@@ -96,6 +99,7 @@ public partial class App : System.Windows.Application
                             .AddTransient<DtoManagementPage>();
 
                         _ = services.AddTransient<IDtoService, DtoService>();
+                        _ = services.AddTransient<ICodeGeneratorEngine<INamespace>, RoslynCodeGenerator>();
 
                         _ = services.AddTransient(x => new SqlConnection(Settings.Default.ConnectionString));
 
