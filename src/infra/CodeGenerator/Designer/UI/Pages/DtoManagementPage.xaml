@@ -13,170 +13,170 @@
     d:DesignHeight="950"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <Grid>
-        <bases:BasePage>
-            <bases:BasePage.ToolbarContent>
-                <ToolBar>
-                    <Button Click="NewDtoButton_Click" Content="New…" />
-                    <Button Content="Edit" />
-                    <Button Content="Delete…" />
-                    <Separator />
-                    <Button Click="GenerateCodeButton_Click" Content="Generate Code…" Style="{StaticResource LongToolbarButton}" />
-                    <Separator />
-                    <Button Content="Save to Disk…" Style="{StaticResource LongToolbarButton}" />
-                    <Button Content="Save to DB…" Style="{StaticResource LongToolbarButton}" />
-                </ToolBar>
-            </bases:BasePage.ToolbarContent>
-            <bases:BasePage.SidebarContent>
-                <ListBox />
-            </bases:BasePage.SidebarContent>
-            <bases:BasePage.EntityDesignerContent>
-                <Grid x:Name="EntityDesignerGrid">
+    <bases:BasePage>
+        <bases:BasePage.ToolbarContent>
+            <ToolBar>
+                <Button Click="NewDtoButton_Click" Content="New…" />
+                <Button Content="Edit" />
+                <Button Content="Delete…" />
+                <Separator />
+                <Button Click="GenerateCodeButton_Click" Content="Generate Code…" Style="{StaticResource LongToolbarButton}" />
+                <Separator />
+                <Button Content="Save to Disk…" Style="{StaticResource LongToolbarButton}" />
+                <Button Content="Save to DB…" Style="{StaticResource LongToolbarButton}" />
+            </ToolBar>
+        </bases:BasePage.ToolbarContent>
+        <bases:BasePage.SidebarContent>
+            <ListBox />
+        </bases:BasePage.SidebarContent>
+        <bases:BasePage.EntityDesignerContent>
+            <Grid x:Name="EntityDesignerGrid">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
-                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <Grid>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal">
+                        <TextBlock Text="Name:" />
+                        <TextBox Text="{Binding Name}" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal">
+                        <TextBlock Text="Namespace:" />
+                        <TextBox Text="{Binding NameSpace}" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Orientation="Horizontal">
+                        <TextBlock Text="Module:" />
+                        <ComboBox ItemsSource="{Binding ElementName=Me, Path=StaticViewModel.Modules}" SelectedItem="{Binding Module}" />
+                    </StackPanel>
+                    <Grid
+                    Grid.Row="0"
+                    Grid.RowSpan="3"
+                    Grid.Column="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
+                        <TextBlock Text="Comments:" />
+                        <RichTextBox Grid.Column="1" />
+                    </Grid>
+                    <StackPanel
+                    Grid.Row="0"
+                    Grid.RowSpan="3"
+                    Grid.Column="2">
+                        <CheckBox Content="Is Params" IsChecked="{Binding IsParams}" />
+                        <CheckBox Content="Is Result" IsChecked="{Binding IsResult}" />
+                        <CheckBox Content="Is ViewModel" IsChecked="{Binding IsViewModel}" />
+                        <CheckBox Content="Is List" IsChecked="{Binding IsList}" />
+                    </StackPanel>
+                </Grid>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Properties" />
+                    <Separator Grid.Column="1" />
+                </Grid>
+                <Grid Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ToolBar>
+                        <Button Content="New" />
+                        <Button Command="{Binding DeletePropertiesCommand}" Content="Delete" />
+                    </ToolBar>
+                    <DataGrid
+                    x:Name="PropertiesGrid"
+                    Grid.Row="1"
+                    common:DataGridExtensions.SelectedItems="{Binding SelectedProperties}"
+                    AutoGenerateColumns="False"
+                    CanUserAddRows="False"
+                    CanUserDeleteRows="True"
+                    CanUserReorderColumns="False"
+                    CanUserResizeRows="False"
+                    CanUserSortColumns="False"
+                    ItemsSource="{Binding Properties}"
+                    SelectionMode="Extended">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn
+                            Width="Auto"
+                            Binding="{Binding Name}"
+                            Header="Name" />
+                            <DataGridTextColumn
+                            Width="Auto"
+                            Binding="{Binding DbObjectId}"
+                            Header="DB Object ID" />
+                            <DataGridTextColumn
+                            Width="Auto"
+                            Binding="{Binding TypeFullName}"
+                            Header="Type" />
+                            <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding Comment}"
+                            Header="Comments" />
+                            <DataGridCheckBoxColumn
+                            Width="Auto"
+                            Binding="{Binding IsNullable}"
+                            Header="Is Nullable" />
+                            <DataGridCheckBoxColumn
+                            Width="Auto"
+                            Binding="{Binding HasSetter}"
+                            Header="Is ReadOnly" />
+                            <DataGridCheckBoxColumn
+                            Width="Auto"
+                            Binding="{Binding IsList}"
+                            Header="Is List" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Grid
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    DataContext="{Binding SelectedItem, ElementName=PropertiesGrid}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0" Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Name:" />
                             <TextBox Text="{Binding Name}" />
                         </StackPanel>
                         <StackPanel Grid.Row="1" Orientation="Horizontal">
-                            <TextBlock Text="Namespace:" />
-                            <TextBox Text="{Binding NameSpace}" />
-                        </StackPanel>
-                        <StackPanel Grid.Row="2" Orientation="Horizontal">
-                            <TextBlock Text="Module:" />
-                            <ComboBox ItemsSource="{Binding ElementName=Me, Path=StaticViewModel.Modules}" SelectedItem="{Binding Module}" />
-                        </StackPanel>
-                        <Grid
-                            Grid.Row="0"
-                            Grid.RowSpan="3"
-                            Grid.Column="1">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="Comments:" />
-                            <RichTextBox Grid.Column="1" />
-                        </Grid>
-                        <StackPanel
-                            Grid.Row="0"
-                            Grid.RowSpan="3"
-                            Grid.Column="2">
-                            <CheckBox Content="Is Params" IsChecked="{Binding IsParams}" />
-                            <CheckBox Content="Is Result" IsChecked="{Binding IsResult}" />
-                            <CheckBox Content="Is ViewModel" IsChecked="{Binding IsViewModel}" />
+                            <CheckBox Content="Is Nullable" IsChecked="{Binding IsNullable}" />
                             <CheckBox Content="Is List" IsChecked="{Binding IsList}" />
                         </StackPanel>
-                    </Grid>
-                    <Grid Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="Properties" />
-                        <Separator Grid.Column="1" />
-                    </Grid>
-                    <Grid Grid.Row="2">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <ToolBar>
-                            <Button Content="New" />
-                            <Button Command="{Binding DeletePropertiesCommand}" Content="Delete" />
-                        </ToolBar>
-                        <DataGrid
-                            x:Name="PropertiesGrid"
-                            Grid.Row="1"
-                            common:DataGridExtensions.SelectedItems="{Binding SelectedProperties}"
-                            AutoGenerateColumns="False"
-                            CanUserAddRows="False"
-                            CanUserDeleteRows="True"
-                            CanUserReorderColumns="False"
-                            CanUserResizeRows="False"
-                            CanUserSortColumns="False"
-                            ItemsSource="{Binding Properties}"
-                            SelectionMode="Extended">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn
-                                    Width="Auto"
-                                    Binding="{Binding Name}"
-                                    Header="Name" />
-                                <DataGridTextColumn
-                                    Width="Auto"
-                                    Binding="{Binding DbObjectId}"
-                                    Header="DB Object ID" />
-                                <DataGridTextColumn
-                                    Width="Auto"
-                                    Binding="{Binding TypeFullName}"
-                                    Header="Type" />
-                                <DataGridTextColumn
-                                    Width="*"
-                                    Binding="{Binding Comment}"
-                                    Header="Comments" />
-                                <DataGridCheckBoxColumn
-                                    Width="Auto"
-                                    Binding="{Binding IsNullable}"
-                                    Header="Is Nullable" />
-                                <DataGridCheckBoxColumn
-                                    Width="Auto"
-                                    Binding="{Binding HasSetter}"
-                                    Header="Is ReadOnly" />
-                                <DataGridCheckBoxColumn
-                                    Width="Auto"
-                                    Binding="{Binding IsList}"
-                                    Header="Is List" />
-                            </DataGrid.Columns>
-                        </DataGrid>
-                        <Grid
-                            Grid.Row="1"
-                            Grid.Column="1"
-                            DataContext="{Binding SelectedItem, ElementName=PropertiesGrid}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Name:" />
-                                <TextBox Text="{Binding Name}" />
-                            </StackPanel>
-                            <StackPanel Grid.Row="1" Orientation="Horizontal">
-                                <CheckBox Content="Is Nullable" IsChecked="{Binding IsNullable}" />
-                                <CheckBox Content="Is List" IsChecked="{Binding IsList}" />
-                            </StackPanel>
-                            <StackPanel Grid.Row="2" Orientation="Horizontal">
-                                <TextBlock Text="Type:" />
-                                <ComboBox ItemsSource="{Binding ElementName=Me, Path=StaticViewModel.DataTypes}" SelectedItem="{Binding TypeFullName}" />
-                                <Button Content="..." Style="{StaticResource ShortButton}" />
-                            </StackPanel>
-                            <StackPanel Grid.Row="3" Orientation="Horizontal">
-                                <TextBlock Text="Comments:" />
-                                <TextBox Text="{Binding Comment}" />
-                            </StackPanel>
-                        </Grid>
+                        <StackPanel Grid.Row="2" Orientation="Horizontal">
+                            <TextBlock Text="Type:" />
+                            <ComboBox ItemsSource="{Binding ElementName=Me, Path=StaticViewModel.DataTypes}" SelectedItem="{Binding TypeFullName}" />
+                            <Button Content="..." Style="{StaticResource ShortButton}" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="3" Orientation="Horizontal">
+                            <TextBlock Text="Comments:" />
+                            <TextBox Text="{Binding Comment}" />
+                        </StackPanel>
                     </Grid>
                 </Grid>
-            </bases:BasePage.EntityDesignerContent>
-        </bases:BasePage>
-    </Grid>
+            </Grid>
+        </bases:BasePage.EntityDesignerContent>
+        <bases:BasePage.SourceCodeContent>
+        </bases:BasePage.SourceCodeContent>
+    </bases:BasePage>
 </UserControl>
