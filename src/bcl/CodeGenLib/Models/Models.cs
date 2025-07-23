@@ -65,8 +65,8 @@ public sealed class PropertyInfo(
     in string type,
     in string name,
     in MemberAttributes? accessModifier = null,
-    in PropertyAccessor? getter = null,
-    in PropertyAccessor? setter = null) : IMemberInfo
+    in PropertyInfoAccessor? getter = null,
+    in PropertyInfoAccessor? setter = null) : IMemberInfo
 {
     public PropertyInfo()
         : this(string.Empty, string.Empty)
@@ -77,24 +77,24 @@ public sealed class PropertyInfo(
     public Collection<string> Attributes { get; } = [];
     public string? BackingFieldName { get; init; }
     public string? Comment { get; init; }
-    public PropertyAccessor? Getter { get; init; } = getter;
+    public PropertyInfoAccessor? Getter { get; init; } = getter;
     public bool HasBackingField { get; init; }
     public string? InitCode { get; init; }
     public bool IsNullable { get; init; }
     public string Name { get; init; } = name;
-    public PropertyAccessor? Setter { get; init; } = setter;
+    public PropertyInfoAccessor? Setter { get; init; } = setter;
     public TypePath Type { get; init; } = type;
 }
 
-public readonly struct PropertyAccessor(in bool has = true, in bool? isPrivate = null, in string? code = null)
+public readonly struct PropertyInfoAccessor(in bool has = true, in bool? isPrivate = null, in string? code = null)
 {
     public string? Code { get; } = code;
     public bool Has { get; } = has;
     public bool? IsPrivate { get; } = isPrivate;
 
-    public static bool operator !=(PropertyAccessor left, PropertyAccessor right) => !(left == right);
+    public static bool operator !=(PropertyInfoAccessor left, PropertyInfoAccessor right) => !(left == right);
 
-    public static bool operator ==(PropertyAccessor left, PropertyAccessor right) => left.Equals(right);
+    public static bool operator ==(PropertyInfoAccessor left, PropertyInfoAccessor right) => left.Equals(right);
 
     public void Destruct(out bool has, out bool? isPrivate, out string? code) =>
         (has, isPrivate, code) = (this.Has, this.IsPrivate, this.Code);

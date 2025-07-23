@@ -1,20 +1,23 @@
-namespace CodeGenerator.Application.Services;
-
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-
-using CodeGenerator.Application.Domain;
+﻿using System.Diagnostics.CodeAnalysis;
 
 using Library.CodeGenLib;
 using Library.CodeGenLib.Back;
 using Library.CodeGenLib.Models;
+using Library.Coding;
 using Library.Resulting;
+
 using Microsoft.Data.SqlClient;
+
+namespace CodeGenerator.Application.Services;
 
 internal sealed partial class DtoService(SqlConnection connection, ICodeGeneratorEngine<INamespace> codeGenerator) : IDtoService
 {
-    private readonly SqlConnection _connection = connection;
     private readonly ICodeGeneratorEngine<INamespace> _codeGenerator = codeGenerator;
+    private readonly SqlConnection _connection = connection;
+
+    [return: NotNull]
+    public Task<IResult> Delete(long id, CancellationToken ct = default) =>
+        Task.FromResult<IResult>(Result.Fail(new NotImplementedException()));
 
     [return: NotNull]
     public IResult<Codes> GenerateCodes(Dto dto, CancellationToken ct = default)
@@ -25,11 +28,11 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
         }
 
         var nameSpace = INamespace.New(dto.Namespace);
-        var classType = IClass.New(dto.Name) with { InheritanceModifier = InheritanceModifier.Partial };
+        var classType = new Class(dto.Name) { InheritanceModifier = InheritanceModifier.Partial };
 
         if (!dto.BaseType.IsNullOrEmpty())
         {
-            classType.AddBaseType(TypePath.Parse(dto.BaseType!));
+            _ = classType.AddBaseType(TypePath.Parse(dto.BaseType!));
         }
 
         foreach (var prop in dto.Properties)
@@ -45,14 +48,14 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
                 type = type.WithNullable(true);
             }
 
-            var setter = prop.HasSetter != false ? new PropertyAccessor() : null;
-            var getter = prop.HasGetter != false ? new PropertyAccessor() : null;
+            PropertyAccessor? setter = prop.HasSetter is not true ? null : new PropertyAccessor();
+            PropertyAccessor? getter = prop.HasGetter is not true ? null : new PropertyAccessor();
 
             var property = new CodeGenProperty(prop.Name, type, setter: setter, getter: getter);
-            classType.AddProperty(property);
+            _ = classType.AddProperty(property);
         }
 
-        nameSpace.AddType(classType);
+        _ = nameSpace.AddType(classType);
 
         var codeResult = this._codeGenerator.Generate(nameSpace, dto.Name, Languages.CSharp, true);
         return Result.From<Codes>(codeResult, new Codes(codeResult.Value));
@@ -65,10 +68,6 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
     [return: NotNull]
     public Task<IResult<Dto?>> GetById(long id, CancellationToken ct = default) =>
         Task.FromResult<IResult<Dto?>>(Result.Fail<Dto?>(new NotImplementedException()));
-
-    [return: NotNull]
-    public Task<IResult> Delete(long id, CancellationToken ct = default) =>
-        Task.FromResult<IResult>(Result.Fail(new NotImplementedException()));
 
     [return: NotNull]
     public Task<IResult<long>> Insert(Dto dto, CancellationToken ct = default) =>
