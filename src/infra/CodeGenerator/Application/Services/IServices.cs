@@ -1,6 +1,4 @@
-﻿using CodeGenerator.Application.Domain;
-
-namespace CodeGenerator.Application.Services;
+﻿namespace CodeGenerator.Application.Services;
 
 public interface IDtoService : ICodeGenerator<Dto>, ICrudService<Dto>;
 
