@@ -53,7 +53,8 @@ public partial class DtoManagementPage : UserControl
             return;
         }
 
-        _ = this._dtoService.GenerateCodes(vm.ToEntity()!);
+        var result = this._dtoService.GenerateCodes(vm.ToEntity()!);
+        this.CodesViewer.Codes = result.Value;
     }
 
     private async Task LoadStaticViewModelAsync()

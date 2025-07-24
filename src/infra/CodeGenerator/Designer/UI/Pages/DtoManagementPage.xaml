@@ -8,6 +8,7 @@
     xmlns:local="clr-namespace:CodeGenerator.Designer.UI.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="clr-namespace:CodeGenerator.Designer.UI.ViewModels"
+    xmlns:controls="clr-namespace:CodeGenerator.Designer.UI.Controls"
     x:Name="Me"
     d:DataContext="{d:DesignInstance Type=viewmodels:DtoViewModel}"
     d:DesignHeight="950"
@@ -177,6 +178,7 @@
             </Grid>
         </bases:BasePage.EntityDesignerContent>
         <bases:BasePage.SourceCodeContent>
+            <controls:CodesViewerControl x:Name="CodesViewer" />
         </bases:BasePage.SourceCodeContent>
     </bases:BasePage>
 </UserControl>
