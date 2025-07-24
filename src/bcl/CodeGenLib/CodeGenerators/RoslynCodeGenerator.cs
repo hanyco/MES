@@ -10,24 +10,21 @@ namespace Library.CodeGenLib.CodeGenerators;
 
 public sealed class RoslynCodeGenerator : ICodeGeneratorEngine<INamespace>, ICodeGeneratorEngine<IProperty>
 {
-    public IResult<string> Generate(IProperty property)
+    public string Generate(IProperty property)
     {
         Check.MustBeArgumentNotNull(property);
 
         var prop = CreateRosProperty(CreateRoot(), property);
         var statement = prop.Root.AddMembers(prop.Member).GenerateCode();
-        var result = Result.Success(ReformatCode(statement));
+        var result = ReformatCode(statement);
         return result;
     }
 
-    public IResult<string> Generate(INamespace nameSpace)
+    public string Generate(INamespace nameSpace)
     {
         // Validation checks
         Check.MustBeArgumentNotNull(nameSpace);
-        if (!nameSpace.Validate().IfSucceed(out var vr))
-        {
-            return vr.WithValue(string.Empty);
-        }
+        nameSpace.Validate().ThrowOnFail().End();
 
         // Create compilation unit
         var root = CreateRoot();
@@ -86,7 +83,7 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine<INamespace>, ICod
             .Compact();
         var finalRoot = root.WithUsings(List(distinctUsings));
 
-        return Result.Success(finalRoot.GenerateCode())!;
+        return finalRoot.GenerateCode();
     }
 
     private static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) AddAttributes(PropertyDeclarationSyntax prop, CompilationUnitSyntax root, IMember member)

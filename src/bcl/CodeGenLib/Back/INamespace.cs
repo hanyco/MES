@@ -1,5 +1,4 @@
-﻿
-namespace Library.CodeGenLib.Back;
+﻿namespace Library.CodeGenLib.Back;
 
 public interface INamespace : IValidatable
 {
@@ -55,10 +54,9 @@ public static class NamSpaceExtensions
         return ns;
     }
 
-    public static IResult<string> GenerateCode<TCodeGeneratorEngine>(this INamespace ns, TCodeGeneratorEngine engine)
+    public static string GenerateCode<TCodeGeneratorEngine>(this INamespace ns, TCodeGeneratorEngine engine)
         where TCodeGeneratorEngine : ICodeGeneratorEngine<INamespace> => engine.Generate(ns);
 
-    public static IResult<string> GenerateCode<TCodeGeneratorEngine>(this INamespace ns)
-        where TCodeGeneratorEngine : ICodeGeneratorEngine<INamespace>, new()
-        => ns.GenerateCode(new TCodeGeneratorEngine());
+    public static string GenerateCode<TCodeGeneratorEngine>(this INamespace ns)
+        where TCodeGeneratorEngine : ICodeGeneratorEngine<INamespace>, new() => ns.GenerateCode(new TCodeGeneratorEngine());
 }

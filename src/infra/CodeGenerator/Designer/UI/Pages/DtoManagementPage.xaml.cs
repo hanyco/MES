@@ -7,6 +7,8 @@ using CodeGenerator.Designer.UI.ViewModels;
 
 using DataLib.SqlServer;
 
+using Microsoft.WindowsAPICodePack.Dialogs;
+
 namespace CodeGenerator.Designer.UI.Pages;
 
 /// <summary>
@@ -53,8 +55,15 @@ public partial class DtoManagementPage : UserControl
             return;
         }
 
-        var result = this._dtoService.GenerateCodes(vm.ToEntity()!);
-        this.CodesViewer.Codes = result.Value;
+        var codeGenerationResult = this._dtoService.GenerateCodes(vm.ToEntity()!);
+        if (codeGenerationResult.IsFailure)
+        {
+            TaskDialog.Error(codeGenerationResult.Message ?? "Error occurred on generating code.");
+        }
+        else
+        {
+            this.CodesViewer.Codes = codeGenerationResult.Value;
+        }
     }
 
     private async Task LoadStaticViewModelAsync()

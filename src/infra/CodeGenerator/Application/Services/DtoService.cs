@@ -5,6 +5,7 @@ using Library.CodeGenLib.Back;
 using Library.CodeGenLib.Models;
 using Library.Coding;
 using Library.Resulting;
+using Library.Validations;
 
 using Microsoft.Data.SqlClient;
 
@@ -20,12 +21,9 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
         Task.FromResult<IResult>(Result.Fail(new NotImplementedException()));
 
     [return: NotNull]
-    public IResult<Codes> GenerateCodes(Dto dto, CancellationToken ct = default)
+    public IResult<Codes> GenerateCodes(Dto dto, CancellationToken ct = default) => CatchResult(() =>
     {
-        if (dto is null)
-        {
-            return Result.Fail<Codes>(new ArgumentNullException(nameof(dto)));
-        }
+        Check.MustBeArgumentNotNull(dto);
 
         var nameSpace = INamespace.New(dto.Namespace);
         var classType = new Class(dto.Name) { InheritanceModifier = InheritanceModifier.Partial };
@@ -58,8 +56,8 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
         _ = nameSpace.AddType(classType);
 
         var codeResult = this._codeGenerator.Generate(nameSpace, dto.Name, Languages.CSharp, true);
-        return Result.From<Codes>(codeResult, new Codes(codeResult.Value));
-    }
+        return new Codes(codeResult);
+    });
 
     [return: NotNull]
     public Task<IResult<IEnumerable<Dto>>> GetAll(CancellationToken ct = default) =>
