@@ -1,3 +1,4 @@
+using Library.Coding;
 ﻿namespace DataLib.SqlServer;
 
 public static class SqlTypeUtils
@@ -30,5 +31,18 @@ public static class SqlTypeUtils
         yield return ("varchar", typeof(string)); // Map "varchar" or "nvarchar" to string.
         yield return ("nvarchar", typeof(string)); // Map "varchar" or "nvarchar" to string.
         yield return ("bit", typeof(bool)); // Map "bit" to bool.
+    }
+
+    public static string ToNetTypeName(string sqlTypeName)
+    {
+        foreach (var (name, type) in GetSqlTypes())
+        {
+            if (string.Equals(name, sqlTypeName, StringComparison.OrdinalIgnoreCase))
+            {
+                return TypePath.AsKeyword(type.FullName ?? type.Name);
+            }
+        }
+
+        return sqlTypeName;
     }
 }
