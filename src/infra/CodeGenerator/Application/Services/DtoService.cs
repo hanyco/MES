@@ -23,10 +23,12 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
     [return: NotNull]
     public IResult<Codes> GenerateCodes(Dto dto, CancellationToken ct = default) => CatchResult(() =>
     {
-        Check.MustBeArgumentNotNull(dto);
+        Check.MustBeArgumentNotNull(dto, nameof(dto));
+        Check.MustBeNotNullOrEmpty(dto.Namespace, nameof(dto.Namespace));
+        Check.MustBeNotNullOrEmpty(dto.Name, nameof(dto.Name));
 
         var nameSpace = INamespace.New(dto.Namespace);
-        var classType = new Class(dto.Name) { InheritanceModifier = InheritanceModifier.Partial };
+        var classType = new Class(dto.Name) { InheritanceModifier = InheritanceModifier.Partial | InheritanceModifier.Sealed };
 
         if (!dto.BaseType.IsNullOrEmpty())
         {

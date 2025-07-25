@@ -7,8 +7,6 @@ using CodeGenerator.Designer.UI.ViewModels;
 
 using DataLib.SqlServer;
 
-using Library.Validations;
-
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace CodeGenerator.Designer.UI.Pages;
@@ -59,7 +57,10 @@ public partial class DtoManagementPage : UserControl
                 return;
             }
 
-            var entity = vm.ToEntity().EnsureNotNull();
+            var entity = vm
+                .ToEntity()
+                .With(x => x
+                    .Properties = [.. x.Properties.Select(p => p.With(x => x.TypeFullName = SqlTypeUtils.ToNetTypeName(p.TypeFullName ?? string.Empty)))]);
             var codeGenerationResult = this._dtoService.GenerateCodes(entity).ThrowOnFail(this, "Error occurred on generating code.");
             this.CodesViewer.Codes = codeGenerationResult.Value;
         }

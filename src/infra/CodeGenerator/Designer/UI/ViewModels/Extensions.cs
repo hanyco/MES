@@ -1,23 +1,46 @@
-﻿using DataLib.SqlServer;
-﻿namespace CodeGenerator.Designer.UI.ViewModels;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace CodeGenerator.Designer.UI.ViewModels;
 
 public static class Extensions
 {
-    extension(DtoViewModel? @this)
+    [return: NotNullIfNotNull(nameof(@this))]
+    public static Dto? ToEntity(this DtoViewModel? @this)
+        => @this is null
+        ? null
+        : Copy<DtoViewModel, Dto>(@this)
+            .With(x => x.Properties = [.. @this.Properties.Select(Copy<Property, Property>)]);
+
+    private static TDest? Copy<TSource, TDest>(TSource? @this, TDest? dest, bool throwExtension = false)
+        where TSource : class
+        where TDest : class
     {
-        public Dto? ToEntity() => @this is null ? null : new()
+        if (@this is null || dest is null)
         {
-            Id = @this.Id ?? 0,
-            Name = @this.Name ?? string.Empty,
-            Namespace = @this.NameSpace,
-            Comment = @this.Comments,
-            IsList = @this.IsList,
-            IsParamsDto = @this.IsParams,
-            IsResultDto = @this.IsResult,
-            IsViewModel = @this.IsViewModel,
-            DbObjectId = @this.ObjectId.ToString(),
-            ModuleId = @this.Module?.Id,
-            Properties = [.. @this.Properties.Select(p => p.With(x => x.TypeFullName = SqlTypeUtils.ToNetTypeName(p.TypeFullName ?? string.Empty)))],
-        };
+            return dest;
+        }
+        var destProperties = typeof(TDest).GetProperties();
+        foreach (var prop in typeof(TSource).GetProperties())
+        {
+            try
+            {
+                destProperties
+                    .FirstOrDefault(x => x.Name.Equals(prop.Name, StringComparison.OrdinalIgnoreCase))?
+                    .SetValue(dest, prop.GetValue(@this));
+            }
+            catch (Exception)
+            {
+                if (throwExtension)
+                {
+                    throw;
+                }
+            }
+        }
+        return dest;
     }
+
+    [return: NotNullIfNotNull(nameof(@this))]
+    private static TDest? Copy<TSource, TDest>(TSource? @this)
+        where TSource : class
+        where TDest : class, new() => Copy<TSource, TDest>(@this, new());
 }

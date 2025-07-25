@@ -31,6 +31,7 @@ public static class SqlTypeUtils
         yield return ("varchar", typeof(string)); // Map "varchar" or "nvarchar" to string.
         yield return ("nvarchar", typeof(string)); // Map "varchar" or "nvarchar" to string.
         yield return ("bit", typeof(bool)); // Map "bit" to bool.
+        yield return ("date", typeof(DateOnly)); // Map "date" to DateOnly.
     }
 
     public static TypePath ToNetTypeName(string sqlTypeName)
