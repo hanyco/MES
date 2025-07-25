@@ -45,11 +45,17 @@ public partial class CodesViewerControl : UserControl
                 Text = code.Statement,
                 AcceptsReturn = true,
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-                IsReadOnly = true
+                IsReadOnly = true,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                Width = double.NaN,
+                Height = double.NaN
             };
             var tab = new TabItem
             {
                 Header = code.Name,
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                VerticalContentAlignment = VerticalAlignment.Stretch,
                 Content = box
             };
             this.Tabs.Items.Add(tab);
