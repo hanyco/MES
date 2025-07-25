@@ -178,7 +178,9 @@
             </Grid>
         </bases:BasePage.EntityDesignerContent>
         <bases:BasePage.SourceCodeContent>
-            <controls:CodesViewerControl x:Name="CodesViewer" />
+            <controls:CodesViewerControl x:Name="CodesViewer"
+                                         HorizontalAlignment="Stretch"
+                                         VerticalAlignment="Stretch" />
         </bases:BasePage.SourceCodeContent>
     </bases:BasePage>
 </UserControl>
