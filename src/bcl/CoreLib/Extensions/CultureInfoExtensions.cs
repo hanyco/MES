@@ -43,7 +43,7 @@ public static class CultureInfoExtension
         /// <param name="this"> The CultureInfo this object. </param>
         /// <returns> The English version of the language name. </returns>
         public string GetLanguageEnglishName()
-            => @this.ArgumentNotNull().EnglishName.Split(['('], StringSplitOptions.RemoveEmptyEntries)[0].Trim();
+            => @this.EnsureArgumentNotNull().EnglishName.Split(['('], StringSplitOptions.RemoveEmptyEntries)[0].Trim();
 
         /// <summary>
         /// Gets the weekday state for the given culture and day of week.
@@ -52,7 +52,7 @@ public static class CultureInfoExtension
         /// <param name="day">  The day of week. </param>
         /// <returns> The weekday state. </returns>
         public WeekdayState GetWeekdayState(DayOfWeek day)
-            => GetCountryAbbreviation(@this.ArgumentNotNull()) switch
+            => GetCountryAbbreviation(@this.EnsureArgumentNotNull()) switch
             {
                 "DZ" // Algeria
                 or "BH" // Bahrain

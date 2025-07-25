@@ -596,7 +596,7 @@ public readonly struct PersianDateTime :
     /// <param name="dateTimeString">The date time string.</param>
     /// <returns></returns>
     public static PersianDateTime ParseEnglish(in string dateTimeString) =>
-        DateTime.Parse(dateTimeString.ArgumentNotNull()).ToPersianDateTime();
+        DateTime.Parse(dateTimeString.EnsureArgumentNotNull()).ToPersianDateTime();
 
     ///// <summary>
     ///// Parses a string to a PersianDateTime object.
@@ -760,7 +760,7 @@ public readonly struct PersianDateTime :
     /// <param name="result">The parsed PersianDateTime object.</param>
     /// <returns>True if the string was successfully parsed, false otherwise.</returns>
     public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out PersianDateTime result)
-        => TryParse(s.ArgumentNotNull(), out result);
+        => TryParse(s.EnsureArgumentNotNull(), out result);
 
     /// <summary>
     /// Validates a string to check if it is a valid Persian date or time.

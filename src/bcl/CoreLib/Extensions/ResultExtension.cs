@@ -40,7 +40,7 @@ public static class ResultExtension
         {
             if (@this?.IsSucceed == true)
             {
-                action.ArgumentNotNull()(@this);
+                action.EnsureArgumentNotNull()(@this);
             }
 
             return @this;
@@ -59,7 +59,7 @@ public static class ResultExtension
         {
             if (@this?.IsSucceed == false)
             {
-                action.ArgumentNotNull()();
+                action.EnsureArgumentNotNull()();
             }
 
             return @this;
@@ -70,7 +70,7 @@ public static class ResultExtension
         {
             if (@this?.IsSucceed == false)
             {
-                action.ArgumentNotNull()(@this);
+                action.EnsureArgumentNotNull()(@this);
             }
 
             return @this;
@@ -146,13 +146,13 @@ public static class ResultExtension
             @this != null && @this.IsSucceed;
 
         public void Deconstruct(out bool IsSucceed, out TValue Value) =>
-            (IsSucceed, Value) = (@this.ArgumentNotNull().IsSucceed, @this.Value);
+            (IsSucceed, Value) = (@this.EnsureArgumentNotNull().IsSucceed, @this.Value);
     }
 
     extension(Result @this)
     {
         public void Deconstruct(out bool isSucceed, out string message) =>
-            (isSucceed, message) = (@this.ArgumentNotNull().IsSucceed, @this.Message?.ToString() ?? string.Empty);
+            (isSucceed, message) = (@this.EnsureArgumentNotNull().IsSucceed, @this.Message?.ToString() ?? string.Empty);
 
         /// <summary>
         /// Throws an exception if the given Result is not successful.
@@ -244,7 +244,7 @@ public static class ResultExtension
         var r = await @this;
         if (r.IsFailure)
         {
-            next.ArgumentNotNull()();
+            next.EnsureArgumentNotNull()();
         }
 
         return r;
@@ -255,7 +255,7 @@ public static class ResultExtension
         var r = await @this;
         if (r.IsFailure)
         {
-            next.ArgumentNotNull()(r);
+            next.EnsureArgumentNotNull()(r);
         }
 
         return r;
@@ -264,13 +264,13 @@ public static class ResultExtension
     public static async Task<TResult> OnFailure<TResult>(this Task<TResult> @this, [DisallowNull] Func<TResult> next) where TResult : IResult
     {
         var r = await @this;
-        return r.IsFailure ? next.ArgumentNotNull()() : r;
+        return r.IsFailure ? next.EnsureArgumentNotNull()() : r;
     }
 
     public static async Task<TResult> OnFailure<TResult>(this Task<TResult> @this, [DisallowNull] Func<TResult, TResult> next) where TResult : IResult
     {
         var r = await @this;
-        return r.IsFailure ? next.ArgumentNotNull()(r) : r;
+        return r.IsFailure ? next.EnsureArgumentNotNull()(r) : r;
     }
 
     public static async Task<TResult> OnSucceed<TResult>(this Task<TResult> @this, [DisallowNull] Action<TResult> action) where TResult : IResult
@@ -278,7 +278,7 @@ public static class ResultExtension
         var result = await @this;
         if (result?.IsSucceed == true)
         {
-            action.ArgumentNotNull()(result);
+            action.EnsureArgumentNotNull()(result);
         }
 
         return result!;
@@ -286,13 +286,13 @@ public static class ResultExtension
 
     public static async Task<TResult?> OnSucceed<TResult>(this TResult? @this, [DisallowNull] Func<TResult, CancellationToken, Task<TResult>> next, CancellationToken token = default) where TResult : IResult
         => @this?.IsSucceed == true
-            ? await next.ArgumentNotNull()(@this, token)
+            ? await next.EnsureArgumentNotNull()(@this, token)
             : @this;
 
     public static async Task<TResult> OnSucceed<TResult>(this Task<TResult> @this, [DisallowNull] Func<TResult, CancellationToken, Task<TResult>> next, CancellationToken token = default) where TResult : IResult
     {
         var r = await @this;
-        return r.IsSucceed ? await next.ArgumentNotNull()(r, token) : r;
+        return r.IsSucceed ? await next.EnsureArgumentNotNull()(r, token) : r;
     }
 
     /// <summary>
@@ -315,7 +315,7 @@ public static class ResultExtension
     public static async Task<TOutput> OnSucceed<TValue, TOutput>(this Task<IResult<TValue>> @this, Func<TValue, TOutput> next)
     {
         var r = await @this;
-        return r.IsSucceed ? next.ArgumentNotNull()(r.Value) : default!;
+        return r.IsSucceed ? next.EnsureArgumentNotNull()(r.Value) : default!;
     }
 
     /// <summary>

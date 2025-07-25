@@ -36,7 +36,7 @@ public static class ReflectionHelper
         BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance)
         where TDelegate : class
     {
-        var methodInfo = obj.ArgumentNotNull().GetType().GetMethod(name, bindingFlags);
+        var methodInfo = obj.EnsureArgumentNotNull().GetType().GetMethod(name, bindingFlags);
         return methodInfo is not null
             ? Delegate.CreateDelegate(typeof(TDelegate), obj, methodInfo).Cast().As<TDelegate>()
             : null;
@@ -48,7 +48,7 @@ public static class ReflectionHelper
     /// name="searchPrivates">Whether to search
     public static TPropertyType? GetPropertyValue<TPropertyType>([DisallowNull] in object obj, [DisallowNull] string propName, bool searchPrivates = false)
     {
-        var type = obj.ArgumentNotNull().GetType();
+        var type = obj.EnsureArgumentNotNull().GetType();
         var properties = type.GetProperties();
         if (properties.Length == 0)
         {
@@ -71,5 +71,5 @@ public static class ReflectionHelper
     /// <c> true </c> if [is inherited or implemented] [the specified object]; otherwise, <c> false </c>.
     /// </returns>
     public static bool IsInheritedOrImplemented(in object? obj, [DisallowNull] in Type type)
-        => obj != null && type.ArgumentNotNull().IsAssignableFrom(obj.GetType());
+        => obj != null && type.EnsureArgumentNotNull().IsAssignableFrom(obj.GetType());
 }

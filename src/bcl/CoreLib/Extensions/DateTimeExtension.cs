@@ -64,7 +64,7 @@ public static class DateTimeExtension
             @this >= start && @this < end;
 
         public bool IsWeekend(CultureInfo? culture = null) =>
-            (culture ?? CultureInfo.CurrentCulture).GetWeekdayState(@this.ArgumentNotNull().DayOfWeek)
+            (culture ?? CultureInfo.CurrentCulture).GetWeekdayState(@this.EnsureArgumentNotNull().DayOfWeek)
                 is WeekdayState.Weekend or WeekdayState.WorkdayMorning;
 
         public TimeSpan ToTimeSpan() =>

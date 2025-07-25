@@ -1,4 +1,4 @@
-using Library.Coding;
+﻿using Library.Coding;
 ﻿namespace DataLib.SqlServer;
 
 public static class SqlTypeUtils
@@ -33,16 +33,16 @@ public static class SqlTypeUtils
         yield return ("bit", typeof(bool)); // Map "bit" to bool.
     }
 
-    public static string ToNetTypeName(string sqlTypeName)
+    public static TypePath ToNetTypeName(string sqlTypeName)
     {
         foreach (var (name, type) in GetSqlTypes())
         {
             if (string.Equals(name, sqlTypeName, StringComparison.OrdinalIgnoreCase))
             {
-                return TypePath.AsKeyword(type.FullName ?? type.Name);
+                return TypePath.Parse(type.FullName ?? type.Name);
             }
         }
 
-        return sqlTypeName;
+        throw new KeyNotFoundException();
     }
 }

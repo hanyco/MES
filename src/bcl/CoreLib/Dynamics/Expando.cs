@@ -99,7 +99,7 @@ public class Expando : DynamicObject, ISerializable, INotifyPropertyChanged
     public object? GetByPropName([DisallowNull] string propName)
         => this[propName];
     public static object? GetByPropName([DisallowNull] Expando expando, [DisallowNull] string propName)
-        => expando.ArgumentNotNull(nameof(expando)).GetByPropName(propName);
+        => expando.EnsureArgumentNotNull(nameof(expando)).GetByPropName(propName);
     public static object? GetByPropName([DisallowNull] dynamic expando, [DisallowNull] string propName)
         => expando.Is<Expando>(nameof(expando)).GetByPropName(propName);
 }

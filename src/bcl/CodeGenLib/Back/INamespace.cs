@@ -12,7 +12,7 @@ public interface INamespace : IValidatable
 
 public sealed class Namespace(string name) : INamespace
 {
-    public string Name { get; } = name.ArgumentNotNull();
+    public string Name { get; } = name.EnsureArgumentNotNull();
     public ISet<IType> Types { get; } = new HashSet<IType>();
     public ISet<string> UsingNamespaces { get; } = new HashSet<string>();
 

@@ -123,9 +123,9 @@ public static class DelegateExtension
         {
             try
             {
-                return action.ArgumentNotNull()();
+                return action.EnsureArgumentNotNull()();
             }
-            catch (TException ex) when (pickException.ArgumentNotNull()(ex))
+            catch (TException ex) when (pickException.EnsureArgumentNotNull()(ex))
             {
                 return default;
             }

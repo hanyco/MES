@@ -81,7 +81,7 @@ public static class Pluralizer
         in IEnumerable<(string Key, string Value)> keepables,
         in IEnumerable<(Regex Key, string Value)> rules)
     {
-        var token = word.ArgumentNotNull(nameof(word)).ToLower(CultureInfo.InvariantCulture);
+        var token = word.EnsureArgumentNotNull(nameof(word)).ToLower(CultureInfo.InvariantCulture);
         return keepables.ContainsKey(token)
             ? RestoreCase(word, token)
             : replacables.ContainsKey(token) ? RestoreCase(word, replacables.GetValueByKey(token)) : ApplyRules(token, word, rules);

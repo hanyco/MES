@@ -81,7 +81,7 @@ public static class Caster
         (T)o.Value!;
 
     public static TResult? To<T, TResult>([DisallowNull] this ICastable<T?> o, Func<T?, TResult?> converter) =>
-        converter.ArgumentNotNull()(o.ArgumentNotNull().Value);
+        converter.EnsureArgumentNotNull()(o.EnsureArgumentNotNull().Value);
 
     public static byte ToByte([DisallowNull] this ICastable o, byte defaultValue = default, IFormatProvider? formatProvider = null)
     {

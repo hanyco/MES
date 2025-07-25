@@ -662,7 +662,7 @@ public static class CodeHelper
         => _ = Lock(lockObject, ()
             =>
             {
-                action.ArgumentNotNull(nameof(action))();
+                action.EnsureArgumentNotNull(nameof(action))();
                 return true;
             });
 
@@ -677,7 +677,7 @@ public static class CodeHelper
     {
         lock (lockObject ?? CodeHelper.GetCallerMethod()!.DeclaringType!)
         {
-            return action.ArgumentNotNull()();
+            return action.EnsureArgumentNotNull()();
         }
     }
 
@@ -697,7 +697,7 @@ public static class CodeHelper
     /// <param name="args"></param>
     /// <returns></returns>
     public static T New<T>(params object[] args)
-        => Activator.CreateInstance(typeof(T), args).NotNull().Cast().To<T>();
+        => Activator.CreateInstance(typeof(T), args).EnsureNotNull().Cast().To<T>();
 
     /// <summary>
     /// Throws a new instance of the specified exception type.

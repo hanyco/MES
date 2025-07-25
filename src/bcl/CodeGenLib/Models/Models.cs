@@ -36,11 +36,11 @@ public readonly struct FieldInfo(
 
 public readonly struct MethodArgument(in TypePath type, in string? name) : IEquatable<MethodArgument>
 {
-    public string Name { get; } = name ?? TypeMemberNameHelper.ToArgName(type.ArgumentNotNull().Name);
+    public string Name { get; } = name ?? TypeMemberNameHelper.ToArgName(type.EnsureArgumentNotNull().Name);
     public TypePath Type { get; } = type;
 
     public static MethodArgument Create(TypePath arg) =>
-        new(arg.ArgumentNotNull(), TypeMemberNameHelper.ToArgName(arg.Name));
+        new(arg.EnsureArgumentNotNull(), TypeMemberNameHelper.ToArgName(arg.Name));
 
     public static bool operator !=(MethodArgument left, MethodArgument right) =>
         !(left == right);

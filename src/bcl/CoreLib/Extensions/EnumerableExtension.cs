@@ -94,7 +94,7 @@ public static class EnumerableExtension
         /// Checks if the given IEnumerable contains a key-value pair with the specified key.
         /// </summary>
         public bool ContainsKey(TKey key) =>
-            @this.ArgumentNotNull().Any(kv => kv.Key?.Equals(key) ?? key is null);
+            @this.EnsureArgumentNotNull().Any(kv => kv.Key?.Equals(key) ?? key is null);
 
         /// <summary>
         /// Gets the value from the given source by the specified key.
@@ -105,7 +105,7 @@ public static class EnumerableExtension
         /// <param name="key">    The key. </param>
         /// <returns> The value. </returns>
         public TValue GetValueByKey(TKey key) =>
-            @this.ArgumentNotNull().First(kv => kv.Key?.Equals(key) ?? key is null).Value;
+            @this.EnsureArgumentNotNull().First(kv => kv.Key?.Equals(key) ?? key is null).Value;
     }
 
     extension(Enumerable)

@@ -7,6 +7,8 @@ using CodeGenerator.Designer.UI.ViewModels;
 
 using DataLib.SqlServer;
 
+using Library.Validations;
+
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace CodeGenerator.Designer.UI.Pages;
@@ -50,19 +52,20 @@ public partial class DtoManagementPage : UserControl
 
     private void GenerateCodeButton_Click(object sender, RoutedEventArgs e)
     {
-        if (this.DataContext is not DtoViewModel vm)
+        try
         {
-            return;
-        }
+            if (this.DataContext is not DtoViewModel vm)
+            {
+                return;
+            }
 
-        var codeGenerationResult = this._dtoService.GenerateCodes(vm.ToEntity()!);
-        if (codeGenerationResult.IsFailure)
-        {
-            TaskDialog.Error(codeGenerationResult.Message ?? "Error occurred on generating code.");
-        }
-        else
-        {
+            var entity = vm.ToEntity().EnsureNotNull();
+            var codeGenerationResult = this._dtoService.GenerateCodes(entity).ThrowOnFail(this, "Error occurred on generating code.");
             this.CodesViewer.Codes = codeGenerationResult.Value;
+        }
+        catch (Exception ex)
+        {
+            TaskDialog.Error(ex.GetBaseException().Message);
         }
     }
 
