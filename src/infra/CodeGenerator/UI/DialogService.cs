@@ -28,6 +28,14 @@ public static class TaskDialogExtension
                 .WithIcon(TaskDialogStandardIcon.Error);
             _ = dialog.Show();
         }
+        public static void Error(Exception exception, string? caption = null)
+        {
+            using var dialog = Create()
+                .WithInstructionText(exception.GetBaseException().Message)
+                .WithCaption(caption ?? "Error")
+                .WithIcon(TaskDialogStandardIcon.Error);
+            _ = dialog.Show();
+        }
         public static void Warning(string instructionText, string? caption = null)
         {
             using var dialog = Create()

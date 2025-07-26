@@ -33,8 +33,8 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
     public IResult<Codes> GenerateCodes(Dto dto, CancellationToken ct = default) => CatchResult(() =>
     {
         Check.MustBeArgumentNotNull(dto, nameof(dto));
-        Check.MustBeNotNullOrEmpty(dto.Namespace, nameof(dto.Namespace));
-        Check.MustBeNotNullOrEmpty(dto.Name, nameof(dto.Name));
+        Check.MustBeNotNull(dto.Namespace, nameof(dto.Namespace));
+        Check.MustBeNotNull(dto.Name, nameof(dto.Name));
 
         var nameSpace = INamespace.New(dto.Namespace);
         var classType = new Class(dto.Name) { InheritanceModifier = InheritanceModifier.Partial | InheritanceModifier.Sealed };
@@ -95,6 +95,7 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
     [return: NotNull]
     public Task<IResult<long>> Insert(Dto dto, CancellationToken ct = default) => CatchResultAsync(async () =>
     {
+        this.Validate(dto);
         const string dtoSql = """
         INSERT INTO [infra].[Dto]
           (Name, NameSpace, ModuleId, DbObjectId, Guid, Comment, IsParamsDto, IsResultDto, IsViewModel, IsList, BaseType)
@@ -104,8 +105,8 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
 
         const string propSql = """
         INSERT INTO [infra].[Property]
-          (ParentEntityId, PropertyType, TypeFullName, Name, HasSetter, HasGetter, IsList, IsNullable, Comment, DbObjectId, Guid, ParentEntityId)
-          VALUES (@ParentEntityId, @PropertyType, @TypeFullName, @Name, @HasSetter, @HasGetter, @IsList, @IsNullable, @Comment, @DbObjectId, @Guid, @DtoId);
+          (ParentEntityId, PropertyType, TypeFullName, Name, HasSetter, HasGetter, IsList, IsNullable, Comment, DbObjectId, Guid)
+          VALUES (@ParentEntityId, @PropertyType, @TypeFullName, @Name, @HasSetter, @HasGetter, @IsList, @IsNullable, @Comment, @DbObjectId, @Guid);
         """;
 
         var wasClosed = this._connection.State != System.Data.ConnectionState.Open;
@@ -129,7 +130,7 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
                 dto.IsResultDto,
                 dto.IsViewModel,
                 dto.IsList,
-                dto.BaseType
+                dto.BaseType,
             }, trans);
 
             foreach (var prop in dto.Properties)
@@ -146,7 +147,7 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
                     prop.IsNullable,
                     prop.Comment,
                     prop.DbObjectId,
-                    prop.Guid
+                    prop.Guid,
                 }, trans);
             }
 
@@ -170,6 +171,7 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
     [return: NotNull]
     public Task<IResult> Update(long id, Dto dto, CancellationToken ct = default) => CatchResultAsync(async () =>
     {
+        this.Validate(dto);
         const string dtoSql = """
         UPDATE [infra].[Dto] SET
           Name = @Name,
@@ -253,4 +255,12 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
             }
         }
     });
+
+    private void Validate(Dto dto)
+    {
+        Check.MustBeNotNull(dto);
+        Check.MustBeNotNull(dto.Name);
+        Check.MustBeNotNull(dto.Namespace);
+        Check.MustBe(dto.ModuleId is not null and not 0);
+    }
 }

@@ -24,7 +24,7 @@ public static class Check
     /// The name of the argument being validated. Defaults to the name of the calling member.
     /// </param>
     /// <returns> The validated argument if it is not null. </returns>
-    public static T EnsureArgumentNotNull<T>([NotNull][AllowNull] this T? obj, [CallerMemberName] string? argumentName = null)
+    public static T EnsureArgumentNotNull<T>([NotNull][AllowNull] this T? obj, [CallerArgumentExpression(nameof(obj))] string? argumentName = null)
     {
         MustBeArgumentNotNull(obj, argumentName);
         return obj;
@@ -42,7 +42,7 @@ public static class Check
     /// </param>
     /// <returns> The validated object, guaranteed to be non-null. </returns>
     [return: NotNull]
-    public static T EnsureNotNull<T>([NotNull][AllowNull] this T? obj, [CallerMemberName] string? argumentName = null)
+    public static T EnsureNotNull<T>([NotNull][AllowNull] this T? obj, [CallerArgumentExpression(nameof(obj))] string? argumentName = null)
     {
         MustBeNotNull(obj, [DebuggerStepThrough, StackTraceHidden] () => new ValidationException($"{argumentName} cannot be null"));
         return obj;
@@ -73,13 +73,13 @@ public static class Check
     public static void MustBe([DoesNotReturnIf(false)] bool ok, Func<string> getMessage) =>
         MustBe(ok, [DebuggerStepThrough, StackTraceHidden] () => new CommonException(getMessage()));
 
-    public static void MustBe([NotNull][AllowNull] object? obj, string? argumentName = null) =>
+    public static void MustBe([NotNull][AllowNull] object? obj, [CallerArgumentExpression(nameof(obj))] string? argumentName = null) =>
         MustBe(obj != null, [DebuggerStepThrough, StackTraceHidden] () => new ValidationException($"invalid value for argument: {argumentName}"));
 
-    public static void MustBeArgumentNotNull([NotNull][AllowNull] object? obj, string? argumentName = null) =>
+    public static void MustBeArgumentNotNull([NotNull][AllowNull] object? obj, [CallerArgumentExpression(nameof(obj))] string? argumentName = null) =>
         MustBe(obj != null, [DebuggerStepThrough, StackTraceHidden] () => new ValidationException($"{argumentName} cannot be null"));
 
-    public static void MustBeNotNull([NotNull][AllowNull] object? obj, string? argumentName = null) =>
+    public static void MustBeNotNull([NotNull][AllowNull] object? obj, [CallerArgumentExpression(nameof(obj))] string? argumentName = null) =>
         MustBe(obj is not null, [DebuggerStepThrough, StackTraceHidden] () => new ValidationException($"{argumentName} cannot be null"));
 
     public static void MustBeNotNull([NotNull][AllowNull] object? obj, Func<string> getMessage) =>
@@ -88,9 +88,9 @@ public static class Check
     public static void MustBeNotNull([NotNull][AllowNull] object? obj, Func<Exception> getException) =>
         MustBe(obj is not null, getException);
 
-    public static void MustBeNotNullOrEmpty([NotNull][AllowNull] string? str, string? argumentName = null) =>
+    public static void MustBeNotNull([NotNull][AllowNull] string? str, [CallerArgumentExpression(nameof(str))] string? argumentName = null) =>
         MustBe(!string.IsNullOrEmpty(str), [DebuggerStepThrough, StackTraceHidden] () => new ValidationException($"{argumentName} cannot be null or empty"));
 
-    public static void MustBeNotNullOrEmpty([NotNull][AllowNull] string? str, Func<Exception> getException) =>
+    public static void MustBeNotNull([NotNull][AllowNull] string? str, Func<Exception> getException) =>
         MustBe(!string.IsNullOrEmpty(str), getException);
 }

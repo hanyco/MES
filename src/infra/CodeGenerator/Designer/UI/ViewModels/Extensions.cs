@@ -9,6 +9,7 @@ public static class Extensions
         => @this is null
         ? null
         : Copy<DtoViewModel, Dto>(@this)
+            .With(x => x.ModuleId = @this.Module?.Id)
             .With(x => x.Properties = [.. @this.Properties.Select(Copy<Property, Property>)]);
 
     private static TDest? Copy<TSource, TDest>(TSource? @this, TDest? dest, bool throwExtension = false)

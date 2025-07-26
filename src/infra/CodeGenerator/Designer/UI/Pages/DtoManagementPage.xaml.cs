@@ -106,19 +106,19 @@ public partial class DtoManagementPage : UserControl
 
             if (vm.Id is null or 0)
             {
-                var id = await this._dtoService.Insert(dto).ParseValue();
+                var id = await this._dtoService.Insert(dto).ThrowOnFail().ParseValue();
                 vm.Id = id;
             }
             else
             {
-                _ = await this._dtoService.Update(vm.Id.Value, dto).ThrowOnFail(this, "Error occurred on updating DTO.");
+                _ = await this._dtoService.Update(vm.Id.Value, dto).ThrowOnFail();
             }
 
             TaskDialog.Info("DTO saved successfully.");
         }
         catch (Exception ex)
         {
-            TaskDialog.Error(ex.GetBaseException().Message);
+            TaskDialog.Error(ex);
         }
     }
 }
