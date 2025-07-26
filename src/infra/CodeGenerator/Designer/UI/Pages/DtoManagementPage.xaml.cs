@@ -88,6 +88,39 @@ public partial class DtoManagementPage : UserControl
 
         this.DataContext = model;
     }
+
+    private async void SaveToDbButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (this.DataContext is not DtoViewModel vm)
+            {
+                return;
+            }
+
+            var dto = vm.ToEntity();
+            if (dto is null)
+            {
+                return;
+            }
+
+            if (vm.Id is null or 0)
+            {
+                var id = await this._dtoService.Insert(dto).ParseValue();
+                vm.Id = id;
+            }
+            else
+            {
+                _ = await this._dtoService.Update(vm.Id.Value, dto).ThrowOnFail(this, "Error occurred on updating DTO.");
+            }
+
+            TaskDialog.Info("DTO saved successfully.");
+        }
+        catch (Exception ex)
+        {
+            TaskDialog.Error(ex.GetBaseException().Message);
+        }
+    }
 }
 
 public sealed partial class DtoManagementPageStaticViewModel(IEnumerable<ModuleViewModel> modules, IEnumerable<string> dataTypes)
