@@ -1,5 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+
+using Dapper;
+
+using DataLib.Extensions;
 
 using Library.CodeGenLib;
 using Library.CodeGenLib.Back;
@@ -10,22 +13,21 @@ using Library.Validations;
 
 using Microsoft.Data.SqlClient;
 
-using CodeGenerator.Application.Domain;
-
-using Dapper;
-using DataLib.Extensions;
-
-
 namespace CodeGenerator.Application.Services;
 
-internal sealed partial class DtoService(SqlConnection connection, ICodeGeneratorEngine<INamespace> codeGenerator) : IDtoService
+internal sealed partial class DtoService(SqlConnection connection, ICodeGeneratorEngine<INamespace> codeGenerator) : IDtoService, IDisposable
 {
     private readonly ICodeGeneratorEngine<INamespace> _codeGenerator = codeGenerator;
     private readonly SqlConnection _connection = connection;
 
     [return: NotNull]
-    public Task<IResult> Delete(long id, CancellationToken ct = default) =>
-        CatchResultAsync(() => this._connection.ExecuteAsync("DELETE FROM [infra].[Dto] WHERE Id = @Id", new { Id = id }));
+    public Task<IResult> Delete(long id, CancellationToken ct = default) => CatchResultAsync(async () =>
+    {
+        _ = await this._connection.ExecuteAsync("DELETE FROM [infra].[Dto] WHERE Id = @Id", new { Id = id });
+    });
+
+    public void Dispose() =>
+        this._connection.Dispose();
 
     [return: NotNull]
     public IResult<Codes> GenerateCodes(Dto dto, CancellationToken ct = default) => CatchResult(() =>
@@ -69,197 +71,186 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
     });
 
     [return: NotNull]
-    public Task<IResult<IEnumerable<Dto>>> GetAll(CancellationToken ct = default) =>
-        CatchResultAsync(async () =>
-        {
-            var dtos = (await this._connection.QueryAsync<Dto>("SELECT * FROM [infra].[Dto]")).ToList();
-            foreach (var dto in dtos)
-            {
-                var props = await this._connection.QueryAsync<Property>(
-                    "SELECT * FROM [infra].[Property] WHERE DtoId = @Id",
-                    new { Id = dto.Id });
-                dto.Properties = [.. props];
-            }
-
-            return dtos.AsEnumerable();
-        });
+    public Task<IResult<IEnumerable<Dto>>> GetAll(CancellationToken ct = default) => CatchResultAsync(() =>
+        this._connection.QueryAsync<Dto>("SELECT * FROM [infra].[Dto]"));
 
     [return: NotNull]
-    public Task<IResult<Dto?>> GetById(long id, CancellationToken ct = default) =>
-        CatchResultAsync(async () =>
+    public Task<IResult<Dto?>> GetById(long id, CancellationToken ct = default) => CatchResultAsync(async () =>
+    {
+        var dto = await this._connection.QueryFirstOrDefaultAsync<Dto>(
+            "SELECT * FROM [infra].[Dto] WHERE Id = @Id",
+            new { Id = id });
+
+        if (dto is not null)
         {
-            var dto = await this._connection.QueryFirstOrDefaultAsync<Dto>(
-                "SELECT * FROM [infra].[Dto] WHERE Id = @Id",
-                new { Id = id });
+            var props = await this._connection.QueryAsync<Property>(
+                "SELECT * FROM [infra].[Property] WHERE ParentEntityId = @Id",
+                new { dto.Id });
+            dto.Properties = [.. props];
+        }
 
-            if (dto is not null)
-            {
-                var props = await this._connection.QueryAsync<Property>(
-                    "SELECT * FROM [infra].[Property] WHERE DtoId = @Id",
-                    new { Id = dto.Id });
-                dto.Properties = [.. props];
-            }
-
-            return dto;
-        });
+        return dto;
+    });
 
     [return: NotNull]
-    public Task<IResult<long>> Insert(Dto dto, CancellationToken ct = default) =>
-        CatchResultAsync(async () =>
+    public Task<IResult<long>> Insert(Dto dto, CancellationToken ct = default) => CatchResultAsync(async () =>
+    {
+        const string dtoSql = """
+        INSERT INTO [infra].[Dto]
+          (Name, NameSpace, ModuleId, DbObjectId, Guid, Comment, IsParamsDto, IsResultDto, IsViewModel, IsList, BaseType)
+          VALUES (@Name, @NameSpace, @ModuleId, @DbObjectId, @Guid, @Comment, @IsParamsDto, @IsResultDto, @IsViewModel, @IsList, @BaseType);
+        SELECT CAST(SCOPE_IDENTITY() AS bigint);
+        """;
+
+        const string propSql = """
+        INSERT INTO [infra].[Property]
+          (ParentEntityId, PropertyType, TypeFullName, Name, HasSetter, HasGetter, IsList, IsNullable, Comment, DbObjectId, Guid, ParentEntityId)
+          VALUES (@ParentEntityId, @PropertyType, @TypeFullName, @Name, @HasSetter, @HasGetter, @IsList, @IsNullable, @Comment, @DbObjectId, @Guid, @DtoId);
+        """;
+
+        var wasClosed = this._connection.State != System.Data.ConnectionState.Open;
+        if (wasClosed)
         {
-            const string dtoSql = @"INSERT INTO [infra].[Dto]
-    (Name, NameSpace, ModuleId, DbObjectId, Guid, Comment, IsParamsDto, IsResultDto, IsViewModel, IsList, BaseType)
-    VALUES (@Name, @NameSpace, @ModuleId, @DbObjectId, @Guid, @Comment, @IsParamsDto, @IsResultDto, @IsViewModel, @IsList, @BaseType);
-    SELECT CAST(SCOPE_IDENTITY() AS bigint);";
+            await this._connection.OpenAsync(ct);
+        }
 
-            const string propSql = @"INSERT INTO [infra].[Property]
-    (ParentEntityId, PropertyType, TypeFullName, Name, HasSetter, HasGetter, IsList, IsNullable, Comment, DbObjectId, Guid, DtoId)
-    VALUES (@ParentEntityId, @PropertyType, @TypeFullName, @Name, @HasSetter, @HasGetter, @IsList, @IsNullable, @Comment, @DbObjectId, @Guid, @DtoId);";
+        using var trans = this._connection.BeginTransaction();
+        try
+        {
+            var dtoId = await this._connection.ExecuteScalarAsync<long>(dtoSql, new
+            {
+                dto.Name,
+                NameSpace = dto.Namespace,
+                dto.ModuleId,
+                dto.DbObjectId,
+                dto.Guid,
+                dto.Comment,
+                dto.IsParamsDto,
+                dto.IsResultDto,
+                dto.IsViewModel,
+                dto.IsList,
+                dto.BaseType
+            }, trans);
 
-            var wasClosed = this._connection.State != System.Data.ConnectionState.Open;
+            foreach (var prop in dto.Properties)
+            {
+                _ = await this._connection.ExecuteAsync(propSql, new
+                {
+                    ParentEntityId = dtoId,
+                    prop.PropertyType,
+                    prop.TypeFullName,
+                    prop.Name,
+                    prop.HasSetter,
+                    prop.HasGetter,
+                    prop.IsList,
+                    prop.IsNullable,
+                    prop.Comment,
+                    prop.DbObjectId,
+                    prop.Guid
+                }, trans);
+            }
+
+            trans.Commit();
+            return dtoId;
+        }
+        catch
+        {
+            trans.Rollback();
+            throw;
+        }
+        finally
+        {
             if (wasClosed)
             {
-                await this._connection.OpenAsync(ct);
+                await this._connection.CloseAsync();
             }
-
-            using var trans = this._connection.BeginTransaction();
-            try
-            {
-                var dtoId = await this._connection.ExecuteScalarAsync<long>(dtoSql, new
-                {
-                    dto.Name,
-                    NameSpace = dto.Namespace,
-                    dto.ModuleId,
-                    dto.DbObjectId,
-                    dto.Guid,
-                    dto.Comment,
-                    dto.IsParamsDto,
-                    dto.IsResultDto,
-                    dto.IsViewModel,
-                    dto.IsList,
-                    dto.BaseType
-                }, trans);
-
-                foreach (var prop in dto.Properties)
-                {
-                    await this._connection.ExecuteAsync(propSql, new
-                    {
-                        ParentEntityId = dtoId,
-                        prop.PropertyType,
-                        prop.TypeFullName,
-                        prop.Name,
-                        prop.HasSetter,
-                        prop.HasGetter,
-                        prop.IsList,
-                        prop.IsNullable,
-                        prop.Comment,
-                        prop.DbObjectId,
-                        prop.Guid,
-                        DtoId = dtoId
-                    }, trans);
-                }
-
-                trans.Commit();
-                if (wasClosed)
-                {
-                    await this._connection.CloseAsync();
-                }
-                return dtoId;
-            }
-            catch
-            {
-                trans.Rollback();
-                if (wasClosed)
-                {
-                    await this._connection.CloseAsync();
-                }
-                throw;
-            }
-        });
+        }
+    });
 
     [return: NotNull]
-    public Task<IResult> Update(long id, Dto dto, CancellationToken ct = default) =>
-        CatchResultAsync(async () =>
+    public Task<IResult> Update(long id, Dto dto, CancellationToken ct = default) => CatchResultAsync(async () =>
+    {
+        const string dtoSql = """
+        UPDATE [infra].[Dto] SET
+          Name = @Name,
+          NameSpace = @NameSpace,
+          ModuleId = @ModuleId,
+          DbObjectId = @DbObjectId,
+          Guid = @Guid,
+          Comment = @Comment,
+          IsParamsDto = @IsParamsDto,
+          IsResultDto = @IsResultDto,
+          IsViewModel = @IsViewModel,
+          IsList = @IsList,
+          BaseType = @BaseType
+        WHERE Id = @Id
+        """;
+
+        const string deletePropSql = "DELETE FROM [infra].[Property] WHERE DtoId = @Id";
+        const string propSql = """
+        INSERT INTO [infra].[Property]
+          (ParentEntityId, PropertyType, TypeFullName, Name, HasSetter, HasGetter, IsList, IsNullable, Comment, DbObjectId, Guid, DtoId)
+          VALUES (@ParentEntityId, @PropertyType, @TypeFullName, @Name, @HasSetter, @HasGetter, @IsList, @IsNullable, @Comment, @DbObjectId, @Guid, @DtoId);
+        """;
+
+        var wasClosed = this._connection.State != System.Data.ConnectionState.Open;
+        if (wasClosed)
         {
-            const string dtoSql = @"UPDATE [infra].[Dto] SET
-    Name = @Name,
-    NameSpace = @NameSpace,
-    ModuleId = @ModuleId,
-    DbObjectId = @DbObjectId,
-    Guid = @Guid,
-    Comment = @Comment,
-    IsParamsDto = @IsParamsDto,
-    IsResultDto = @IsResultDto,
-    IsViewModel = @IsViewModel,
-    IsList = @IsList,
-    BaseType = @BaseType
-WHERE Id = @Id";
+            await this._connection.OpenAsync(ct);
+        }
 
-            const string deletePropSql = "DELETE FROM [infra].[Property] WHERE DtoId = @Id";
-            const string propSql = @"INSERT INTO [infra].[Property]
-    (ParentEntityId, PropertyType, TypeFullName, Name, HasSetter, HasGetter, IsList, IsNullable, Comment, DbObjectId, Guid, DtoId)
-    VALUES (@ParentEntityId, @PropertyType, @TypeFullName, @Name, @HasSetter, @HasGetter, @IsList, @IsNullable, @Comment, @DbObjectId, @Guid, @DtoId);";
+        using var trans = this._connection.BeginTransaction();
+        try
+        {
+            _ = await this._connection.ExecuteAsync(dtoSql, new
+            {
+                dto.Name,
+                NameSpace = dto.Namespace,
+                dto.ModuleId,
+                dto.DbObjectId,
+                dto.Guid,
+                dto.Comment,
+                dto.IsParamsDto,
+                dto.IsResultDto,
+                dto.IsViewModel,
+                dto.IsList,
+                dto.BaseType,
+                Id = id
+            }, trans);
 
-            var wasClosed = this._connection.State != System.Data.ConnectionState.Open;
+            _ = await this._connection.ExecuteAsync(deletePropSql, new { Id = id }, trans);
+
+            foreach (var prop in dto.Properties)
+            {
+                _ = await this._connection.ExecuteAsync(propSql, new
+                {
+                    ParentEntityId = id,
+                    prop.PropertyType,
+                    prop.TypeFullName,
+                    prop.Name,
+                    prop.HasSetter,
+                    prop.HasGetter,
+                    prop.IsList,
+                    prop.IsNullable,
+                    prop.Comment,
+                    prop.DbObjectId,
+                    prop.Guid,
+                    DtoId = id
+                }, trans);
+            }
+            trans.Commit();
+        }
+        catch
+        {
+            trans.Rollback();
+            throw;
+        }
+        finally
+        {
             if (wasClosed)
             {
-                await this._connection.OpenAsync(ct);
+                await this._connection.CloseAsync();
             }
-
-            using var trans = this._connection.BeginTransaction();
-            try
-            {
-                await this._connection.ExecuteAsync(dtoSql, new
-                {
-                    dto.Name,
-                    NameSpace = dto.Namespace,
-                    dto.ModuleId,
-                    dto.DbObjectId,
-                    dto.Guid,
-                    dto.Comment,
-                    dto.IsParamsDto,
-                    dto.IsResultDto,
-                    dto.IsViewModel,
-                    dto.IsList,
-                    dto.BaseType,
-                    Id = id
-                }, trans);
-
-                await this._connection.ExecuteAsync(deletePropSql, new { Id = id }, trans);
-
-                foreach (var prop in dto.Properties)
-                {
-                    await this._connection.ExecuteAsync(propSql, new
-                    {
-                        ParentEntityId = id,
-                        prop.PropertyType,
-                        prop.TypeFullName,
-                        prop.Name,
-                        prop.HasSetter,
-                        prop.HasGetter,
-                        prop.IsList,
-                        prop.IsNullable,
-                        prop.Comment,
-                        prop.DbObjectId,
-                        prop.Guid,
-                        DtoId = id
-                    }, trans);
-                }
-
-                trans.Commit();
-                if (wasClosed)
-                {
-                    await this._connection.CloseAsync();
-                }
-            }
-            catch
-            {
-                trans.Rollback();
-                if (wasClosed)
-                {
-                    await this._connection.CloseAsync();
-                }
-                throw;
-            }
-        });
+        }
+    });
 }

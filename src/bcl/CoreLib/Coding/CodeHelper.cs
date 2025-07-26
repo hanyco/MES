@@ -34,7 +34,7 @@ public static class CodeHelper
     /// <typeparam name="TResult"></typeparam>
     /// <param name="action"></param>
     /// <returns></returns>
-    public static async Task<Result<TResult?>> CatchAsync<TResult>(Func<Task<TResult?>> action)
+    public static async Task<IResult<TResult?>> CatchAsync<TResult>(Func<Task<TResult?>> action)
     {
         try
         {
@@ -51,7 +51,7 @@ public static class CodeHelper
     /// </summary>
     /// <param name="action"></param>
     /// <returns></returns>
-    public static Result CatchResult([DisallowNull] in Action action)
+    public static IResult CatchResult([DisallowNull] in Action action)
     {
         Check.MustBeArgumentNotNull(action);
         try
@@ -61,7 +61,7 @@ public static class CodeHelper
         }
         catch (Exception ex)
         {
-            return Result.Fail(ex.GetBaseException().Message, ex);
+            return Result.Fail(ex);
         }
     }
 
@@ -72,7 +72,7 @@ public static class CodeHelper
     /// <param name="action"></param>
     /// <param name="onErrorResult"></param>
     /// <returns></returns>
-    public static Result<TResult?> CatchResult<TResult>([DisallowNull] in Func<TResult> action, TResult? onErrorResult = default)
+    public static IResult<TResult> CatchResult<TResult>([DisallowNull] in Func<TResult> action, TResult? onErrorResult = default)
     {
         Check.MustBeArgumentNotNull(action);
         try
@@ -93,7 +93,7 @@ public static class CodeHelper
     /// <param name="method"></param>
     /// <param name="arg"></param>
     /// <returns></returns>
-    public static Result<IEnumerable<TResult?>?> CatchResult<TResult, TArg>(Func<TArg, IEnumerable<TResult?>> method, TArg arg)
+    public static IResult<IEnumerable<TResult?>?> CatchResult<TResult, TArg>(Func<TArg, IEnumerable<TResult?>> method, TArg arg)
     {
         Check.MustBeArgumentNotNull(method);
         try
@@ -114,7 +114,7 @@ public static class CodeHelper
     /// <param name="func"></param>
     /// <param name="defaultResult"></param>
     /// <returns></returns>
-    public static async Task<Result<TResult>> CatchResult<TResult>(Func<Task<TResult>> func, TResult? defaultResult = default)
+    public static async Task<IResult<TResult>> CatchResult<TResult>(Func<Task<TResult>> func, TResult? defaultResult = default)
     {
         Check.MustBeArgumentNotNull(func);
         try
@@ -133,7 +133,7 @@ public static class CodeHelper
     /// </summary>
     /// <param name="func"></param>
     /// <returns></returns>
-    public static async Task<Result> CatchResultAsync(Func<Task<Result>> func)
+    public static async Task<IResult> CatchResultAsync(Func<Task<IResult>> func)
     {
         Check.MustBeArgumentNotNull(func);
         try
@@ -151,7 +151,7 @@ public static class CodeHelper
     /// </summary>
     /// <param name="func"></param>
     /// <returns></returns>
-    public static async Task<Result> CatchResultAsync(Func<Task> func)
+    public static async Task<IResult> CatchResultAsync(Func<Task> func)
     {
         Check.MustBeArgumentNotNull(func);
         try
@@ -165,7 +165,7 @@ public static class CodeHelper
         }
     }
 
-    public static async Task<Result<TValue>> CatchResultAsync<TValue>(Func<Task<TValue>> func)
+    public static async Task<IResult<TValue>> CatchResultAsync<TValue>(Func<Task<TValue>> func)
     {
         Check.MustBeArgumentNotNull(func);
         try
@@ -208,7 +208,7 @@ public static class CodeHelper
     /// Func<TResult1, Result<TResult2>> to compose.</param> <param name="onFail">The
     /// Func<Result<TResult1>, Result<TResult2>> to invoke if the first result is a failure.</param>
     /// <returns>A Func<Result<TResult2>> composed of the two functions.</returns>
-    public static Func<Result<TResult2>> Compose<TArgs, TResult2>([DisallowNull] this Func<Result<TArgs>> create, Func<TArgs, Result<TResult2>> func, Func<Result<TArgs>, Result<TResult2>>? onFail = null)
+    public static Func<IResult<TResult2>> Compose<TArgs, TResult2>([DisallowNull] this Func<IResult<TArgs>> create, Func<TArgs, IResult<TResult2>> func, Func<IResult<TArgs>, IResult<TResult2>>? onFail = null)
     {
         Check.MustBeArgumentNotNull(create);
         Check.MustBeArgumentNotNull(func);
