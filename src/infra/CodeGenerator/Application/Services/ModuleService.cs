@@ -11,7 +11,6 @@ using Library.Resulting;
 
 using Microsoft.Data.SqlClient;
 
-using Action = Library.Extensions.DelegateExtension;
 
 namespace CodeGenerator.Application.Services;
 
@@ -19,9 +18,9 @@ internal sealed class ModuleService(SqlConnection connection) : IModuleService
 {
     [return: NotNull]
     public Task<IResult<IEnumerable<Module>>> GetAll(CancellationToken ct = default) =>
-        Action.ToResult(() => connection.QueryAsync<Module>("SELECT * FROM [infra].[Module]"));
+        CatchResultAsync(() => connection.QueryAsync<Module>("SELECT * FROM [infra].[Module]"));
 
     [return: NotNull]
     public Task<IResult<Module?>> GetById(long id, CancellationToken ct = default) =>
-        Action.ToResult(() => connection.QueryFirstOrDefaultAsync<Module>("SELECT * FROM [infra].[Module] WHERE Id = @Id", new { Id = id }));
+        CatchResultAsync(() => connection.QueryFirstOrDefaultAsync<Module>("SELECT * FROM [infra].[Module] WHERE Id = @Id", new { Id = id }));
 }
