@@ -13,7 +13,12 @@ public static class Extensions
             .With(x => x.DbObjectId = @this.ObjectId.ToString())
             .With(x => x.Properties = [.. @this.Properties
                         .Select(Copy<Property, Property>)!
-                        .ForEach<IEnumerable<Property>, Property>(x => x.PropertyType = 0)]);
+                        .ForEach<IEnumerable<Property>, Property>(x =>
+                        {
+                            var typeName = x.TypeFullName ?? "System.Object";
+                            var type = Type.GetType(typeName) ?? typeof(object);
+                            x.PropertyType = (int)Type.GetTypeCode(type);
+                        })]);
 
     private static TDest? Copy<TSource, TDest>(TSource? @this, TDest? dest, bool throwExtension = false)
         where TSource : class
