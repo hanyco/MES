@@ -96,6 +96,7 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
     public Task<IResult<long>> Insert(Dto dto, CancellationToken ct = default) => CatchResultAsync(async () =>
     {
         this.Validate(dto);
+
         const string dtoSql = """
         INSERT INTO [infra].[Dto]
           (Name, NameSpace, ModuleId, DbObjectId, Guid, Comment, IsParamsDto, IsResultDto, IsViewModel, IsList, BaseType)
@@ -171,7 +172,7 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
     [return: NotNull]
     public Task<IResult> Update(long id, Dto dto, CancellationToken ct = default) => CatchResultAsync(async () =>
     {
-        this.Validate(dto);
+        this.Validate(dto).ThrowOnFail().End();
         const string dtoSql = """
         UPDATE [infra].[Dto] SET
           Name = @Name,
@@ -256,11 +257,12 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
         }
     });
 
-    private void Validate(Dto dto)
-    {
-        Check.MustBeNotNull(dto);
-        Check.MustBeNotNull(dto.Name);
-        Check.MustBeNotNull(dto.Namespace);
-        Check.MustBe(dto.ModuleId is not null and not 0);
-    }
+    private IResult Validate(Dto dto) =>
+        CatchResult(() =>
+        {
+            Check.MustBeNotNull(dto);
+            Check.MustBeNotNull(dto.Name);
+            Check.MustBeNotNull(dto.Namespace);
+            Check.MustBe(dto.ModuleId is not null and not 0);
+        });
 }

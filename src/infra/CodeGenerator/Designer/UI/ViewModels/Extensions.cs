@@ -10,7 +10,10 @@ public static class Extensions
         ? null
         : Copy<DtoViewModel, Dto>(@this)
             .With(x => x.ModuleId = @this.Module?.Id)
-            .With(x => x.Properties = [.. @this.Properties.Select(Copy<Property, Property>)]);
+            .With(x => x.DbObjectId = @this.ObjectId.ToString())
+            .With(x => x.Properties = [.. @this.Properties
+                        .Select(Copy<Property, Property>)!
+                        .ForEach<IEnumerable<Property>, Property>(x => x.PropertyType = 0)]);
 
     private static TDest? Copy<TSource, TDest>(TSource? @this, TDest? dest, bool throwExtension = false)
         where TSource : class

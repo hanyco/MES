@@ -7,6 +7,8 @@ using CodeGenerator.Designer.UI.ViewModels;
 
 using DataLib.SqlServer;
 
+using Library.Exceptions;
+
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace CodeGenerator.Designer.UI.Pages;
@@ -95,15 +97,10 @@ public partial class DtoManagementPage : UserControl
         {
             if (this.DataContext is not DtoViewModel vm)
             {
-                return;
+                throw new ValidationException("No view model found.");
             }
 
             var dto = vm.ToEntity();
-            if (dto is null)
-            {
-                return;
-            }
-
             if (vm.Id is null or 0)
             {
                 var id = await this._dtoService.Insert(dto).ThrowOnFail().ParseValue();

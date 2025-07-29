@@ -29,14 +29,14 @@ public static class EnumerableExtension
 
     extension<TItem>(IEnumerable<TItem> @this)
     {
-        public void ForEach(Action<TItem> action)
-        {
-            var items = @this.ToImmutableArray();
-            foreach (var item in items)
-            {
-                action(item);
-            }
-        }
+        //public void ForEach(Action<TItem> action)
+        //{
+        //    var items = @this.ToImmutableArray();
+        //    foreach (var item in items)
+        //    {
+        //        action(item);
+        //    }
+        //}
 
         public IEnumerable<TItem> AddRangeImmuted(params TItem[] items)
         {
@@ -175,5 +175,19 @@ public static class EnumerableExtension
         cancellationToken.ThrowIfCancellationRequested();
         var result = items.ToList();
         return result;
+    }
+
+    [return: NotNullIfNotNull(nameof(@this))]
+    public static TItems? ForEach<TItems, TItem>(this TItems? @this, in Action<TItem> action)
+        where TItems : IEnumerable<TItem>
+    {
+        if (@this?.Any() is true)
+        {
+            foreach (var item in @this)
+            {
+                action(item);
+            }
+        }
+        return @this;
     }
 }
