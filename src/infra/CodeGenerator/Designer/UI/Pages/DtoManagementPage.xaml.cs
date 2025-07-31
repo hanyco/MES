@@ -4,6 +4,7 @@ using System.Windows.Controls;
 
 using CodeGenerator.Designer.UI.Dialogs;
 using CodeGenerator.Designer.UI.ViewModels;
+using System.IO;
 
 using DataLib.Extensions;
 using DataLib.SqlServer;
@@ -121,6 +122,44 @@ public partial class DtoManagementPage : UserControl
         catch (Exception ex)
         {
             TaskDialog.Error(ex);
+        }
+    }
+
+    private void SaveGeneratedCodesToDisk_Click(object sender, RoutedEventArgs e)
+        => this.SaveGeneratedCodesToDisk();
+
+    private void SaveGeneratedCodesToDisk()
+    {
+        try
+        {
+            var codes = this.GenerateCode();
+            var dialog = new CommonOpenFileDialog { IsFolderPicker = true };
+            if (dialog.ShowDialog() != CommonFileDialogResult.Ok)
+            {
+                return;
+            }
+
+            foreach (var code in codes)
+            {
+                if (code is null)
+                {
+                    continue;
+                }
+
+                try
+                {
+                    var path = Path.Combine(dialog.FileName, code.FileName);
+                    File.WriteAllText(path, code.Statement);
+                }
+                catch (Exception ex)
+                {
+                    TaskDialog.Error(ex.GetBaseException().Message);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            TaskDialog.Error(ex.GetBaseException().Message);
         }
     }
 }
