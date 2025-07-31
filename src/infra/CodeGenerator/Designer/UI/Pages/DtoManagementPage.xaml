@@ -23,7 +23,7 @@
                 <Separator />
                 <Button Click="GenerateCodeButton_Click" Content="Generate Code…" Style="{StaticResource LongToolbarButton}" />
                 <Separator />
-                <Button Content="Save to Disk…" Style="{StaticResource LongToolbarButton}" />
+                <Button Click="SaveGeneratedCodesToDisk_Click" Content="Save to Disk…" Style="{StaticResource LongToolbarButton}" />
                 <Button Click="SaveToDbButton_Click" Content="Save to DB…" Style="{StaticResource LongToolbarButton}" />
             </ToolBar>
         </bases:BasePage.ToolbarContent>
