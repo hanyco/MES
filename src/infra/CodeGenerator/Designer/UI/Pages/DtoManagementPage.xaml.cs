@@ -8,6 +8,7 @@ using CodeGenerator.Designer.UI.ViewModels;
 using DataLib.Extensions;
 using DataLib.SqlServer;
 
+using Library.CodeGenLib.Models;
 using Library.Exceptions;
 
 using Microsoft.WindowsAPICodePack.Dialogs;
@@ -55,20 +56,25 @@ public partial class DtoManagementPage : UserControl
     {
         try
         {
-            if (this.DataContext is not DtoViewModel vm)
-            {
-                return;
-            }
-
-            static Property setTypeName(Property p) => p.With(x => x.TypeFullName = SqlType.ToNetType(p.TypeFullName!).FullName);
-            var entity = vm.ToEntity().With(x => x.Properties = [.. x.Properties.Select(setTypeName)]);
-            var codeGenerationResult = this._dtoService.GenerateCodes(entity).ThrowOnFail();
-            this.CodesViewer.Codes = codeGenerationResult.Value;
+            this.CodesViewer.Codes = this.GenerateCode();
         }
         catch (Exception ex)
         {
             TaskDialog.Error(ex.GetBaseException().Message);
         }
+    }
+
+    private Codes GenerateCode()
+    {
+        if (this.DataContext is not DtoViewModel vm)
+        {
+            throw new Exception("no dto is created yet.");
+        }
+
+        static Property setTypeName(Property p) => p.With(x => x.TypeFullName = SqlType.ToNetType(p.TypeFullName!).FullName);
+        var entity = vm.ToEntity().With(x => x.Properties = [.. x.Properties.Select(setTypeName)]);
+        var codeGenerationResult = this._dtoService.GenerateCodes(entity).ThrowOnFail();
+        return codeGenerationResult.Value;
     }
 
     private async Task LoadStaticViewModelAsync()
