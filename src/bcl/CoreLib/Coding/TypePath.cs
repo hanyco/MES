@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace Library.Coding;
 
-[DebuggerStepThrough, StackTraceHidden]
+//[DebuggerStepThrough, StackTraceHidden]
 public sealed class TypePath : IEquatable<TypePath>
 {
     private static readonly Dictionary<Type, string> _primitiveTypes = new()
@@ -381,6 +381,20 @@ public sealed class TypePath : IEquatable<TypePath>
                 => !(mainType.Contains('<') && !mainType.Contains("<>"));
         }
     }
+
+    public int GetTypeCode() =>
+        GetTypeCode(this.FullPath);
+
+    public static int GetTypeCode(string fullPath)
+    {
+        Check.MustBeArgumentNotNull(fullPath);
+        var type = Type.GetType(fullPath) ?? throw new InvalidCastException($"cannot cat `{fullPath}` to .NET type.");
+        var result = (int)Type.GetTypeCode(type);
+        return result;
+    }
+
+    public static int GetTypeCode(Type type) =>
+        (int)Type.GetTypeCode(type);
 }
 
 internal static class TypPathHelpers

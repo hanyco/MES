@@ -84,8 +84,12 @@ public static class ResultExtension
         /// <param name="owner">       The owner of the result. </param>
         /// <param name="instruction"> The instruction associated with the result. </param>
         /// <returns> The given result. </returns>
-        public TResult ThrowOnFail(object? owner = null, string? instruction = null)
+        public TResult ThrowOnFail(object? owner, string? instruction = null)
             => InnerThrowOnFail(@this, owner, instruction);
+        public TResult ThrowOnFail(string? instruction = null)
+            => InnerThrowOnFail(@this, null, instruction);
+        public TResult ThrowOnFail()
+            => InnerThrowOnFail(@this, null, null);
 
         /// <summary>
         /// Tries to parse the input object as a <typeparamref name="TResult" /> object and

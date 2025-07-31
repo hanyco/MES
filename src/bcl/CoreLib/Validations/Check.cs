@@ -24,6 +24,7 @@ public static class Check
     /// The name of the argument being validated. Defaults to the name of the calling member.
     /// </param>
     /// <returns> The validated argument if it is not null. </returns>
+    [return: NotNull]
     public static T EnsureArgumentNotNull<T>([NotNull][AllowNull] this T? obj, [CallerArgumentExpression(nameof(obj))] string? argumentName = null)
     {
         MustBeArgumentNotNull(obj, argumentName);
@@ -45,6 +46,13 @@ public static class Check
     public static T EnsureNotNull<T>([NotNull][AllowNull] this T? obj, [CallerArgumentExpression(nameof(obj))] string? argumentName = null)
     {
         MustBeNotNull(obj, [DebuggerStepThrough, StackTraceHidden] () => new ValidationException($"{argumentName} cannot be null"));
+        return obj;
+    }
+
+    [return: NotNullIfNotNull(nameof(obj))]
+    public static T? Ensure<T>(this T? obj, Func<T?, bool> validate, Func<Exception> getExceptionIfNot)
+    {
+        MustBe(validate(obj), getExceptionIfNot);
         return obj;
     }
 

@@ -1,6 +1,6 @@
 ﻿namespace Library.Extensions;
 
-internal static class DisposableExtention
+public static class DisposableExtention
 {
     extension(IDisposable)
     {

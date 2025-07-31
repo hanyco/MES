@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using CodeGenerator.Designer.UI.Dialogs;
 using CodeGenerator.Designer.UI.ViewModels;
 
+using DataLib.Extensions;
 using DataLib.SqlServer;
 
 using Library.Exceptions;
@@ -59,11 +60,9 @@ public partial class DtoManagementPage : UserControl
                 return;
             }
 
-            var entity = vm
-                .ToEntity()
-                .With(x => x
-                    .Properties = [.. x.Properties.Select(p => p.With(x => x.TypeFullName = SqlTypeUtils.ToNetTypeName(p.TypeFullName ?? string.Empty)))]);
-            var codeGenerationResult = this._dtoService.GenerateCodes(entity).ThrowOnFail(this, "Error occurred on generating code.");
+            static Property setTypeName(Property p) => p.With(x => x.TypeFullName = SqlType.ToNetType(p.TypeFullName!).FullName);
+            var entity = vm.ToEntity().With(x => x.Properties = [.. x.Properties.Select(setTypeName)]);
+            var codeGenerationResult = this._dtoService.GenerateCodes(entity).ThrowOnFail();
             this.CodesViewer.Codes = codeGenerationResult.Value;
         }
         catch (Exception ex)
@@ -75,7 +74,7 @@ public partial class DtoManagementPage : UserControl
     private async Task LoadStaticViewModelAsync()
     {
         var modules = await this._moduleService.GetAll().ParseValue().ToViewModel();
-        var dataTypes = SqlTypeUtils.GetSqlTypes().Select(x => x.SqlTypeName);
+        var dataTypes = SqlType.GetSqlTypes().Select(x => x.SqlType.SqlTypeName);
         this.StaticViewModel = new(modules, dataTypes);
     }
 

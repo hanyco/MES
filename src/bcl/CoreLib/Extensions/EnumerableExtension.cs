@@ -177,6 +177,18 @@ public static class EnumerableExtension
         return result;
     }
 
+    public static void ForEach<TItem>(this IEnumerable<TItem> @this, in Action<TItem> action)
+    {
+        if (@this?.Any() is not true)
+        {
+            return;
+        }
+        foreach (var item in @this)
+        {
+            action(item);
+        }
+    }
+
     [return: NotNullIfNotNull(nameof(@this))]
     public static TItems? ForEach<TItems, TItem>(this TItems? @this, in Action<TItem> action)
         where TItems : IEnumerable<TItem>

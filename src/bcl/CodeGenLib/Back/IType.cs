@@ -26,12 +26,12 @@ public abstract class TypeBase(in string name) : IType
         Result.Success();
 }
 
-public static class TypeExtensions
+public static class TypeExtension
 {
-    public static TType AddBaseType<TType>(this TType type, TypePath baseType) where TType : IType
+    public static TType AddBaseType<TType>(this TType @this, TypePath baseType) where TType : IType
     {
-        _ = (type?.BaseTypes.Add(baseType));
-        return type;
+        _ = (@this?.BaseTypes.Add(baseType));
+        return @this;
     }
 
     public static IClass AddBaseType<TBaseType>(this IClass type)

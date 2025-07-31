@@ -1,5 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
+using DataLib.Extensions;
+using DataLib.SqlServer;
+
+using Library.Coding;
+
 namespace CodeGenerator.Designer.UI.ViewModels;
 
 public static class Extensions
@@ -15,11 +20,15 @@ public static class Extensions
                         .Select(Copy<Property, Property>)!
                         .ForEach<IEnumerable<Property>, Property>(x =>
                         {
-                            var typeName = x.TypeFullName ?? "System.Object";
-                            var type = Type.GetType(typeName) ?? typeof(object);
-                            x.PropertyType = (int)Type.GetTypeCode(type);
+                            x.PropertyType = x.TypeFullName.IsNullOrEmpty()
+                                ? TypePath.GetTypeCode(nameof(Object))
+                                : SqlType.IsSqlType(x.TypeFullName)
+                                    ? SqlType.ToSqlType(x.TypeFullName).GetTypeCode()
+                                    : TypePath.GetTypeCode(x.TypeFullName);
                         })]);
 
+    [return: NotNullIfNotNull(nameof(@this))]
+    [return: NotNullIfNotNull(nameof(dest))]
     private static TDest? Copy<TSource, TDest>(TSource? @this, TDest? dest, bool throwExtension = false)
         where TSource : class
         where TDest : class
