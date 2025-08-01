@@ -36,8 +36,11 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
         Check.MustBeNotNull(dto.Namespace, nameof(dto.Namespace));
         Check.MustBeNotNull(dto.Name, nameof(dto.Name));
 
+        var className = $"{dto.Name}Dto";
         var nameSpace = INamespace.New(dto.Namespace);
-        var classType = new Class(dto.Name) { InheritanceModifier = InheritanceModifier.Partial | InheritanceModifier.Sealed };
+        var classType = new Class(className) { InheritanceModifier = InheritanceModifier.Partial | InheritanceModifier.Sealed };
+        _ = nameSpace.AddType(classType);
+        var mainClass = this._codeGenerator.Generate(nameSpace, className, Languages.CSharp, false);
 
         if (!dto.BaseType.IsNullOrEmpty())
         {
@@ -64,10 +67,8 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
             _ = classType.AddProperty(property);
         }
 
-        _ = nameSpace.AddType(classType);
-
-        var codeResult = this._codeGenerator.Generate(nameSpace, dto.Name, Languages.CSharp, true);
-        return new Codes(codeResult);
+        var partClass = this._codeGenerator.Generate(nameSpace, className, Languages.CSharp, true);
+        return new Codes(mainClass, partClass);
     });
 
     [return: NotNull]
@@ -95,7 +96,7 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
     [return: NotNull]
     public Task<IResult<long>> Insert(Dto dto, CancellationToken ct = default) => CatchResultAsync(async () =>
     {
-        this.Validate(dto);
+        _ = this.Validate(dto);
 
         const string dtoSql = """
         INSERT INTO [infra].[Dto]

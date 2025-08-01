@@ -72,7 +72,7 @@ public partial class DtoManagementPage : UserControl
     {
         if (this.DataContext is not DtoViewModel vm)
         {
-            throw new Exception("no dto is created yet.");
+            throw new Exception("No DTO is created yet.");
         }
 
         static Property setTypeName(Property p) => p.With(x => x.TypeFullName = SqlType.ToNetType(p.TypeFullName!).FullName);
@@ -149,7 +149,7 @@ public partial class DtoManagementPage : UserControl
             }
             _ = TaskDialog.Create()
                 .WithIcon(TaskDialogStandardIcon.Information)
-                .WithInstructionText("Saved.")
+                .WithInstructionText("Codes are saved.")
                 .WithCaption("Save code")
                 .AddOkButton()
                 .AddButton("openFolderButton", "Open destination _folder", (d, __) =>
