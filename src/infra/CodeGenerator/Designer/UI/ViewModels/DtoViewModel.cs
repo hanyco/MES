@@ -1,13 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Windows;
 
-using CodeGenerator.Application.Domain;
 using CodeGenerator.Designer.UI.Common;
+using CodeGenerator.UI.Dialogs;
 
 using DataLib;
-
-using Library.Validations;
 
 using Microsoft.WindowsAPICodePack.Dialogs;
 

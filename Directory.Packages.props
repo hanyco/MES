@@ -24,5 +24,6 @@
 		<PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageVersion Include="WindowsAPICodePack-Core" Version="1.1.2" />
 		<PackageVersion Include="WindowsAPICodePack-Shell" Version="1.1.1" />
+		<PackageVersion Include="Microsoft-Windows10-APICodePack-Core" Version="1.1.8" />
 	</ItemGroup>
 </Project>

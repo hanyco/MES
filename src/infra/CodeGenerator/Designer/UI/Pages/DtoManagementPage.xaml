@@ -4,11 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:bases="clr-namespace:CodeGenerator.Designer.UI.Bases"
     xmlns:common="clr-namespace:CodeGenerator.Designer.UI.Common"
+    xmlns:controls="clr-namespace:CodeGenerator.Designer.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:CodeGenerator.Designer.UI.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="clr-namespace:CodeGenerator.Designer.UI.ViewModels"
-    xmlns:controls="clr-namespace:CodeGenerator.Designer.UI.Controls"
     x:Name="Me"
     d:DataContext="{d:DesignInstance Type=viewmodels:DtoViewModel}"
     d:DesignHeight="950"
@@ -21,10 +21,19 @@
                 <Button Content="Edit" />
                 <Button Content="Delete…" />
                 <Separator />
-                <Button Click="GenerateCodeButton_Click" Content="Generate Code…" Style="{StaticResource LongToolbarButton}" />
+                <Button
+                    Click="GenerateCodeButton_Click"
+                    Content="Generate Code…"
+                    Style="{StaticResource LongToolbarButton}" />
                 <Separator />
-                <Button Click="SaveGeneratedCodesToDisk_Click" Content="Save to Disk…" Style="{StaticResource LongToolbarButton}" />
-                <Button Click="SaveToDbButton_Click" Content="Save to DB…" Style="{StaticResource LongToolbarButton}" />
+                <Button
+                    Click="SaveGeneratedCodesToDisk_Click"
+                    Content="Save to Disk…"
+                    Style="{StaticResource LongToolbarButton}" />
+                <Button
+                    Click="SaveToDbButton_Click"
+                    Content="Save to DB…"
+                    Style="{StaticResource LongToolbarButton}" />
             </ToolBar>
         </bases:BasePage.ToolbarContent>
         <bases:BasePage.SidebarContent>
@@ -62,9 +71,9 @@
                         <ComboBox ItemsSource="{Binding ElementName=Me, Path=StaticViewModel.Modules}" SelectedItem="{Binding Module}" />
                     </StackPanel>
                     <Grid
-                    Grid.Row="0"
-                    Grid.RowSpan="3"
-                    Grid.Column="1">
+                        Grid.Row="0"
+                        Grid.RowSpan="3"
+                        Grid.Column="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
@@ -73,9 +82,9 @@
                         <RichTextBox Grid.Column="1" />
                     </Grid>
                     <StackPanel
-                    Grid.Row="0"
-                    Grid.RowSpan="3"
-                    Grid.Column="2">
+                        Grid.Row="0"
+                        Grid.RowSpan="3"
+                        Grid.Column="2">
                         <CheckBox Content="Is Params" IsChecked="{Binding IsParams}" />
                         <CheckBox Content="Is Result" IsChecked="{Binding IsResult}" />
                         <CheckBox Content="Is ViewModel" IsChecked="{Binding IsViewModel}" />
@@ -104,52 +113,52 @@
                         <Button Command="{Binding DeletePropertiesCommand}" Content="Delete" />
                     </ToolBar>
                     <DataGrid
-                    x:Name="PropertiesGrid"
-                    Grid.Row="1"
-                    common:DataGridExtensions.SelectedItems="{Binding SelectedProperties}"
-                    AutoGenerateColumns="False"
-                    CanUserAddRows="False"
-                    CanUserDeleteRows="True"
-                    CanUserReorderColumns="False"
-                    CanUserResizeRows="False"
-                    CanUserSortColumns="False"
-                    ItemsSource="{Binding Properties}"
-                    SelectionMode="Extended">
+                        x:Name="PropertiesGrid"
+                        Grid.Row="1"
+                        common:DataGridExtensions.SelectedItems="{Binding SelectedProperties}"
+                        AutoGenerateColumns="False"
+                        CanUserAddRows="False"
+                        CanUserDeleteRows="True"
+                        CanUserReorderColumns="False"
+                        CanUserResizeRows="False"
+                        CanUserSortColumns="False"
+                        ItemsSource="{Binding Properties}"
+                        SelectionMode="Extended">
                         <DataGrid.Columns>
                             <DataGridTextColumn
-                            Width="Auto"
-                            Binding="{Binding Name}"
-                            Header="Name" />
+                                Width="Auto"
+                                Binding="{Binding Name}"
+                                Header="Name" />
                             <DataGridTextColumn
-                            Width="Auto"
-                            Binding="{Binding DbObjectId}"
-                            Header="DB Object ID" />
+                                Width="Auto"
+                                Binding="{Binding DbObjectId}"
+                                Header="DB Object ID" />
                             <DataGridTextColumn
-                            Width="Auto"
-                            Binding="{Binding TypeFullName}"
-                            Header="Type" />
+                                Width="Auto"
+                                Binding="{Binding TypeFullName}"
+                                Header="Type" />
                             <DataGridTextColumn
-                            Width="*"
-                            Binding="{Binding Comment}"
-                            Header="Comments" />
+                                Width="*"
+                                Binding="{Binding Comment}"
+                                Header="Comments" />
                             <DataGridCheckBoxColumn
-                            Width="Auto"
-                            Binding="{Binding IsNullable}"
-                            Header="Is Nullable" />
+                                Width="Auto"
+                                Binding="{Binding IsNullable}"
+                                Header="Is Nullable" />
                             <DataGridCheckBoxColumn
-                            Width="Auto"
-                            Binding="{Binding HasSetter}"
-                            Header="Is ReadOnly" />
+                                Width="Auto"
+                                Binding="{Binding HasSetter}"
+                                Header="Is ReadOnly" />
                             <DataGridCheckBoxColumn
-                            Width="Auto"
-                            Binding="{Binding IsList}"
-                            Header="Is List" />
+                                Width="Auto"
+                                Binding="{Binding IsList}"
+                                Header="Is List" />
                         </DataGrid.Columns>
                     </DataGrid>
                     <Grid
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    DataContext="{Binding SelectedItem, ElementName=PropertiesGrid}">
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        DataContext="{Binding SelectedItem, ElementName=PropertiesGrid}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -178,9 +187,10 @@
             </Grid>
         </bases:BasePage.EntityDesignerContent>
         <bases:BasePage.SourceCodeContent>
-            <controls:CodesViewerControl x:Name="CodesViewer"
-                                         HorizontalAlignment="Stretch"
-                                         VerticalAlignment="Stretch" />
+            <controls:CodesViewerControl
+                x:Name="CodesViewer"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch" />
         </bases:BasePage.SourceCodeContent>
     </bases:BasePage>
 </UserControl>

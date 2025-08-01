@@ -3,7 +3,7 @@ using System.Windows;
 
 using CodeGenerator.Designer.UI.Common;
 using CodeGenerator.Designer.UI.Pages;
-using CodeGenerator.UI;
+using CodeGenerator.UI.Dialogs;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.WindowsAPICodePack.Dialogs;
@@ -62,4 +62,17 @@ public partial class MainWindow : Window
 
     private void MenuItem_Click(object sender, RoutedEventArgs e)
         => this.MainContent.Content = this._services.GetService<DtoManagementPage>();
+
+    private void AboutMenuItem_Click(object sender, RoutedEventArgs e) =>
+        TaskDialog.Create()
+            .WithCaption("About HanyCo Code Generator")
+            .WithInstructionText("HanyCo Infrastructure Code Generator")
+            .WithText("""
+                HanyCo Code Generator Enterprise 2025 (64-bit) - Preview
+                Version 2.20.10 Preview 1.0
+                @ 2025 Hamoonazeh Corporation.
+                All rights reserved.
+                """)
+            .WithFooter("Warning: HanyCo Code Generator is protected by copyright law and international treaties. Unauthorized reproduction or distribution of this program, or any portion of it, may result in severe civil and criminal penalties, and will be prosecuted to the maximum extent possible under the law.", TaskDialogStandardIcon.Warning)
+            .Show();
 }

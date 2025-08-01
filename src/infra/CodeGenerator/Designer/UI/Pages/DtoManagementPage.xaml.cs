@@ -1,15 +1,18 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 
 using CodeGenerator.Designer.UI.Dialogs;
 using CodeGenerator.Designer.UI.ViewModels;
-using System.IO;
+using CodeGenerator.UI.Dialogs;
 
 using DataLib.Extensions;
 using DataLib.SqlServer;
 
 using Library.CodeGenLib.Models;
+using Library.Coding;
 using Library.Exceptions;
 
 using Microsoft.WindowsAPICodePack.Dialogs;
@@ -133,29 +136,28 @@ public partial class DtoManagementPage : UserControl
         try
         {
             var codes = this.GenerateCode();
-            var dialog = new CommonOpenFileDialog { IsFolderPicker = true };
-            if (dialog.ShowDialog() != CommonFileDialogResult.Ok)
+            var (dialogResult, selectedPath) = FolderBrowserDialog.Show();
+            if (dialogResult != DialogResult.OK)
             {
                 return;
             }
 
-            foreach (var code in codes)
+            foreach (var code in codes.Compact())
             {
-                if (code is null)
-                {
-                    continue;
-                }
-
-                try
-                {
-                    var path = Path.Combine(dialog.FileName, code.FileName);
-                    File.WriteAllText(path, code.Statement);
-                }
-                catch (Exception ex)
-                {
-                    TaskDialog.Error(ex.GetBaseException().Message);
-                }
+                var path = Path.Combine(selectedPath, code.FileName);
+                File.WriteAllText(path, code.Statement);
             }
+            _ = TaskDialog.Create()
+                .WithIcon(TaskDialogStandardIcon.Information)
+                .WithInstructionText("Saved.")
+                .WithCaption("Save code")
+                .AddOkButton()
+                .AddButton("openFolderButton", "Open destination _folder", (d, __) =>
+                {
+                    _ = Process.Start("explorer.exe", selectedPath);
+                    d.Close();
+                })
+                .Show();
         }
         catch (Exception ex)
         {

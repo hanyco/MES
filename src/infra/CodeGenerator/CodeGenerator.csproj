@@ -15,9 +15,10 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
-    <PackageReference Include="WindowsAPICodePack-Core" />
-	  <PackageReference Include="WindowsAPICodePack-Shell" />
+    <!--<PackageReference Include="WindowsAPICodePack-Core" />
+	  <PackageReference Include="WindowsAPICodePack-Shell" />-->
 	  <!--<PackageReference Include="Microsoft.WindowsAPICodePack.Dialogs" />-->
+	  <PackageReference Include="Microsoft-Windows10-APICodePack-Core" />
   </ItemGroup>
 
   <ItemGroup>
