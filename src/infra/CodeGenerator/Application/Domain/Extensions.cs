@@ -37,4 +37,21 @@ internal static class Extensions
         var value = await task;
         return value.ToViewModel();
     }
+
+    [return: NotNullIfNotNull(nameof(model))]
+    public static DtoViewModel ToViewModel(this Dto model) => new()
+    {
+        Id = model.Id,
+        Name = model.Name,
+    };
+
+    [return: NotNull]
+    public static IEnumerable<DtoViewModel> ToViewModel([AllowNull] this IEnumerable<Dto> models)
+        => models?.Select(ToViewModel) ?? [];
+
+    public static async Task<IEnumerable<DtoViewModel>> ToViewModel(this Task<IEnumerable<Dto>> task)
+    {
+        var value = await task;
+        return value.ToViewModel();
+    }
 }
