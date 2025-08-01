@@ -85,7 +85,8 @@ public partial class DtoManagementPage : UserControl
     {
         var modules = await this._moduleService.GetAll().ParseValue().ToViewModel();
         var dataTypes = SqlType.GetSqlTypes().Select(x => x.SqlType.SqlTypeName);
-        this.StaticViewModel = new(modules, dataTypes);
+        var dtos = await this._dtoService.GetAll().ParseValue().ToViewModel();
+        this.StaticViewModel = new(modules, dataTypes, dtos);
     }
 
     private void NewDtoButton_Click(object sender, RoutedEventArgs e)
@@ -166,8 +167,12 @@ public partial class DtoManagementPage : UserControl
     }
 }
 
-public sealed partial class DtoManagementPageStaticViewModel(IEnumerable<ModuleViewModel> modules, IEnumerable<string> dataTypes)
+public sealed partial class DtoManagementPageStaticViewModel(
+    IEnumerable<ModuleViewModel> modules,
+    IEnumerable<string> dataTypes,
+    IEnumerable<DtoViewModel> dtos)
 {
     public ObservableCollection<string> DataTypes { get; } = new(dataTypes);
     public ObservableCollection<ModuleViewModel> Modules { get; } = new(modules);
+    public ObservableCollection<DtoViewModel> Dtos { get; } = new(dtos);
 }
