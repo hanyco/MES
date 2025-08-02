@@ -1,4 +1,6 @@
-﻿namespace CodeGenerator.Application.Services;
+using System.IO;
+
+namespace CodeGenerator.Application.Services;
 
 public sealed class Settings
 {
@@ -10,9 +12,34 @@ public sealed class Settings
         => Default = new Settings { ConnectionString = connectionString };
 }
 
-public sealed class FolderStructure
+public sealed partial class FolderStructure
 {
-    public string DefaultRoot { get; set; } = default!;
+    private string _defaultRoot = default!;
+
+    public string DefaultRoot
+    {
+        get => _defaultRoot;
+        set
+        {
+            _defaultRoot = value;
+
+            if (string.IsNullOrWhiteSpace(PagesPath))
+                PagesPath = Path.Combine(_defaultRoot, "Presentation", "Pages");
+            if (string.IsNullOrWhiteSpace(ComponentsPath))
+                ComponentsPath = Path.Combine(_defaultRoot, "Presentation", "Components");
+            if (string.IsNullOrWhiteSpace(ViewModelsPath))
+                ViewModelsPath = Path.Combine(_defaultRoot, "Presentation", "ViewModels");
+            if (string.IsNullOrWhiteSpace(ControllersPath))
+                ControllersPath = Path.Combine(_defaultRoot, "Presentation", "Controllers");
+            if (string.IsNullOrWhiteSpace(ApplicationPath))
+                ApplicationPath = Path.Combine(_defaultRoot, "Application");
+            if (string.IsNullOrWhiteSpace(ApplicationModelsPath))
+                ApplicationModelsPath = Path.Combine(ApplicationPath!, "Models");
+            if (string.IsNullOrWhiteSpace(RepositoriesPath))
+                RepositoriesPath = Path.Combine(_defaultRoot, "Infrastructure", "Repositories");
+        }
+    }
+
     public string? PagesPath { get; set; }
     public string? ComponentsPath { get; set; }
     public string? ViewModelsPath { get; set; }
