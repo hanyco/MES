@@ -14,7 +14,9 @@ using RosMember = Microsoft.CodeAnalysis.CSharp.Syntax.MemberDeclarationSyntax;
 using RosMethod = Microsoft.CodeAnalysis.CSharp.Syntax.BaseMethodDeclarationSyntax;
 using RosProp = Microsoft.CodeAnalysis.CSharp.Syntax.PropertyDeclarationSyntax;
 
+#pragma warning disable IDE0130 // Namespace does not match folder structure
 namespace Library.Extensions;
+#pragma warning restore IDE0130 // Namespace does not match folder structure
 
 public static class RoslynHelper
 {
@@ -111,12 +113,12 @@ public static class RoslynHelper
     }
 
     public static CompilationUnitSyntax AddNameSpace(this CompilationUnitSyntax root, BaseNamespaceDeclarationSyntax nameSpace) =>
-        root.ArgumentNotNull().WithMembers(SingletonList<RosMember>(nameSpace));
+        root.EnsureArgumentNotNull().WithMembers(SingletonList<RosMember>(nameSpace));
 
     public static CompilationUnitSyntax AddNameSpace(this CompilationUnitSyntax root, string nameSpaceName, out BaseNamespaceDeclarationSyntax nameSpace)
     {
         nameSpace = CreateNamespace(nameSpaceName);
-        return root.ArgumentNotNull().WithMembers(SingletonList<RosMember>(nameSpace));
+        return root.EnsureArgumentNotNull().WithMembers(SingletonList<RosMember>(nameSpace));
     }
 
     public static RosClass AddProperty<TPropertyType>(this RosClass type, string name, bool hasSetAccessor = true, bool hasGetAccessor = true) =>
@@ -193,7 +195,7 @@ public static class RoslynHelper
     }
 
     public static CompilationUnitSyntax AddUsingNameSpace(this CompilationUnitSyntax root, string usingNamespace) =>
-        root.ArgumentNotNull().AddUsings(CreateUsingNameSpace(usingNamespace));
+        root.EnsureArgumentNotNull().AddUsings(CreateUsingNameSpace(usingNamespace));
 
     public static BaseNamespaceDeclarationSyntax AddUsingNameSpace(this BaseNamespaceDeclarationSyntax nameSpace, string usingNamespace)
     {
@@ -352,10 +354,10 @@ public static class RoslynHelper
         syntaxNode.NormalizeWhitespace().ToFullString();
 
     public static string GetName(this RosFld field) =>
-        field.ArgumentNotNull().Declaration.Variables.First().Identifier.ValueText;
+        field.EnsureArgumentNotNull().Declaration.Variables.First().Identifier.ValueText;
 
     public static string GetName(this RosClass type) =>
-        type.ArgumentNotNull().Identifier.ValueText;
+        type.EnsureArgumentNotNull().Identifier.ValueText;
 
     public static string ReformatCode(string sourceCode) =>
         CSharpSyntaxTree.ParseText(sourceCode)
@@ -477,7 +479,7 @@ public sealed class RosMethodInfo(
     public string? Body { get; } = body ?? "throw new NotImplementedException();";
     public bool IsExtensionMethod { get; } = isExtensionMethod;
     public IEnumerable<SyntaxKind> Modifiers { get; } = modifiers ?? [SyntaxKind.PublicKeyword];
-    public string Name { get; } = name.ArgumentNotNull();
+    public string Name { get; } = name.EnsureArgumentNotNull();
     public IEnumerable<MethodParameterInfo> Parameters { get; } = parameters ?? [];
     public TypePath ReturnType { get; } = returnType ?? new("void");
     public bool IsAsync { get; } = isAsync;

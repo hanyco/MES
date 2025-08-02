@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
+﻿namespace Library.Exceptions;
 
-namespace Library.Exceptions;
-public sealed class BreakException:Exception
+public sealed class BreakException : Exception
 {
     [DoesNotReturn]
     public static void Throw() =>

@@ -1,6 +1,4 @@
-﻿using Library.Globalization.DataTypes;
-
-namespace Library.Helpers;
+﻿namespace Library.Globalization;
 
 /// <summary>
 /// Provides helper methods for converting between PersianDayOfWeek and DayOfWeek, and for checking
@@ -15,25 +13,20 @@ public static class GlobalizationExtensions
     /// <summary>
     /// Checks if the given PersianDayOfWeek is a holiday.
     /// </summary>
-    /// <param name="dow">The PersianDayOfWeek to check.</param>
-    /// <returns>True if the given PersianDayOfWeek is a holiday, false otherwise.</returns>
+    /// <param name="dow"> The PersianDayOfWeek to check. </param>
+    /// <returns> True if the given PersianDayOfWeek is a holiday, false otherwise. </returns>
     public static bool IsPersianHoliday(this PersianDayOfWeek dow) =>
         dow switch
         {
-            PersianDayOfWeek.Jomeh or PersianDayOfWeek.Shanbeh => true,
-            PersianDayOfWeek.YekShanbeh => false,
-            PersianDayOfWeek.DoShanbeh => false,
-            PersianDayOfWeek.SeShanbeh => false,
-            PersianDayOfWeek.ChaharShanbeh => false,
-            PersianDayOfWeek.PanjShanbeh => false,
+            PersianDayOfWeek.PanjShanbeh or PersianDayOfWeek.Jomeh => true,
             _ => false,
         };
 
     /// <summary>
     /// Converts a PersianDayOfWeek to a DayOfWeek.
     /// </summary>
-    /// <param name="dow">The PersianDayOfWeek to convert.</param>
-    /// <returns>The DayOfWeek corresponding to the given PersianDayOfWeek.</returns>
+    /// <param name="dow"> The PersianDayOfWeek to convert. </param>
+    /// <returns> The DayOfWeek corresponding to the given PersianDayOfWeek. </returns>
     public static DayOfWeek ToDayOfWeek(this PersianDayOfWeek dow) =>
         dow switch
         {
@@ -50,8 +43,8 @@ public static class GlobalizationExtensions
     /// <summary>
     /// Converts a DayOfWeek to a PersianDayOfWeek.
     /// </summary>
-    /// <param name="dow">The DayOfWeek to convert.</param>
-    /// <returns>The PersianDayOfWeek corresponding to the given DayOfWeek.</returns>
+    /// <param name="dow"> The DayOfWeek to convert. </param>
+    /// <returns> The PersianDayOfWeek corresponding to the given DayOfWeek. </returns>
     public static PersianDayOfWeek ToPersianDayOfWeek(this DayOfWeek dow) =>
         dow switch
         {

@@ -15,6 +15,7 @@ public class ValidationException : LibraryExceptionBase, IValidationException
     {
     }
 
+    [DoesNotReturn]
     public static void Throw(string message) =>
         throw new ValidationException(message);
 }

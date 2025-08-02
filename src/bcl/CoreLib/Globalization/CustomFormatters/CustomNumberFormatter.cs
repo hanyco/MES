@@ -1,6 +1,5 @@
-using System.Globalization;
+﻿using System.Globalization;
 
-using Library.Globalization.DataTypes;
 
 namespace Library.Globalization.CustomFormatters;
 

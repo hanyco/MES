@@ -10,24 +10,21 @@ namespace Library.CodeGenLib.CodeGenerators;
 
 public sealed class RoslynCodeGenerator : ICodeGeneratorEngine<INamespace>, ICodeGeneratorEngine<IProperty>
 {
-    public IResult<string> Generate(IProperty property)
+    public string Generate(IProperty property)
     {
         Check.MustBeArgumentNotNull(property);
 
         var prop = CreateRosProperty(CreateRoot(), property);
         var statement = prop.Root.AddMembers(prop.Member).GenerateCode();
-        var result = Result.Success(ReformatCode(statement));
+        var result = ReformatCode(statement);
         return result;
     }
 
-    public IResult<string> Generate(INamespace nameSpace)
+    public string Generate(INamespace nameSpace)
     {
         // Validation checks
         Check.MustBeArgumentNotNull(nameSpace);
-        if (!nameSpace.Validate().TryParse(out var vr))
-        {
-            return vr.WithValue(string.Empty);
-        }
+        nameSpace.Validate().ThrowOnFail().End();
 
         // Create compilation unit
         var root = CreateRoot();
@@ -40,7 +37,7 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine<INamespace>, ICod
         {
             var modifiers = GeneratorHelper.ToModifiers(type.AccessModifier, type.InheritanceModifier);
             // Create type
-            var rosType = CreateType(TypePath.New(type.Name), modifiers);
+            var rosType = CreateType(TypePath.Parse(type.Name), modifiers);
 
             // Add base class or interfaces to type
             foreach (var baseType in type.BaseTypes)
@@ -52,7 +49,7 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine<INamespace>, ICod
             // Add attributes
             foreach (var attribute in type.Attributes.Compact())
             {
-                var attributeType = TypePath.New(attribute.Name);
+                var attributeType = TypePath.Parse(attribute.Name);
                 foreach (var ns in attributeType.GetNameSpaces().Compact())
                 {
                     root = root.AddUsingNameSpace(ns);
@@ -86,7 +83,7 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine<INamespace>, ICod
             .Compact();
         var finalRoot = root.WithUsings(List(distinctUsings));
 
-        return Result.Success(finalRoot.GenerateCode())!;
+        return finalRoot.GenerateCode();
     }
 
     private static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) AddAttributes(PropertyDeclarationSyntax prop, CompilationUnitSyntax root, IMember member)
@@ -123,7 +120,7 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine<INamespace>, ICod
 
         foreach (var attribute in method.Attributes.Compact())
         {
-            var attributeType = TypePath.New(attribute.Name);
+            var attributeType = TypePath.Parse(attribute.Name);
             foreach (var ns in attributeType.GetNameSpaces().Compact())
             {
                 root = root.AddUsingNameSpace(ns);

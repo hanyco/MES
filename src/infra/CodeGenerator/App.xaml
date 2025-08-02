@@ -2,7 +2,15 @@
     x:Class="CodeGenerator.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:CodeGenerator"
-    StartupUri="MainWindow.xaml">
-    <Application.Resources />
+    xmlns:local="clr-namespace:CodeGenerator">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Designer/UI/Styles/LightTheme.xaml" />
+                <ResourceDictionary Source="Designer/UI/Styles/Controls.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
 </Application>
+
+<!--  StartupUri="MainWindow.xaml"  -->

@@ -16,4 +16,3 @@ global using Library.Extensions;
 
 global using Library.CodeGenLib.Helpers;
 
-global using Library.Helpers;

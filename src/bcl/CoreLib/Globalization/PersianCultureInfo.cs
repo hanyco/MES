@@ -5,10 +5,10 @@ namespace Library.Globalization;
 public sealed class PersianCultureInfo : CultureInfo
 {
     /// <summary>
-    ///     Initializes a new instance of the <see cref="PersianCultureInfo" /> class.
+    /// Initializes a new instance of the <see cref="PersianCultureInfo" /> class.
     /// </summary>
-    /// <param name="cultureName">Name of the culture.</param>
-    /// <param name="useUserOverride">if set to <c>true</c> [use user override].</param>
+    /// <param name="cultureName">     Name of the culture. </param>
+    /// <param name="useUserOverride"> if set to <c> true </c> [use user override]. </param>
     public PersianCultureInfo(string cultureName = "fa-IR", bool useUserOverride = true)
         : base(cultureName, useUserOverride)
     {
@@ -21,40 +21,40 @@ public sealed class PersianCultureInfo : CultureInfo
         var persianCalendar = new PersianCalendar();
         optionalCalendars.Insert(0, persianCalendar);
 
-        this.OptionalCalendars = optionalCalendars.ToArray();
+        this.OptionalCalendars = [.. optionalCalendars];
         this.Calendar = this.OptionalCalendars[0];
         var dateTimeFormatInfo = new DateTimeFormatInfo
         {
-            AbbreviatedMonthGenitiveNames = PersianDateTime.PersianMonthNameAbbrsInPersian.AddImmuted(" ").ToArray(),
-            AbbreviatedMonthNames = PersianDateTime.EnglishMonthNameAbbrsInPersian.AddImmuted(" ").ToArray(),
+            AbbreviatedMonthGenitiveNames = [.. PersianDateTime.PersianMonthNameAbbrsInPersian.AddImmuted(" ")],
+            AbbreviatedMonthNames = [.. PersianDateTime.EnglishMonthNameAbbrsInPersian.AddImmuted(" ")],
             AMDesignator = CultureConstants.AM_DESIGNATOR,
             CalendarWeekRule = CalendarWeekRule.FirstFourDayWeek,
             DateSeparator = CultureConstants.DATE_SEPARATOR,
-            DayNames = PersianDateTime.PersianWeekDays.Select(wd => wd.Name).ToArray(),
+            DayNames = [.. PersianDateTime.PersianWeekDays.Select(wd => wd.Name)],
             FirstDayOfWeek = DayOfWeek.Saturday,
             FullDateTimePattern = CultureConstants.FULL_DATE_TIME_PATTERN,
             LongDatePattern = CultureConstants.LONG_DATE_PATTERN,
-            AbbreviatedDayNames = PersianDateTime.PersianWeekDaysAbbrs.Select(abbr => abbr.Name).ToArray(),
+            AbbreviatedDayNames = [.. PersianDateTime.PersianWeekDaysAbbrs.Select(abbr => abbr.Name)],
             //dateTimeFormatInfo.Calendar = persianCalendar;
             LongTimePattern = CultureConstants.LONG_TIME_PATTERN,
-            MonthGenitiveNames = PersianDateTime.PersianMonthNamesInGenitive.AddImmuted(" ").ToArray(),
-            MonthNames = PersianDateTime.PersianMonthNamesInPersian.AddImmuted(" ").ToArray(),
+            MonthGenitiveNames = [.. PersianDateTime.PersianMonthNamesInGenitive.AddImmuted(" ")],
+            MonthNames = [.. PersianDateTime.PersianMonthNamesInPersian.AddImmuted(" ")],
             PMDesignator = CultureConstants.PM_DESIGNATOR,
             ShortDatePattern = CultureConstants.SHORT_DATE_PATTERN,
             ShortTimePattern = CultureConstants.SHORT_TIME_PATTERN,
-            ShortestDayNames = PersianDateTime.PersianWeekDaysAbbrs.Select(wd => wd.Name).ToArray(),
+            ShortestDayNames = [.. PersianDateTime.PersianWeekDaysAbbrs.Select(wd => wd.Name)],
             TimeSeparator = CultureConstants.TIME_SEPARATOR
         };
         this.DateTimeFormat = dateTimeFormatInfo;
     }
 
     /// <summary>
-    ///     Gets the default calendar used by the culture.
+    /// Gets the default calendar used by the culture.
     /// </summary>
     public override Calendar Calendar { get; }
 
     /// <summary>
-    ///     Gets the list of calendars that can be used by the culture.
+    /// Gets the list of calendars that can be used by the culture.
     /// </summary>
     public override Calendar[] OptionalCalendars { get; }
 }

@@ -1,8 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
-using System.Text;
-
-using Library.Extensions;
+﻿using System.Diagnostics.Contracts;
 
 using NullableStrings = System.Collections.Generic.IEnumerable<string?>;
 using Strings = System.Collections.Generic.IEnumerable<string>;
@@ -13,8 +9,8 @@ public static class StringExtension
 {
     private static readonly char[] _standardSeparators = ['\0', '\n', '\r', '\t', '_', '-'];
 
-    extension(string? str)
-    {//ولی من خیلی دوستدارم حتی با خشم
+    extension([AllowNull] string? str)
+    {
         public int Length => str?.Length ?? 0;
 
         public string AsNotNull() =>
@@ -29,9 +25,9 @@ public static class StringExtension
         /// <summary>
         /// Removes the specified value from the string.
         /// </summary>
-        /// <param name="str">The string to remove the value from.</param>
-        /// <param name="value">The value to remove.</param>
-        /// <returns>The string with the value removed, or null if the string is null.</returns>
+        /// <param name="str">   The string to remove the value from. </param>
+        /// <param name="value"> The value to remove. </param>
+        /// <returns> The string with the value removed, or null if the string is null. </returns>
         [return: NotNullIfNotNull(nameof(value))]
         public string? Remove(in string? value) =>
             value is null ? str : str?.Replace(value, "");
@@ -43,8 +39,8 @@ public static class StringExtension
         /// <summary>
         /// Reads a large string line by line.
         /// </summary>
-        /// <param name="str">The large string to read.</param>
-        /// <returns>An enumerable of strings representing each line of the input string.</returns>
+        /// <param name="str"> The large string to read. </param>
+        /// <returns> An enumerable of strings representing each line of the input string. </returns>
         public Strings ReadLines()
         {
             if (str.IsNullOrEmpty())
@@ -63,9 +59,9 @@ public static class StringExtension
         /// <summary>
         /// Separates a string into separate words based on the provided separators.
         /// </summary>
-        /// <param name="str">The string to separate.</param>
-        /// <param name="separators">The separators to use.</param>
-        /// <returns>The separated string.</returns>
+        /// <param name="str">        The string to separate. </param>
+        /// <param name="separators"> The separators to use. </param>
+        /// <returns> The separated string. </returns>
         [return: NotNullIfNotNull(nameof(str))]
         public string? Separate(params char[] separators)
         {
@@ -106,14 +102,15 @@ public static class StringExtension
             static (bool IsSeparator, bool ShouldIgnore) determineSeparator(char c, char[] separators) =>
                 separators.Contains(c) ? (true, true) : (char.IsUpper(c), false);
         }
+
         /// <summary>
         /// Compares two strings and returns a boolean value indicating whether they are equal.
         /// </summary>
         [Pure]
         public bool EqualsTo(in string str1, bool ignoreCase = true) =>
             str?.Equals(str1, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal) ?? (str1 == null);
-
     }
+
     extension(string str)
     {
         /// <summary>
@@ -129,23 +126,25 @@ public static class StringExtension
         public string ReplaceAll(Strings oldValues, string newValue) =>
             oldValues.Aggregate(str, (current, oldValue) => current.Replace(oldValue, newValue));
     }
+
     extension([NotNullWhen(false)][AllowNull] string? str)
     {
-        public bool IsNullOrEmpty() =>
-            string.IsNullOrEmpty(str);
-
-        public bool IsNullOrWhiteSpace() =>
-            string.IsNullOrWhiteSpace(str);
-
         public bool IsEqualTo(string? other, bool ignoreCase = true) =>
             string.Equals(str, other, StringComparison.InvariantCultureIgnoreCase);
     }
+
     extension(NullableStrings text)
     {
         public string Merge(string separator = ", ") =>
             string.Join(separator, text.Where(t => t is not null));
 
-        public string Merge(char separator = ',') =>
+        public string Merge(char separator) =>
             string.Join(separator, text.Where(t => t is not null));
     }
+
+    public static bool IsNullOrEmpty([NotNullWhen(false)][AllowNull] this string? str) =>
+            string.IsNullOrEmpty(str);
+
+    public static bool IsNullOrWhiteSpace([NotNullWhen(false)][AllowNull] this string? str) =>
+        string.IsNullOrWhiteSpace(str);
 }

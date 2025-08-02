@@ -28,7 +28,7 @@ public class CodeGenProperty : Member, IProperty
     PropertyAccessor? getter = null,
     string? backingField = null) : base(name)
     {
-        this.Type = type.ArgumentNotNull();
+        this.Type = type.EnsureArgumentNotNull();
         this.AccessModifier = modifier;
         this.InheritanceModifier = inheritanceModifier;
         this.BackingFieldName = backingField;

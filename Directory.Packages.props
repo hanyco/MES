@@ -1,23 +1,29 @@
 ﻿<Project>
 	<PropertyGroup>
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-	</PropertyGroup>	
+	</PropertyGroup>
 	<ItemGroup>
 		<PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
 		<PackageVersion Include="Microsoft.Data.SqlClient" Version="6.0.2" />
 		<PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
-		<PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.5" />
-		<PackageVersion Include="Microsoft.Extensions.Identity.Core" Version="9.0.5" />
+		<PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.6" />
+		<PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.6" />
+		<PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.6" />
+		<PackageVersion Include="Microsoft.Extensions.Identity.Core" Version="9.0.6" />
+		<PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.7.250606001" />
 		<PackageVersion Include="System.CodeDom" Version="9.0.5" />
 		<PackageVersion Include="Dapper" Version="2.1.66" />
 		<PackageVersion Include="MediatR" Version="12.5.0" />
-		<PackageVersion Include="Microsoft.Extensions.Configuration" Version="9.0.5" />
-		<PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="9.0.5" />
-		<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
-		<PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.5" />
+		<PackageVersion Include="Microsoft.Extensions.Configuration" Version="9.0.6" />
+		<PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="9.0.6" />
+		<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.6" />
+		<PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.6" />
 		<PackageVersion Include="EntityFramework" Version="6.5.1" />
 		<PackageVersion Include="Microsoft.AspNetCore.Components.WebView.Wpf" Version="9.0.70" />
 		<PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="9.0.5" />
 		<PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageVersion Include="WindowsAPICodePack-Core" Version="1.1.2" />
+		<PackageVersion Include="WindowsAPICodePack-Shell" Version="1.1.1" />
+		<PackageVersion Include="Microsoft-Windows10-APICodePack-Core" Version="1.1.8" />
 	</ItemGroup>
 </Project>

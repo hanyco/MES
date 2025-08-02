@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/items/">
+    <File Path=".editorconfig" />
     <File Path=".filenesting.json" />
     <File Path=".gitattributes" />
     <File Path=".gitignore" />
@@ -10,11 +11,15 @@
   <Folder Name="/src/bcl/">
     <Project Path="src/bcl/CodeGenLib/CodeGenLib.csproj" Id="20591deb-0826-43d1-84e3-776bfa78c0bf" />
     <Project Path="src/bcl/CoreLib/CoreLib.csproj" />
+    <Project Path="src/bcl/DataLib/DataLib.csproj" />
   </Folder>
   <Folder Name="/src/infra/">
     <Project Path="src/infra/CodeGenerator/CodeGenerator.csproj" Id="ffa23aa6-bfcd-464a-ba06-89ecb0960a33" />
   </Folder>
   <Folder Name="/src/prj/">
     <Project Path="src/prj/HanyCoMES/HanyCoMES.csproj" />
+  </Folder>
+  <Folder Name="/src/test/">
+    <Project Path="src/test/ConApp/ConApp.csproj" Id="693c36ef-d8fe-4168-a696-a58c96f3a9a5" />
   </Folder>
 </Solution>

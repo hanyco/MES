@@ -1,17 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Frozen;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Text;
 using System.Text.RegularExpressions;
-
-using Library.Extensions;
-using Library.Validations;
 
 namespace Library.Coding;
 
-[DebuggerStepThrough, StackTraceHidden]
+//[DebuggerStepThrough, StackTraceHidden]
 public sealed class TypePath : IEquatable<TypePath>
 {
     private static readonly Dictionary<Type, string> _primitiveTypes = new()
@@ -75,14 +69,14 @@ public sealed class TypePath : IEquatable<TypePath>
     }
 
     public static string Combine(in string? part1, params string?[] parts)
-        => StringExtension.Merge(EnumerableExtension.AsEnumerable(part1).AddRangeImmuted(parts).Compact().Select(x => x.Trim('.')), '.');
+        => Enumerable.ToEnumerable(part1).AddRangeImmuted(parts).Compact().Select(x => x.Trim('.')).Merge('.');
 
     public static TypePath FromKeyword(in string keyword)
     {
         var isNullable = keyword.EndsWith('?');
         var kw = isNullable ? keyword.RemoveEnd("?") : keyword;
         var type = _primitiveTypes.FirstOrDefault(x => x.Value == kw).Key?.FullName ?? keyword;
-        return New(type, isNullable);
+        return Parse(type, isNullable);
     }
 
     [return: NotNullIfNotNull(nameof(typePath))]
@@ -102,7 +96,7 @@ public sealed class TypePath : IEquatable<TypePath>
 
     [return: NotNull]
     public static IEnumerable<string>? GetNameSpaces(in string? typePath)
-        => typePath == null ? [] : New(typePath).GetNameSpaces();
+        => typePath == null ? [] : Parse(typePath).GetNameSpaces();
 
     [return: NotNullIfNotNull(nameof(typeInfo))]
     public static implicit operator string?(in TypePath? typeInfo)
@@ -114,89 +108,89 @@ public sealed class TypePath : IEquatable<TypePath>
 
     [return: NotNullIfNotNull(nameof(typeInfo))]
     public static implicit operator TypePath?(in Type? typeInfo)
-        => typeInfo == null ? null : New(typeInfo);
+        => typeInfo == null ? null : Parse(typeInfo);
 
     [return: NotNull]
-    public static TypePath New([DisallowNull] in string name, in string? nameSpace)
+    public static TypePath Parse([DisallowNull] in string name, in string? nameSpace)
         => new(Combine(nameSpace, name));
 
     [return: NotNull]
-    public static TypePath New([DisallowNull] in string name, in string? nameSpace, in IEnumerable<string>? generics)
+    public static TypePath Parse([DisallowNull] in string name, in string? nameSpace, in IEnumerable<string>? generics)
         => new(Combine(nameSpace, name), generics);
 
     [return: NotNull]
-    public static TypePath New([DisallowNull] in string name, in string? nameSpace, in IEnumerable<string>? generics, bool isNullable)
+    public static TypePath Parse([DisallowNull] in string name, in string? nameSpace, in IEnumerable<string>? generics, bool isNullable)
         => new(Combine(nameSpace, name), generics, isNullable);
 
     [return: NotNull]
-    public static TypePath New([DisallowNull] in string fullPath)
+    public static TypePath Parse([DisallowNull] in string fullPath)
         => new(fullPath);
 
     [return: NotNull]
-    public static TypePath New([DisallowNull] in string fullPath, in IEnumerable<string>? generics)
+    public static TypePath Parse([DisallowNull] in string fullPath, in IEnumerable<string>? generics)
         => new(fullPath, generics);
 
     [return: NotNull]
-    public static TypePath New([DisallowNull] in string fullPath, bool isNullable)
+    public static TypePath Parse([DisallowNull] in string fullPath, bool isNullable)
         => new(fullPath, null, isNullable);
 
     [return: NotNull]
-    public static TypePath New([DisallowNull] in string fullPath, in IEnumerable<string>? generics, bool isNullable)
+    public static TypePath Parse([DisallowNull] in string fullPath, in IEnumerable<string>? generics, bool isNullable)
         => new(fullPath, generics, isNullable);
 
     [return: NotNull]
-    public static TypePath New([DisallowNull] in Type type)
+    public static TypePath Parse([DisallowNull] in Type type)
         => new((type?.FullName ?? null)!);
 
     [return: NotNull]
-    public static TypePath New([DisallowNull] in Type type, in IEnumerable<Type>? generics)
+    public static TypePath Parse([DisallowNull] in Type type, in IEnumerable<Type>? generics)
         => new(type?.FullName!, generics?.Select(x => x.Name == "Nullable`1" ? $"{x.GenericTypeArguments[0].FullName}?" : x.FullName!));
 
     [return: NotNull]
-    public static TypePath New([DisallowNull] in Type type, in IEnumerable<Type>? generics, bool isNullable)
+    public static TypePath Parse([DisallowNull] in Type type, in IEnumerable<Type>? generics, bool isNullable)
         => new(type?.FullName!, generics?.Select(x => x.FullName!), isNullable);
 
     [return: NotNull]
-    public static TypePath New<T>()
-        => New(typeof(T));
+    public static TypePath Parse<T>()
+        => Parse(typeof(T));
 
-    public static TypePath New<T>(in IEnumerable<string> generics)
-        => New(typeof(T).FullName!, generics);
+    public static TypePath Parse<T>(in IEnumerable<string> generics)
+        => Parse(typeof(T).FullName!, generics);
 
     [return: NotNull]
-    public static TypePath New<T>(in IEnumerable<Type>? generics)
+    public static TypePath Parse<T>(in IEnumerable<Type>? generics)
         => new(typeof(T).FullName!, generics?.Select(x => x.FullName!));
 
     [return: NotNull]
-    public static TypePath New<T>(in IEnumerable<string>? generics, bool isNullable)
+    public static TypePath Parse<T>(in IEnumerable<string>? generics, bool isNullable)
         => new(typeof(T).FullName!, generics, isNullable);
 
     [return: NotNull]
-    public static TypePath NewEnumerable(in TypePath generic)
-        => New(typeof(IEnumerable<>).FullName!, [generic]);
+    public static TypePath ParseEnumerable(in TypePath generic)
+        => Parse(typeof(IEnumerable<>).FullName!, [generic]);
 
     [return: NotNull]
-    public static TypePath NewEnumerable(in string generic)
-        => New(typeof(IEnumerable<>).FullName!, [generic]);
+    public static TypePath ParseEnumerable(in string generic)
+        => Parse(typeof(IEnumerable<>).FullName!, [generic]);
 
     [return: NotNull]
-    public static TypePath NewEnumerable()
-        => New<IEnumerable>();
+    public static TypePath ParseEnumerable()
+        => Parse<IEnumerable>();
 
     [return: NotNull]
-    public static TypePath NewTask()
-        => New<Task>();
+    public static TypePath ParseTask()
+        => Parse<Task>();
 
-    public static TypePath NewTask<TResult>()
-        => New<Task>([typeof(TResult)]);
-
-    [return: NotNull]
-    public static TypePath NewTask(in TypePath generic)
-        => New(typeof(Task<>).FullName!, [generic.FullName]);
+    public static TypePath ParseTask<TResult>()
+        => Parse<Task>([typeof(TResult)]);
 
     [return: NotNull]
-    public static TypePath NewTask(in TypePath generic, bool isNullable)
-        => New(typeof(Task<>).FullName!, [generic.FullName], isNullable);
+    public static TypePath ParseTask(in TypePath generic)
+        => Parse(typeof(Task<>).FullName!, [generic.FullName]);
+
+    [return: NotNull]
+    public static TypePath ParseTask(in TypePath generic, bool isNullable)
+        => Parse(typeof(Task<>).FullName!, [generic.FullName], isNullable);
 
     public static bool operator !=(in TypePath? left, in TypePath? right)
         => !(left == right);
@@ -227,7 +221,7 @@ public sealed class TypePath : IEquatable<TypePath>
     }
 
     public override int GetHashCode()
-            => this.FullName.GetHashCode(StringComparison.Ordinal);
+        => this.FullName.GetHashCode(StringComparison.Ordinal);
 
     [return: NotNull]
     public IEnumerable<string> GetNameSpaces()
@@ -374,7 +368,7 @@ public sealed class TypePath : IEquatable<TypePath>
 
             return result;
 
-            static string removeNullableSign(string fullType) => fullType.RemoveEnd("?");
+            static string removeNullableSign(string fullType) => fullType.RemoveEnd("?")!;
 
             static string mergeGenerics(IEnumerable<string> generics) => string.Join(',', generics);
 
@@ -387,6 +381,20 @@ public sealed class TypePath : IEquatable<TypePath>
                 => !(mainType.Contains('<') && !mainType.Contains("<>"));
         }
     }
+
+    public int GetTypeCode() =>
+        GetTypeCode(this.FullPath);
+
+    public static int GetTypeCode(string fullPath)
+    {
+        Check.MustBeArgumentNotNull(fullPath);
+        var type = Type.GetType(fullPath) ?? throw new InvalidCastException($"cannot cat `{fullPath}` to .NET type.");
+        var result = (int)Type.GetTypeCode(type);
+        return result;
+    }
+
+    public static int GetTypeCode(Type type) =>
+        (int)Type.GetTypeCode(type);
 }
 
 internal static class TypPathHelpers
@@ -445,7 +453,6 @@ internal static class TypPathHelpers
         => RemoveByRegEx(input, @"`\d");
 
     private static string? RemoveExtraData(this string? input)
-    //=> RemoveByRegEx(input, @",\s*Version=.*?(?=\]|\>)");
     {
         if (input == null)
         {

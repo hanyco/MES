@@ -1,0 +1,200 @@
+﻿<UserControl
+    x:Class="CodeGenerator.Designer.UI.Pages.DtoManagementPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:bases="clr-namespace:CodeGenerator.Designer.UI.Bases"
+    xmlns:common="clr-namespace:CodeGenerator.Designer.UI.Common"
+    xmlns:controls="clr-namespace:CodeGenerator.Designer.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:CodeGenerator.Designer.UI.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:CodeGenerator.Designer.UI.ViewModels"
+    x:Name="Me"
+    d:DataContext="{d:DesignInstance Type=viewmodels:DtoViewModel}"
+    d:DesignHeight="950"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <bases:BasePage>
+        <bases:BasePage.ToolbarContent>
+            <ToolBar>
+                <Button Click="NewDtoButton_Click" Content="New…" />
+                <Button Click="EditDtoButton_Click" Content="Edit" />
+                <Button Content="Delete…" />
+                <Separator />
+                <Button
+                    Click="GenerateCodeButton_Click"
+                    Content="Generate Code…"
+                    Style="{StaticResource LongToolbarButton}" />
+                <Separator />
+                <Button
+                    Click="SaveGeneratedCodesToDisk_Click"
+                    Content="Save to Disk…"
+                    Style="{StaticResource LongToolbarButton}" />
+                <Button
+                    Click="SaveToDbButton_Click"
+                    Content="Save to DB…"
+                    Style="{StaticResource LongToolbarButton}" />
+            </ToolBar>
+        </bases:BasePage.ToolbarContent>
+        <bases:BasePage.SidebarContent>
+            <ListBox
+                x:Name="DtosListBox"
+                ItemsSource="{Binding ElementName=Me, Path=StaticViewModel.Dtos}"
+                DisplayMemberPath="Name"
+                SelectedValuePath="Id" />
+        </bases:BasePage.SidebarContent>
+        <bases:BasePage.EntityDesignerContent>
+            <Grid x:Name="EntityDesignerGrid">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal">
+                        <TextBlock Text="Name:" />
+                        <TextBox Text="{Binding Name}" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal">
+                        <TextBlock Text="Namespace:" />
+                        <TextBox Text="{Binding NameSpace}" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Orientation="Horizontal">
+                        <TextBlock Text="Module:" />
+                        <ComboBox ItemsSource="{Binding ElementName=Me, Path=StaticViewModel.Modules}" SelectedItem="{Binding Module}" />
+                    </StackPanel>
+                    <Grid
+                        Grid.Row="0"
+                        Grid.RowSpan="3"
+                        Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Comments:" />
+                        <RichTextBox Grid.Column="1" />
+                    </Grid>
+                    <StackPanel
+                        Grid.Row="0"
+                        Grid.RowSpan="3"
+                        Grid.Column="2">
+                        <CheckBox Content="Is Params" IsChecked="{Binding IsParams}" />
+                        <CheckBox Content="Is Result" IsChecked="{Binding IsResult}" />
+                        <CheckBox Content="Is ViewModel" IsChecked="{Binding IsViewModel}" />
+                        <CheckBox Content="Is List" IsChecked="{Binding IsList}" />
+                    </StackPanel>
+                </Grid>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Properties" />
+                    <Separator Grid.Column="1" />
+                </Grid>
+                <Grid Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ToolBar>
+                        <Button Content="New" />
+                        <Button Command="{Binding DeletePropertiesCommand}" Content="Delete" />
+                    </ToolBar>
+                    <DataGrid
+                        x:Name="PropertiesGrid"
+                        Grid.Row="1"
+                        common:DataGridExtensions.SelectedItems="{Binding SelectedProperties}"
+                        AutoGenerateColumns="False"
+                        CanUserAddRows="False"
+                        CanUserDeleteRows="True"
+                        CanUserReorderColumns="False"
+                        CanUserResizeRows="False"
+                        CanUserSortColumns="False"
+                        ItemsSource="{Binding Properties}"
+                        SelectionMode="Extended">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn
+                                Width="Auto"
+                                Binding="{Binding Name}"
+                                Header="Name" />
+                            <DataGridTextColumn
+                                Width="Auto"
+                                Binding="{Binding DbObjectId}"
+                                Header="DB Object ID" />
+                            <DataGridTextColumn
+                                Width="Auto"
+                                Binding="{Binding TypeFullName}"
+                                Header="Type" />
+                            <DataGridTextColumn
+                                Width="*"
+                                Binding="{Binding Comment}"
+                                Header="Comments" />
+                            <DataGridCheckBoxColumn
+                                Width="Auto"
+                                Binding="{Binding IsNullable}"
+                                Header="Is Nullable" />
+                            <DataGridCheckBoxColumn
+                                Width="Auto"
+                                Binding="{Binding HasSetter}"
+                                Header="Is ReadOnly" />
+                            <DataGridCheckBoxColumn
+                                Width="Auto"
+                                Binding="{Binding IsList}"
+                                Header="Is List" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Grid
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        DataContext="{Binding SelectedItem, ElementName=PropertiesGrid}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Name:" />
+                            <TextBox Text="{Binding Name}" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Orientation="Horizontal">
+                            <CheckBox Content="Is Nullable" IsChecked="{Binding IsNullable}" />
+                            <CheckBox Content="Is List" IsChecked="{Binding IsList}" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="2" Orientation="Horizontal">
+                            <TextBlock Text="Type:" />
+                            <ComboBox ItemsSource="{Binding ElementName=Me, Path=StaticViewModel.DataTypes}" SelectedItem="{Binding TypeFullName}" />
+                            <Button Content="..." Style="{StaticResource ShortButton}" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="3" Orientation="Horizontal">
+                            <TextBlock Text="Comments:" />
+                            <TextBox Text="{Binding Comment}" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </bases:BasePage.EntityDesignerContent>
+        <bases:BasePage.SourceCodeContent>
+            <controls:CodesViewerControl
+                x:Name="CodesViewer"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch" />
+        </bases:BasePage.SourceCodeContent>
+    </bases:BasePage>
+</UserControl>

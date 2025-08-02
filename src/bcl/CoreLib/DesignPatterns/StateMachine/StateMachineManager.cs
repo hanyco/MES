@@ -45,7 +45,7 @@ public static class StateMachineManager
 
     public static Task<(TState? Last, IEnumerable<(TState State, MoveDirection Direction)> History)> Dispatch<TState>([DisallowNull] this IAsyncStateMachine<TState> stateMachine)
         => Dispatch(
-            stateMachine.ArgumentNotNull().StartAsync,
+            stateMachine.EnsureArgumentNotNull().StartAsync,
             stateMachine.MoveNextAsync,
             stateMachine.MoveBackAsync,
             stateMachine.NotifyStateAsync,

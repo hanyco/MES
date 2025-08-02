@@ -2,23 +2,42 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows7.0</TargetFramework>
     <UseWPF>true</UseWPF>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Dapper" />
-    <PackageReference Include="MediatR" />
     <PackageReference Include="Microsoft.Data.SqlClient" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration" />
+	  <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+    <!--<PackageReference Include="WindowsAPICodePack-Core" />
+	  <PackageReference Include="WindowsAPICodePack-Shell" />-->
+	  <!--<PackageReference Include="Microsoft.WindowsAPICodePack.Dialogs" />-->
+	  <PackageReference Include="Microsoft-Windows10-APICodePack-Core" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\bcl\CodeGenLib\CodeGenLib.csproj" />
     <ProjectReference Include="..\..\bcl\CoreLib\CoreLib.csproj" />
+    <ProjectReference Include="..\..\bcl\DataLib\DataLib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Designer\Services\" />
+    <Folder Include="Designer\UI\Controls\" />
+    <Folder Include="Designer\UI\Resources\" />
+    <Folder Include="Designer\UI\Styles\" />
   </ItemGroup>
 
 </Project>

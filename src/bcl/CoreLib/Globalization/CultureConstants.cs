@@ -2,8 +2,6 @@
 
 public static class CultureConstants
 {
-    #region Constants
-
     public const string ABAN_ABBR_EN = "Aba";
     public const string ABAN_ABBR_FA = "آبا";
     public const string ABAN_EN = "Aban";
@@ -116,6 +114,4 @@ public static class CultureConstants
     public const string YEK_SHANBE_ABBR_FA = "ی";
     public const string YEK_SHANBE_EN = "Yekshanbeh";
     public const string YEK_SHANBE_FA = "یکشنبه";
-
-    #endregion
 }

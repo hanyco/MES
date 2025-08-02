@@ -11,7 +11,7 @@ public sealed class ObservationRepository : IObservableRepository, IObserverRepo
 
     public void Add(in RegisterObservable observable)
     {
-        this._observables.Add(observable.ArgumentNotNull(nameof(observable)));
+        this._observables.Add(observable.EnsureArgumentNotNull(nameof(observable)));
         observable.Observable.Changed += this.Subject_PropertyChanged;
     }
 

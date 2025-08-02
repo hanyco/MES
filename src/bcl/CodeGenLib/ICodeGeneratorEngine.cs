@@ -17,7 +17,7 @@ public interface ICodeGeneratorEngine<in TDto>
     /// An <see cref="IResult{T}" /> containing the generated string result. The result may indicate
     /// success or failure.
     /// </returns>
-    IResult<string> Generate([DisallowNull] TDto dto);
+    string Generate([DisallowNull] TDto dto);
 }
 
 /// <summary>
@@ -31,42 +31,39 @@ public interface ICodeGeneratorEngine<in TDto>
 public interface ICodeGeneratorEngine<in TDto, in TOptions>
 {
     /// <summary>
-    /// Generates a result based on the provided data transfer object (DTO) and options.
+    /// Generates a string result based on the provided data transfer object (DTO) and options.
     /// </summary>
-    /// <param name="dto">    
-    /// The data transfer object containing the input data required for generation. Cannot be null.
-    /// </param>
-    /// <param name="options"> The options that configure the generation process. </param>
-    /// <returns>
-    /// An <see cref="IResult{T}" /> containing the generated string result. The result may indicate
-    /// success or failure.
-    /// </returns>
-    IResult<string> Generate([DisallowNull] TDto dto, TOptions options);
+    /// <param name="dto"></param>
+    /// <param name="options"></param>
+    /// <returns></returns>
+    string Generate([DisallowNull] TDto dto, TOptions options);
 }
 
 public static class CodeGeneratorExtensions
 {
-    /// <summary>
-    /// Generates code from the namespace.
-    /// </summary>
-    /// <param name="codeGenerator"> Code generator engine. </param>
-    /// <param name="nameSpace">     Namespace to generate code from. </param>
-    /// <param name="name">          Name of the code. </param>
-    /// <param name="language">      Language of the code. </param>
-    /// <param name="isPartial">     Is the code partial. </param>
-    /// <param name="fileName">      The file name of the code. </param>
-    /// <returns> Gives the result of the code generation. </returns>
-    public static IResult<Code> Generate(
-        this ICodeGeneratorEngine<INamespace> codeGenerator,
-        in INamespace nameSpace,
-        [DisallowNull] in string name,
-        [DisallowNull] Language language,
-        bool isPartial,
-        string? fileName = null)
+    extension(ICodeGeneratorEngine<INamespace> @this)
     {
-        Check.MustBeArgumentNotNull(codeGenerator);
-        var statement = codeGenerator.Generate(nameSpace);
-        var code = new Code(name, language, RoslynHelper.ReformatCode(statement.GetValue()), isPartial, fileName);
-        return Result.From<Code>(statement, code);
+        /// <summary>
+        /// Generates code from the namespace.
+        /// </summary>
+        /// <param name="this"> Code generator engine. </param>
+        /// <param name="nameSpace">     Namespace to generate code from. </param>
+        /// <param name="name">          Name of the code. </param>
+        /// <param name="language">      Language of the code. </param>
+        /// <param name="isPartial">     Is the code partial. </param>
+        /// <param name="fileName">      The file name of the code. </param>
+        /// <returns> Gives the result of the code generation. </returns>
+        public Code Generate(
+            in INamespace nameSpace,
+            [DisallowNull] in string name,
+            [DisallowNull] Language language,
+            bool isPartial,
+            string? fileName = null)
+        {
+            Check.MustBeArgumentNotNull(@this);
+            var statement = @this.Generate(nameSpace);
+            var result = new Code(name, language, RoslynHelper.ReformatCode(statement), isPartial, fileName);
+            return result;
+        }
     }
 }

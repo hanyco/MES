@@ -1,5 +1,4 @@
-﻿
-namespace Library.CodeGenLib.Back;
+﻿namespace Library.CodeGenLib.Back;
 
 public interface INamespace : IValidatable
 {
@@ -13,7 +12,7 @@ public interface INamespace : IValidatable
 
 public sealed class Namespace(string name) : INamespace
 {
-    public string Name { get; } = name.ArgumentNotNull();
+    public string Name { get; } = name.EnsureArgumentNotNull();
     public ISet<IType> Types { get; } = new HashSet<IType>();
     public ISet<string> UsingNamespaces { get; } = new HashSet<string>();
 
@@ -29,7 +28,7 @@ public sealed class Namespace(string name) : INamespace
         }
         foreach (var type in this.Types)
         {
-            if (!type.Validate().TryParse(out var vr))
+            if (!type.Validate().IfSucceed(out var vr))
             {
                 return vr;
             }
@@ -55,10 +54,9 @@ public static class NamSpaceExtensions
         return ns;
     }
 
-    public static IResult<string> GenerateCode<TCodeGeneratorEngine>(this INamespace ns, TCodeGeneratorEngine engine)
+    public static string GenerateCode<TCodeGeneratorEngine>(this INamespace ns, TCodeGeneratorEngine engine)
         where TCodeGeneratorEngine : ICodeGeneratorEngine<INamespace> => engine.Generate(ns);
 
-    public static IResult<string> GenerateCode<TCodeGeneratorEngine>(this INamespace ns)
-        where TCodeGeneratorEngine : ICodeGeneratorEngine<INamespace>, new()
-        => ns.GenerateCode(new TCodeGeneratorEngine());
+    public static string GenerateCode<TCodeGeneratorEngine>(this INamespace ns)
+        where TCodeGeneratorEngine : ICodeGeneratorEngine<INamespace>, new() => ns.GenerateCode(new TCodeGeneratorEngine());
 }

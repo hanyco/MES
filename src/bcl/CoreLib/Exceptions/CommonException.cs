@@ -14,6 +14,7 @@ public sealed class CommonException : LibraryExceptionBase, ILibraryException
     {
     }
 
+    [DoesNotReturn]
     public static void Throw(string message) =>
         throw new CommonException(message);
 }

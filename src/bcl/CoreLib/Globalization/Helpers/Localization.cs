@@ -1,57 +1,72 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
+﻿using System.Globalization;
+
 using Library.DesignPatterns.Creational;
 
 namespace Library.Globalization.Helpers;
 
 public static class Localization
 {
-    private static ILocalizer? _localizer;
+    /// <summary>
+    /// Converts a string to a cultural number based on the specified language and corrects Persian
+    /// characters if needed.
+    /// </summary>
+    /// <param name="value">               The string to convert. </param>
+    /// <param name="correctPersianChars">
+    /// A boolean value indicating whether Persian characters should be corrected.
+    /// </param>
+    /// <param name="toLanguage">          The language to convert the string to. </param>
+    /// <returns> The converted string. </returns>
+    [return: NotNullIfNotNull(nameof(value))]
+    public static string ToCulturalNumber(in string value, in Language toLanguage) =>
+        toLanguage switch
+        {
+            Language.Persian => ToPersianDigits(value),
+            Language.English => value.ToEnglishDigits(),
+            Language.None => throw new NotImplementedException(),
+            _ => value
+        };
 
     /// <summary>
-    ///     Gets or sets the localizer.
+    /// Replaces all Persian digits in the given string with their English equivalents.
     /// </summary>
-    /// <value>
-    ///     The localizer.
-    /// </value>
-    /// <exception cref="NotImplementedException"></exception>
+    [return: NotNullIfNotNull(nameof(value))]
+    public static string ToEnglishDigits(this string value) =>
+        value.ReplaceAll(PersianTools.Digits.Select(n => (n.Persian, n.English)));
+
+    /// <summary>
+    /// Replaces all English digits in the given string with their Persian equivalents.
+    /// </summary>
+    [return: NotNullIfNotNull(nameof(value))]
+    public static string ToPersianDigits(in string value) =>
+        value.ReplaceAll(PersianTools.Digits.Select(n => (n.English, n.Persian)));
+
+    /// <summary>
+    /// Gets or sets the localizer.
+    /// </summary>
+    /// <value> The localizer. </value>
+    /// <exception cref="NotImplementedException"> </exception>
     public static ILocalizer Localizer
     {
-        get => _localizer ??= InvariantCultureLocalizer.Instance;
-        set => _localizer = value;
+        get => field ??= InvariantCultureLocalizer.Instance;
+        set;
     }
 
     /// <summary>
-    ///     Converts to local string.
+    /// Converts to local string.
     /// </summary>
-    /// <param name="dateTime">The date time.</param>
-    /// <returns></returns>
+    /// <param name="dateTime"> The date time. </param>
+    /// <returns> </returns>
     public static string ToLocalString(this PersianDateTime dateTime)
         => Localizer.ToString(dateTime);
 
     /// <summary>
-    ///     Converts to local string.
+    /// Converts to local string.
     /// </summary>
-    /// <param name="dateTime">The date time.</param>
-    /// <returns></returns>
+    /// <param name="dateTime"> The date time. </param>
+    /// <returns> </returns>
     [return: NotNull]
     public static string ToLocalString(this DateTime dateTime)
         => Localizer?.ToString(dateTime) ?? dateTime.ToString(CultureInfo.CurrentCulture);
-}
-
-public abstract class LocalizerBase<TLocalizer> : Singleton<TLocalizer>, ILocalizer
-    where TLocalizer : LocalizerBase<TLocalizer>
-{
-    protected LocalizerBase(in CultureInfo culture)
-        => this.CultureInfo = culture;
-
-    protected CultureInfo CultureInfo { get; }
-
-    public string ToString(in DateTime dateTime)
-        => dateTime.ToString(CultureConstants.DEFAULT_DATE_TIME_PATTERN, this.CultureInfo);
-
-    public string Translate(in string statement, in string? culture = null)
-        => throw new NotImplementedException();
 }
 
 public sealed class CurrentCultureLocalizer : LocalizerBase<CurrentCultureLocalizer>
@@ -70,6 +85,18 @@ public sealed class InvariantCultureLocalizer : LocalizerBase<InvariantCultureLo
 {
     private InvariantCultureLocalizer()
         : base(CultureInfo.InvariantCulture) { }
+}
+
+public abstract class LocalizerBase<TLocalizer>(in CultureInfo culture) : Singleton<TLocalizer>, ILocalizer
+    where TLocalizer : LocalizerBase<TLocalizer>
+{
+    protected CultureInfo CultureInfo { get; } = culture;
+
+    public string ToString(in DateTime dateTime)
+        => dateTime.ToString(CultureConstants.DEFAULT_DATE_TIME_PATTERN, this.CultureInfo);
+
+    public string Translate(in string statement, in string? culture = null)
+        => throw new NotImplementedException();
 }
 
 public sealed class PersianLocalizer : LocalizerBase<PersianLocalizer>

@@ -1,50 +1,117 @@
 ﻿using System.Windows;
 
-using CodeGenerator.Application.DependencyInjection;
-using CodeGenerator.Designer.UI.ViewModels;
-
+using CodeGenerator.Application.Services;
+using CodeGenerator.Designer.UI.Pages;
 using Library.CodeGenLib;
 using Library.CodeGenLib.Back;
 using Library.CodeGenLib.CodeGenerators;
 
+using Library.Validations;
+
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace CodeGenerator;
 
-/// <summary>
-/// Interaction logic for App.xaml
-/// </summary>
 public partial class App : System.Windows.Application
 {
-    public IServiceProvider Services { get; private set; } = null!;
+    private IConfiguration _configuration = default!;
+    private ResourceDictionary _currentTheme = default!;
+    private IHost _host = default!;
 
-    protected override void OnStartup(StartupEventArgs e)
+    public App() =>
+        this.Instance = this;
+
+    public App Instance { get; }
+
+    public void UseDarkTheme() =>
+        this.ApplyTheme("DarkTheme.xaml");
+
+    public void UseLightTheme() =>
+        this.ApplyTheme("LightTheme.xaml");
+
+    protected override async void OnExit(ExitEventArgs e)
     {
-        var config = new ConfigurationBuilder()
-            .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .Build();
+        using (this._host)
+        {
+            await this._host!.StopAsync(CancellationToken.None);
+        }
+        base.OnExit(e);
+    }
 
-        var services = new ServiceCollection();
-        services.AddSingleton<IConfiguration>(config);
+    protected override async void OnStartup(StartupEventArgs e)
+    {
+        base.OnStartup(e);
 
-        // Only IDbConnection and MediatR
-        _ = services.AddApplicationLayer(sp =>
-            new SqlConnection(sp.GetRequiredService<IConfiguration>()
-                              .GetConnectionString("DefaultConnection")!));
+        this.SetupConfiguration();
+        await this.SetupServices();
+        this.SetupLayout();
+        this.ShowMainWindow();
+    }
 
-        // CodeGen engine
-        _ = services.AddTransient<ICodeGeneratorEngine<INamespace>, RoslynCodeGenerator>();
+    private void ApplyTheme(string themeFile)
+    {
+        if (this._currentTheme is not null)
+        {
+            _ = this.Resources.MergedDictionaries.Remove(this._currentTheme);
+        }
 
-        // ViewModels
-        _ = services.AddTransient<DtosPageViewModel>();
-        _ = services.AddTransient<ShellViewModel>();
+        var dict = new ResourceDictionary
+        {
+            Source = new Uri($"Designer/UI/Styles/{themeFile}", UriKind.Relative)
+        };
 
-        // Build & show
-        var sp = services.BuildServiceProvider();
-        var wnd = new MainWindow { DataContext = sp.GetRequiredService<ShellViewModel>() };
-        wnd.Show();
+        this.Resources.MergedDictionaries.Insert(0, dict);
+        this._currentTheme = dict;
+    }
+
+    private void SetupConfiguration()
+    {
+        var builder = new ConfigurationBuilder()
+                    .SetBasePath(AppContext.BaseDirectory)
+                    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+        this._configuration = builder.Build();
+        Settings.Configure(this._configuration.GetConnectionString("DefaultConnection")!);
+    }
+
+    private void SetupLayout()
+    {
+        var theme = this._configuration["Theme"];
+        if (!string.IsNullOrEmpty(theme) && theme.Equals("dark", StringComparison.OrdinalIgnoreCase))
+        {
+            this.UseDarkTheme();
+        }
+        else
+        {
+            this.UseLightTheme();
+        }
+    }
+
+    private async Task SetupServices()
+    {
+        this._host = Host.CreateDefaultBuilder()
+                    .ConfigureServices((context, services) =>
+                    {
+                        // Register services
+                        _ = services.AddSingleton<MainWindow>()
+                            .AddTransient<DtoManagementPage>();
+
+                        _ = services.AddTransient<IDtoService, DtoService>();
+                        _ = services.AddTransient<ICodeGeneratorEngine<INamespace>, RoslynCodeGenerator>();
+
+                        _ = services.AddTransient(x => new SqlConnection(Settings.Default.ConnectionString));
+
+                        _ = services.AddTransient<IModuleService, ModuleService>();
+                    })
+                    .Build();
+        await this._host.StartAsync();
+    }
+
+    private void ShowMainWindow()
+    {
+        var mainWindow = this._host!.Services.GetService<MainWindow>()!;
+        mainWindow.Show();
     }
 }

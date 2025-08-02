@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 
-using Library.Globalization.DataTypes;
 
 using static Library.Globalization.CultureConstants;
 
