@@ -46,9 +46,9 @@ public sealed partial class FolderStructure
                 this.ApplicationPath = Path.Combine(field, "Application");
             }
 
-            if (this.ApplicationModelsPath.IsNullOrEmpty())
+            if (this.ApplicationDtosPath.IsNullOrEmpty())
             {
-                this.ApplicationModelsPath = Path.Combine(this.ApplicationPath!, "Models");
+                this.ApplicationDtosPath = Path.Combine(this.ApplicationPath!, "Models");
             }
 
             if (this.RepositoriesPath.IsNullOrEmpty())
@@ -63,7 +63,7 @@ public sealed partial class FolderStructure
     public string? ViewModelsPath { get; set; }
     public string? ControllersPath { get; set; }
     public string? ApplicationPath { get; set; }
-    public string? ApplicationModelsPath { get; set; }
+    public string? ApplicationDtosPath { get; set; }
     public string? RepositoriesPath { get; set; }
 }
 

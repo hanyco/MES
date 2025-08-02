@@ -9,7 +9,6 @@ using CodeGenerator.Designer.UI.ViewModels;
 using CodeGenerator.UI.Dialogs;
 
 using DataLib.Extensions;
-using System.Linq;
 using DataLib.SqlServer;
 
 using Library.CodeGenLib.Models;
@@ -30,12 +29,13 @@ public partial class DtoManagementPage : UserControl
 
     private readonly IDtoService _dtoService;
     private readonly IModuleService _moduleService;
+    private readonly Settings _settings;
 
-    public DtoManagementPage(IDtoService dtoService, IModuleService moduleService)
+    public DtoManagementPage(IDtoService dtoService, IModuleService moduleService, Settings settings)
     {
         this._dtoService = dtoService;
         this._moduleService = moduleService;
-
+        this._settings = settings;
         this.InitializeComponent();
 
         this.DataContextChanged += this.DtoManagementPage_DataContextChanged;
@@ -164,10 +164,18 @@ public partial class DtoManagementPage : UserControl
         try
         {
             var codes = this.GenerateCode();
-            var (dialogResult, selectedPath) = FolderBrowserDialog.Show();
-            if (dialogResult != DialogResult.OK)
+            string selectedPath;
+            if (this._settings?.Folders?.ApplicationDtosPath.IsNullOrEmpty() is not false)
             {
-                return;
+                (var dialogResult, selectedPath) = FolderBrowserDialog.Show();
+                if (dialogResult != DialogResult.OK)
+                {
+                    return;
+                }
+            }
+            else
+            {
+                selectedPath = this._settings.Folders.ApplicationDtosPath;
             }
 
             foreach (var code in codes.Compact())
@@ -195,7 +203,7 @@ public partial class DtoManagementPage : UserControl
 
     private DtoViewModel MapDtoToViewModel(Dto dto)
     {
-        int.TryParse(dto.DbObjectId, out var objectId);
+        _ = int.TryParse(dto.DbObjectId, out var objectId);
         return new DtoViewModel
         {
             Id = dto.Id,
