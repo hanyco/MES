@@ -18,7 +18,7 @@
         <bases:BasePage.ToolbarContent>
             <ToolBar>
                 <Button Click="NewDtoButton_Click" Content="New…" />
-                <Button Content="Edit" />
+                <Button Click="EditDtoButton_Click" Content="Edit" />
                 <Button Content="Delete…" />
                 <Separator />
                 <Button
@@ -38,6 +38,7 @@
         </bases:BasePage.ToolbarContent>
         <bases:BasePage.SidebarContent>
             <ListBox
+                x:Name="DtosListBox"
                 ItemsSource="{Binding ElementName=Me, Path=StaticViewModel.Dtos}"
                 DisplayMemberPath="Name"
                 SelectedValuePath="Id" />
