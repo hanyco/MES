@@ -38,6 +38,7 @@
     <Folder Include="Designer\UI\Controls\" />
     <Folder Include="Designer\UI\Resources\" />
     <Folder Include="Designer\UI\Styles\" />
+    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>
