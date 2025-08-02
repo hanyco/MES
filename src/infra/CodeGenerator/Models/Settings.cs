@@ -1,18 +1,12 @@
-﻿namespace CodeGenerator.Application.Services;
-
+﻿namespace CodeGenerator.Models;
 public sealed class Settings
 {
-    public static Settings Default { get; private set; } = default!;
-    public string ConnectionString { get; private init; } = default!;
     public FolderStructure? Folders { get; set; }
-
-    public static void Configure(string connectionString)
-        => Default = new Settings { ConnectionString = connectionString };
 }
 
 public sealed class FolderStructure
 {
-    public string DefaultRoot { get; set; } = default!;
+    public string? DefaultRoot { get; set; }
     public string? PagesPath { get; set; }
     public string? ComponentsPath { get; set; }
     public string? ViewModelsPath { get; set; }
