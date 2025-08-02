@@ -55,6 +55,7 @@ public partial class DtoManagementPage : UserControl
     {
         this.Loaded -= this.DtoManagementPage_Loaded;
         await this.LoadStaticViewModelAsync();
+        this.DataContext ??= new DtoViewModel();
     }
 
     private void GenerateCodeButton_Click(object sender, RoutedEventArgs e)
