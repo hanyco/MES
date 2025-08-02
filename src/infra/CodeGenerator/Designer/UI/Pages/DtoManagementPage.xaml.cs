@@ -9,6 +9,7 @@ using CodeGenerator.Designer.UI.ViewModels;
 using CodeGenerator.UI.Dialogs;
 
 using DataLib.Extensions;
+using System.Linq;
 using DataLib.SqlServer;
 
 using Library.CodeGenLib.Models;
@@ -101,6 +102,31 @@ public partial class DtoManagementPage : UserControl
         this.DataContext = model;
     }
 
+    private async void EditDtoButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (this.DtosListBox.SelectedItem is not DtoViewModel selected || selected.Id is null)
+        {
+            TaskDialog.Info("Select a DTO first.");
+            return;
+        }
+
+        try
+        {
+            var dto = await this._dtoService.GetById(selected.Id.Value).ThrowOnFail().ParseValue();
+            if (dto is null)
+            {
+                TaskDialog.Error("DTO not found.");
+                return;
+            }
+
+            this.DataContext = this.MapDtoToViewModel(dto);
+        }
+        catch (Exception ex)
+        {
+            TaskDialog.Error(ex);
+        }
+    }
+
     private async void SaveToDbButton_Click(object sender, RoutedEventArgs e)
     {
         try
@@ -164,6 +190,25 @@ public partial class DtoManagementPage : UserControl
         {
             TaskDialog.Error(ex.GetBaseException().Message);
         }
+    }
+
+    private DtoViewModel MapDtoToViewModel(Dto dto)
+    {
+        int.TryParse(dto.DbObjectId, out var objectId);
+        return new DtoViewModel
+        {
+            Id = dto.Id,
+            Name = dto.Name,
+            Comments = dto.Comment,
+            NameSpace = dto.Namespace,
+            IsList = dto.IsList ?? false,
+            IsParams = dto.IsParamsDto,
+            IsResult = dto.IsResultDto,
+            IsViewModel = dto.IsViewModel,
+            ObjectId = objectId,
+            Module = this.StaticViewModel?.Modules.FirstOrDefault(m => m.Id == dto.ModuleId),
+            Properties = new ObservableCollection<Property>(dto.Properties)
+        };
     }
 }
 
