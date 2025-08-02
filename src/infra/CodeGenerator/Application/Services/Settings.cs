@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 
 namespace CodeGenerator.Application.Services;
 
@@ -14,31 +14,49 @@ public sealed class Settings
 
 public sealed partial class FolderStructure
 {
-    private string _defaultRoot = default!;
-
     public string DefaultRoot
     {
-        get => _defaultRoot;
+        get;
         set
         {
-            _defaultRoot = value;
+            field = value;
 
-            if (string.IsNullOrWhiteSpace(PagesPath))
-                PagesPath = Path.Combine(_defaultRoot, "Presentation", "Pages");
-            if (string.IsNullOrWhiteSpace(ComponentsPath))
-                ComponentsPath = Path.Combine(_defaultRoot, "Presentation", "Components");
-            if (string.IsNullOrWhiteSpace(ViewModelsPath))
-                ViewModelsPath = Path.Combine(_defaultRoot, "Presentation", "ViewModels");
-            if (string.IsNullOrWhiteSpace(ControllersPath))
-                ControllersPath = Path.Combine(_defaultRoot, "Presentation", "Controllers");
-            if (string.IsNullOrWhiteSpace(ApplicationPath))
-                ApplicationPath = Path.Combine(_defaultRoot, "Application");
-            if (string.IsNullOrWhiteSpace(ApplicationModelsPath))
-                ApplicationModelsPath = Path.Combine(ApplicationPath!, "Models");
-            if (string.IsNullOrWhiteSpace(RepositoriesPath))
-                RepositoriesPath = Path.Combine(_defaultRoot, "Infrastructure", "Repositories");
+            if (this.PagesPath.IsNullOrEmpty())
+            {
+                this.PagesPath = Path.Combine(field, "Presentation", "Pages");
+            }
+
+            if (this.ComponentsPath.IsNullOrEmpty())
+            {
+                this.ComponentsPath = Path.Combine(field, "Presentation", "Components");
+            }
+
+            if (this.ViewModelsPath.IsNullOrEmpty())
+            {
+                this.ViewModelsPath = Path.Combine(field, "Presentation", "ViewModels");
+            }
+
+            if (this.ControllersPath.IsNullOrEmpty())
+            {
+                this.ControllersPath = Path.Combine(field, "Presentation", "Controllers");
+            }
+
+            if (this.ApplicationPath.IsNullOrEmpty())
+            {
+                this.ApplicationPath = Path.Combine(field, "Application");
+            }
+
+            if (this.ApplicationModelsPath.IsNullOrEmpty())
+            {
+                this.ApplicationModelsPath = Path.Combine(this.ApplicationPath!, "Models");
+            }
+
+            if (this.RepositoriesPath.IsNullOrEmpty())
+            {
+                this.RepositoriesPath = Path.Combine(field, "Infrastructure", "Repositories");
+            }
         }
-    }
+    } = default!;
 
     public string? PagesPath { get; set; }
     public string? ComponentsPath { get; set; }
