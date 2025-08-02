@@ -2,7 +2,7 @@
 
 namespace CodeGenerator.Application.Services;
 
-public sealed class Settings
+public sealed partial class Settings
 {
     public static Settings Default { get; private set; } = default!;
     public string ConnectionString { get; private init; } = default!;

@@ -21,7 +21,7 @@
                 <MenuItem Command="{Binding ExitCommand}" Header="E_xit…" />
             </MenuItem>
             <MenuItem Header="_Tools">
-                <MenuItem Header="_Settings..." />
+                <MenuItem Header="_Settings..." Click="SettingsMenuItem_Click" />
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Click="AboutMenuItem_Click" Header="_About..." />
