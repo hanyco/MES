@@ -3,6 +3,7 @@ using System.Windows;
 
 using CodeGenerator.Designer.UI.Common;
 using CodeGenerator.Designer.UI.Pages;
+using CodeGenerator.Designer.UI.Controls;
 using CodeGenerator.UI.Dialogs;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -62,6 +63,9 @@ public partial class MainWindow : Window
 
     private void MenuItem_Click(object sender, RoutedEventArgs e)
         => this.MainContent.Content = this._services.GetService<DtoManagementPage>();
+
+    private void SettingsMenuItem_Click(object sender, RoutedEventArgs e)
+        => this.MainContent.Content = this._services.GetService<SettingsControl>();
 
     private void AboutMenuItem_Click(object sender, RoutedEventArgs e) =>
         TaskDialog.Create()

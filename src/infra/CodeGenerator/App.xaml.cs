@@ -2,6 +2,7 @@
 
 using CodeGenerator.Application.Services;
 using CodeGenerator.Designer.UI.Pages;
+using CodeGenerator.Designer.UI.Controls;
 using Library.CodeGenLib;
 using Library.CodeGenLib.Back;
 using Library.CodeGenLib.CodeGenerators;
@@ -73,7 +74,13 @@ public partial class App : System.Windows.Application
                     .SetBasePath(AppContext.BaseDirectory)
                     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
         this._configuration = builder.Build();
-        Settings.Configure(this._configuration.GetConnectionString("DefaultConnection")!);
+        Settings.Load();
+        var connection = this._configuration.GetConnectionString("DefaultConnection");
+        if (string.IsNullOrWhiteSpace(Settings.Default.ConnectionString) && !string.IsNullOrWhiteSpace(connection))
+        {
+            Settings.Configure(connection);
+            Settings.Default.Save();
+        }
     }
 
     private void SetupLayout()
@@ -96,7 +103,8 @@ public partial class App : System.Windows.Application
                     {
                         // Register services
                         _ = services.AddSingleton<MainWindow>()
-                            .AddTransient<DtoManagementPage>();
+                            .AddTransient<DtoManagementPage>()
+                            .AddTransient<SettingsControl>();
 
                         _ = services.AddTransient<IDtoService, DtoService>();
                         _ = services.AddTransient<ICodeGeneratorEngine<INamespace>, RoslynCodeGenerator>();
