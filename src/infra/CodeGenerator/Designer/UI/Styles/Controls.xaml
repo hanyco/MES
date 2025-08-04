@@ -11,37 +11,48 @@
     <Style x:Key="ShortButton" TargetType="{x:Type Button}">
         <Setter Property="Width" Value="21" />
         <Setter Property="Height" Value="30" />
-        <Setter Property="Margin" Value="3" />
+        <Setter Property="Margin" Value="2,1,2,1" />
     </Style>
 
     <Style TargetType="{x:Type TextBlock}">
         <Setter Property="MinWidth" Value="80" />
-        <Setter Property="Margin" Value="3,0,0,0" />
+        <Setter Property="Margin" Value="2,1,2,1" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style x:Key="LongTextBlock" TargetType="{x:Type TextBlock}">
+        <Setter Property="MinWidth" Value="120" />
+        <Setter Property="Margin" Value="2,1,2,1" />
         <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
 
     <Style TargetType="{x:Type TextBox}">
         <Setter Property="Width" Value="200" />
         <Setter Property="Height" Value="28" />
-        <Setter Property="Margin" Value="3,0,0,0" />
+        <Setter Property="Margin" Value="2,1,2,1" />
+    </Style>
+    <Style x:Key="LongTextBox" TargetType="TextBox">
+        <Setter Property="MinWidth" Value="200" />
+        <Setter Property="Height" Value="28" />
+        <Setter Property="Margin" Value="2,1,2,1" />
     </Style>
 
     <Style TargetType="{x:Type ComboBox}">
         <Setter Property="Width" Value="200" />
         <Setter Property="Height" Value="28" />
-        <Setter Property="Margin" Value="3,0,0,0" />
+        <Setter Property="Margin" Value="2,1,2,1" />
     </Style>
 
     <Style TargetType="{x:Type CheckBox}">
         <Setter Property="Width" Value="150" />
         <Setter Property="Height" Value="28" />
-        <Setter Property="Margin" Value="3,0,0,0" />
+        <Setter Property="Margin" Value="2,1,2,1" />
     </Style>
 
     <Style TargetType="{x:Type RichTextBox}">
         <Setter Property="MinWidth" Value="200" />
         <Setter Property="MinHeight" Value="28" />
-        <Setter Property="Margin" Value="3,0,0,0" />
+        <Setter Property="Margin" Value="2,1,2,1" />
     </Style>
 
     <!--  Toolbar buttons  -->
@@ -70,5 +81,9 @@
         <Setter Property="Height" Value="24" />
         <Setter Property="Margin" Value="0" />
         <Setter Property="Padding" Value="0" />
+    </Style>
+
+    <Style x:Key="ContentGrid" TargetType="Grid">
+        <Setter Property="Margin" Value="10,10,10,10" />
     </Style>
 </ResourceDictionary>

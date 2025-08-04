@@ -1,6 +1,6 @@
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using CodeGenerator.Application.Services;
+
 using CodeGenerator.UI.Dialogs;
 
 namespace CodeGenerator.Designer.UI.Controls;
@@ -17,8 +17,8 @@ public partial class SettingsControl : UserControl
 
     private void OnSave(object sender, RoutedEventArgs e)
     {
-        Settings.Configure(this.ConnectionStringBox.Text);
-        Settings.Default.Folders = new FolderStructure
+        var cpnnectionString = this.ConnectionStringBox.Text;
+        var folders = new FolderStructure
         {
             DefaultRoot = this.RootPathBox.Text,
             PagesPath = this.PagesPathBox.Text,
@@ -29,8 +29,8 @@ public partial class SettingsControl : UserControl
             ApplicationDtosPath = this.DtosPathBox.Text,
             RepositoriesPath = this.RepositoriesPathBox.Text
         };
-        Settings.Default.Save();
-        this.OnSaved(Settings.Default);
+        Settings.Configure(cpnnectionString, folders);
+        Settings.Save();
     }
 
     private void LoadFromSettings()
@@ -45,7 +45,6 @@ public partial class SettingsControl : UserControl
         this.ApplicationPathBox.Text = Settings.Default.Folders?.ApplicationPath;
         this.DtosPathBox.Text = Settings.Default.Folders?.ApplicationDtosPath;
         this.RepositoriesPathBox.Text = Settings.Default.Folders?.RepositoriesPath;
-        this.OnLoaded(Settings.Default);
     }
 
     private void OnBrowseRootPath(object sender, RoutedEventArgs e)
@@ -119,7 +118,4 @@ public partial class SettingsControl : UserControl
             this.RepositoriesPathBox.Text = path;
         }
     }
-
-    partial void OnLoaded(Settings settings);
-    partial void OnSaved(Settings settings);
 }

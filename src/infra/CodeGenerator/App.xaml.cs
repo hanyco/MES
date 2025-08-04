@@ -79,7 +79,7 @@ public partial class App : System.Windows.Application
         if (string.IsNullOrWhiteSpace(Settings.Default.ConnectionString) && !string.IsNullOrWhiteSpace(connection))
         {
             Settings.Configure(connection);
-            Settings.Default.Save();
+            Settings.Save();
         }
     }
 

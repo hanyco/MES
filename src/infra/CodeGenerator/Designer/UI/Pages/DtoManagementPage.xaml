@@ -39,8 +39,8 @@
         <bases:BasePage.SidebarContent>
             <ListBox
                 x:Name="DtosListBox"
-                ItemsSource="{Binding ElementName=Me, Path=StaticViewModel.Dtos}"
                 DisplayMemberPath="Name"
+                ItemsSource="{Binding ElementName=Me, Path=StaticViewModel.Dtos}"
                 SelectedValuePath="Id" />
         </bases:BasePage.SidebarContent>
         <bases:BasePage.EntityDesignerContent>
