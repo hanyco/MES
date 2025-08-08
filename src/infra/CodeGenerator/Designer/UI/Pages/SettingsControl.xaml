@@ -6,7 +6,8 @@
         <TextBlock Text="Connection String:" />
         <TextBox
             x:Name="ConnectionStringBox"
-            Margin="0,0,0,5" />
+            Margin="0,0,0,5"
+            TextChanged="OnConnectionStringChanged" />
         <TextBlock Text="Root Path:" />
         <StackPanel
             Orientation="Horizontal"
@@ -14,7 +15,8 @@
             <TextBox
                 x:Name="RootPathBox"
                 Width="300"
-                Margin="0,0,5,0" LostFocus="RootPathBox_LostFocus" />
+                Margin="0,0,5,0" LostFocus="RootPathBox_LostFocus"
+                TextChanged="OnRootPathChanged" />
             <Button
                 Content="..."
                 Width="30"
@@ -22,37 +24,37 @@
         </StackPanel>
         <TextBlock Text="Pages Path:" />
         <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-            <TextBox x:Name="PagesPathBox" Width="300" Margin="0,0,5,0" />
+            <TextBox x:Name="PagesPathBox" Width="300" Margin="0,0,5,0" TextChanged="OnPagesPathChanged" />
             <Button Content="..." Width="30" Click="OnBrowsePagesPath" />
         </StackPanel>
         <TextBlock Text="Components Path:" />
         <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-            <TextBox x:Name="ComponentsPathBox" Width="300" Margin="0,0,5,0" />
+            <TextBox x:Name="ComponentsPathBox" Width="300" Margin="0,0,5,0" TextChanged="OnComponentsPathChanged" />
             <Button Content="..." Width="30" Click="OnBrowseComponentsPath" />
         </StackPanel>
         <TextBlock Text="ViewModels Path:" />
         <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-            <TextBox x:Name="ViewModelsPathBox" Width="300" Margin="0,0,5,0" />
+            <TextBox x:Name="ViewModelsPathBox" Width="300" Margin="0,0,5,0" TextChanged="OnViewModelsPathChanged" />
             <Button Content="..." Width="30" Click="OnBrowseViewModelsPath" />
         </StackPanel>
         <TextBlock Text="Controllers Path:" />
         <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-            <TextBox x:Name="ControllersPathBox" Width="300" Margin="0,0,5,0" />
+            <TextBox x:Name="ControllersPathBox" Width="300" Margin="0,0,5,0" TextChanged="OnControllersPathChanged" />
             <Button Content="..." Width="30" Click="OnBrowseControllersPath" />
         </StackPanel>
         <TextBlock Text="Application Path:" />
         <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-            <TextBox x:Name="ApplicationPathBox" Width="300" Margin="0,0,5,0" />
+            <TextBox x:Name="ApplicationPathBox" Width="300" Margin="0,0,5,0" TextChanged="OnApplicationPathChanged" />
             <Button Content="..." Width="30" Click="OnBrowseApplicationPath" />
         </StackPanel>
         <TextBlock Text="DTOs Path:" />
         <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-            <TextBox x:Name="DtosPathBox" Width="300" Margin="0,0,5,0" />
+            <TextBox x:Name="DtosPathBox" Width="300" Margin="0,0,5,0" TextChanged="OnDtosPathChanged" />
             <Button Content="..." Width="30" Click="OnBrowseDtosPath" />
         </StackPanel>
         <TextBlock Text="Repositories Path:" />
         <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-            <TextBox x:Name="RepositoriesPathBox" Width="300" Margin="0,0,5,0" />
+            <TextBox x:Name="RepositoriesPathBox" Width="300" Margin="0,0,5,0" TextChanged="OnRepositoriesPathChanged" />
             <Button Content="..." Width="30" Click="OnBrowseRepositoriesPath" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
