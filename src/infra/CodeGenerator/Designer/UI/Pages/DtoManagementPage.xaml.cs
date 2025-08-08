@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -8,12 +7,14 @@ using CodeGenerator.Designer.UI.Dialogs;
 using CodeGenerator.Designer.UI.ViewModels;
 using CodeGenerator.UI.Dialogs;
 
+using CodeGenerator.Application.Services;
 using DataLib.Extensions;
 using DataLib.SqlServer;
 
 using Library.CodeGenLib.Models;
 using Library.Coding;
 using Library.Exceptions;
+using Library.Extensions;
 
 using Microsoft.WindowsAPICodePack.Dialogs;
 
@@ -29,13 +30,11 @@ public partial class DtoManagementPage : UserControl
 
     private readonly IDtoService _dtoService;
     private readonly IModuleService _moduleService;
-    private readonly Settings _settings;
 
-    public DtoManagementPage(IDtoService dtoService, IModuleService moduleService, Settings settings)
+    public DtoManagementPage(IDtoService dtoService, IModuleService moduleService)
     {
         this._dtoService = dtoService;
         this._moduleService = moduleService;
-        this._settings = settings;
         this.InitializeComponent();
 
         this.DataContextChanged += this.DtoManagementPage_DataContextChanged;
@@ -176,25 +175,10 @@ public partial class DtoManagementPage : UserControl
     private void SaveGeneratedCodesToDisk()
     {
         var codes = this.GenerateCode();
-        string selectedPath;
-        if (this._settings?.Folders?.ApplicationDtosPath.IsNullOrEmpty() is not false)
-        {
-            (var dialogResult, selectedPath) = FolderBrowserDialog.Show();
-            if (dialogResult != DialogResult.OK)
-            {
-                return;
-            }
-        }
-        else
-        {
-            selectedPath = this._settings.Folders.ApplicationDtosPath;
-        }
+        CodeFileService.SaveToDisk(codes.Compact().Select(c => (c, ProjectLayer.ApplicationModel)));
 
-        foreach (var code in codes.Compact())
-        {
-            var path = Path.Combine(selectedPath, code.FileName);
-            File.WriteAllText(path, code.Statement);
-        }
+        var selectedPath = CodeFileService.GetPath(ProjectLayer.ApplicationModel)!;
+
         _ = TaskDialog.Create()
             .WithIcon(TaskDialogStandardIcon.Information)
             .WithInstructionText("Codes are saved.")
