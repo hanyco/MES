@@ -17,7 +17,7 @@ public partial class SettingsControl : UserControl
 
     private void OnSave(object sender, RoutedEventArgs e)
     {
-        var cpnnectionString = this.ConnectionStringBox.Text;
+        var connectionString = this.ConnectionStringBox.Text;
         var folders = new FolderStructure
         {
             DefaultRoot = this.RootPathBox.Text,
@@ -29,7 +29,7 @@ public partial class SettingsControl : UserControl
             ApplicationDtosPath = this.DtosPathBox.Text,
             RepositoriesPath = this.RepositoriesPathBox.Text
         };
-        Settings.Configure(cpnnectionString, folders);
+        Settings.Configure(connectionString, folders);
         Settings.Save();
     }
 
@@ -117,5 +117,10 @@ public partial class SettingsControl : UserControl
         {
             this.RepositoriesPathBox.Text = path;
         }
+    }
+
+    private void RootPathBox_LostFocus(object sender, RoutedEventArgs e)
+    {
+
     }
 }

@@ -1,15 +1,18 @@
-using System.IO;
+﻿using System.IO;
+
 using Library.CodeGenLib.Models;
+using Library.Exceptions;
+using Library.Resulting;
 
 namespace CodeGenerator.Application.Services;
 
 public static partial class CodeFileService
 {
-    public static void SaveToDisk(IEnumerable<(Code Code, ProjectLayer Layer)> codes)
+    public static IResult<string> SaveToDisk(IEnumerable<(Code Code, ProjectLayer Layer)> codes)
     {
         if (codes is null)
         {
-            return;
+            return Result.Fail<string>(new ValidationException($"{nameof(codes)} cannot be null"));
         }
 
         foreach (var (code, layer) in codes)
@@ -20,13 +23,14 @@ public static partial class CodeFileService
                 continue;
             }
 
-            Directory.CreateDirectory(folder);
+            _ = Directory.CreateDirectory(folder);
             var path = Path.Combine(folder, code.FileName);
             File.WriteAllText(path, code.Statement);
         }
+        return Result.Success(GetPath(ProjectLayer.None)!);
     }
 
-    public static string? GetPath(ProjectLayer layer)
+    private static string? GetPath(ProjectLayer layer)
     {
         var folders = Settings.Default.Folders;
         var root = folders.DefaultRoot;
@@ -40,14 +44,10 @@ public static partial class CodeFileService
             ProjectLayer.Application => folders.ApplicationPath,
             ProjectLayer.ApplicationModel => folders.ApplicationDtosPath,
             ProjectLayer.Repository => folders.RepositoriesPath,
+            ProjectLayer.None => root,
             _ => root,
         };
 
-        if (string.IsNullOrWhiteSpace(relative))
-        {
-            return null;
-        }
-
-        return Path.IsPathRooted(relative) ? relative : Path.Combine(root, relative);
+        return string.IsNullOrWhiteSpace(relative) ? null : Path.IsPathRooted(relative) ? relative : Path.Combine(root, relative);
     }
 }

@@ -9,14 +9,8 @@ public static class SettingsExtension
 
     extension(Settings)
     {
-        public static void Load()
-        {
-            var path = Path.Combine(AppContext.BaseDirectory, _FileName);
-            var settings = File.Exists(path)
-                ? JsonSerializer.Deserialize<Settings>(File.ReadAllText(path))!
-                : new Settings();
-            Settings.Configure(settings);
-        }
+        public static void Load() =>
+            Settings.Configure(GetSettings());
 
         public static void Save()
         {
@@ -25,14 +19,14 @@ public static class SettingsExtension
             File.WriteAllText(path, json);
         }
 
-        public static void Configure(string connectionString, FolderStructure folders)
-            => Configure(new Settings { ConnectionString = connectionString, Folders = folders });
+        public static void Configure(string connectionString, FolderStructure? folders = null)
+            => Configure(new Settings { ConnectionString = connectionString, Folders = folders ?? GetSettings().Folders });
 
         public static void Configure(Settings settings)
             => Settings.Default = settings;
 
         public static void Reset()
-            => Settings.Default = new Settings { ConnectionString = string.Empty, Folders = new FolderStructure() };
+            => Settings.Default = new Settings { Folders = new FolderStructure() };
     }
 
     extension(FolderStructure @this)
@@ -74,5 +68,14 @@ public static class SettingsExtension
                 @this.RepositoriesPath = Path.Combine(value, "Infrastructure", "Repositories");
             }
         }
+    }
+
+    private static Settings GetSettings()
+    {
+        var path = Path.Combine(AppContext.BaseDirectory, _FileName);
+        var settings = File.Exists(path)
+            ? JsonSerializer.Deserialize<Settings>(File.ReadAllText(path))!
+            : new Settings();
+        return settings;
     }
 }

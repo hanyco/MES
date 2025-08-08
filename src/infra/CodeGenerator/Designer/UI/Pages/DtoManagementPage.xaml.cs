@@ -7,14 +7,12 @@ using CodeGenerator.Designer.UI.Dialogs;
 using CodeGenerator.Designer.UI.ViewModels;
 using CodeGenerator.UI.Dialogs;
 
-using CodeGenerator.Application.Services;
 using DataLib.Extensions;
 using DataLib.SqlServer;
 
 using Library.CodeGenLib.Models;
 using Library.Coding;
 using Library.Exceptions;
-using Library.Extensions;
 
 using Microsoft.WindowsAPICodePack.Dialogs;
 
@@ -164,7 +162,18 @@ public partial class DtoManagementPage : UserControl
     {
         try
         {
-            this.SaveGeneratedCodesToDisk();
+            var path = this.SaveGeneratedCodesToDisk();
+            _ = TaskDialog.Create()
+            .WithIcon(TaskDialogStandardIcon.Information)
+            .WithInstructionText("Codes are saved.")
+            .WithCaption("Save code")
+            .AddOkButton()
+            .AddButton("openFolderButton", "Open destination _folder", (d, __) =>
+            {
+                _ = Process.Start("explorer.exe", path);
+                d.Close();
+            })
+            .Show();
         }
         catch (Exception ex)
         {
@@ -172,24 +181,10 @@ public partial class DtoManagementPage : UserControl
         }
     }
 
-    private void SaveGeneratedCodesToDisk()
+    private string SaveGeneratedCodesToDisk()
     {
         var codes = this.GenerateCode();
-        CodeFileService.SaveToDisk(codes.Compact().Select(c => (c, ProjectLayer.ApplicationModel)));
-
-        var selectedPath = CodeFileService.GetPath(ProjectLayer.ApplicationModel)!;
-
-        _ = TaskDialog.Create()
-            .WithIcon(TaskDialogStandardIcon.Information)
-            .WithInstructionText("Codes are saved.")
-            .WithCaption("Save code")
-            .AddOkButton()
-            .AddButton("openFolderButton", "Open destination _folder", (d, __) =>
-            {
-                _ = Process.Start("explorer.exe", selectedPath);
-                d.Close();
-            })
-            .Show();
+        return CodeFileService.SaveToDisk(codes.Compact().Select(c => (c, ProjectLayer.ApplicationModel))).ThrowOnFail().GetValue();
     }
 
     private DtoViewModel MapDtoToViewModel(Dto dto)
