@@ -61,7 +61,7 @@ public abstract class Singleton<TSelf> : ISingleton<TSelf>
         where TSingleton : class, ISingleton<TSingleton>
     {
         //! If (T) has implemented CreateInstance as a static method, use it to create an instance
-        var ci = createInstance ?? ReflectionHelper.GetMethod<Func<TSingleton>>(typeof(TSingleton),
+        var ci = createInstance ?? Reflection.GetMethod<Func<TSingleton>>(typeof(TSingleton),
             "CreateInstance",
             BindingFlags.Public | BindingFlags.NonPublic |
             BindingFlags.Static);
@@ -82,7 +82,7 @@ public abstract class Singleton<TSelf> : ISingleton<TSelf>
         }
 
         //! If (T) has implemented CreateInstance as an instantiate method, use it to initialize the instance.
-        var initialize = ReflectionHelper.GetMethod<Action>(result, "InitializeComponents");
+        var initialize = Reflection.GetMethod<Action>(result, "InitializeComponents");
         initialize?.Invoke();
 
         //! if(T) has initialized b"InitializeInstance" delegate, call it to initialize the instance.

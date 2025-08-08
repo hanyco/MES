@@ -7,44 +7,33 @@ namespace CodeGenerator.Designer.UI.Controls;
 
 public partial class SettingsControl : UserControl
 {
-    public SettingsControl()
-    {
+    private Settings _settings = new();
+    public SettingsControl() =>
         this.InitializeComponent();
-        this.LoadFromSettings();
-    }
 
-    private void OnLoad(object sender, RoutedEventArgs e) => this.LoadFromSettings();
+    private void OnLoad(object sender, RoutedEventArgs e) =>
+        this.LoadFromSettings();
 
     private void OnSave(object sender, RoutedEventArgs e)
     {
         var connectionString = this.ConnectionStringBox.Text;
-        var folders = new FolderStructure
-        {
-            DefaultRoot = this.RootPathBox.Text,
-            PagesPath = this.PagesPathBox.Text,
-            ComponentsPath = this.ComponentsPathBox.Text,
-            ViewModelsPath = this.ViewModelsPathBox.Text,
-            ControllersPath = this.ControllersPathBox.Text,
-            ApplicationPath = this.ApplicationPathBox.Text,
-            ApplicationDtosPath = this.DtosPathBox.Text,
-            RepositoriesPath = this.RepositoriesPathBox.Text
-        };
-        Settings.Configure(connectionString, folders);
+        Settings.Configure(connectionString, this._settings.Folders);
         Settings.Save();
     }
 
     private void LoadFromSettings()
     {
         Settings.Load();
-        this.ConnectionStringBox.Text = Settings.Default.ConnectionString;
-        this.RootPathBox.Text = Settings.Default.Folders?.DefaultRoot;
-        this.PagesPathBox.Text = Settings.Default.Folders?.PagesPath;
-        this.ComponentsPathBox.Text = Settings.Default.Folders?.ComponentsPath;
-        this.ViewModelsPathBox.Text = Settings.Default.Folders?.ViewModelsPath;
-        this.ControllersPathBox.Text = Settings.Default.Folders?.ControllersPath;
-        this.ApplicationPathBox.Text = Settings.Default.Folders?.ApplicationPath;
-        this.DtosPathBox.Text = Settings.Default.Folders?.ApplicationDtosPath;
-        this.RepositoriesPathBox.Text = Settings.Default.Folders?.RepositoriesPath;
+        this._settings = Reflection.Copy(Settings.Default);
+        this.ConnectionStringBox.Text = this._settings.ConnectionString;
+        this.RootPathBox.Text = this._settings.Folders?.DefaultRoot;
+        this.PagesPathBox.Text = this._settings.Folders?.PagesPath;
+        this.ComponentsPathBox.Text = this._settings.Folders?.ComponentsPath;
+        this.ViewModelsPathBox.Text = this._settings.Folders?.ViewModelsPath;
+        this.ControllersPathBox.Text = this._settings.Folders?.ControllersPath;
+        this.ApplicationPathBox.Text = this._settings.Folders?.ApplicationPath;
+        this.DtosPathBox.Text = this._settings.Folders?.ApplicationDtosPath;
+        this.RepositoriesPathBox.Text = this._settings.Folders?.RepositoriesPath;
     }
 
     private void OnBrowseRootPath(object sender, RoutedEventArgs e)
@@ -119,8 +108,8 @@ public partial class SettingsControl : UserControl
         }
     }
 
-    private void RootPathBox_LostFocus(object sender, RoutedEventArgs e)
+    private void RootPathBox_TextChanged(object sender, TextChangedEventArgs e)
     {
-
+        _settings.Folders.DefaultRoot = RootPathBox.Text;
     }
 }

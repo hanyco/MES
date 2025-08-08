@@ -4,7 +4,7 @@ using Library.Coding;
 
 namespace Library.Extensions;
 
-public static class ReflectionHelper
+public static class Reflection
 {
     /// <summary>
     /// Gets the attribute.
@@ -72,4 +72,43 @@ public static class ReflectionHelper
     /// </returns>
     public static bool IsInheritedOrImplemented(in object? obj, [DisallowNull] in Type type)
         => obj != null && type.EnsureArgumentNotNull().IsAssignableFrom(obj.GetType());
+
+    [return: NotNullIfNotNull(nameof(@this))]
+    [return: NotNullIfNotNull(nameof(dest))]
+    private static TDest? Copy<TSource, TDest>(TSource? @this, TDest? dest, bool throwExtension = false)
+    where TSource : class
+    where TDest : class
+    {
+        if (@this is null || dest is null)
+        {
+            return dest;
+        }
+        var destProperties = typeof(TDest).GetProperties();
+        foreach (var prop in typeof(TSource).GetProperties())
+        {
+            try
+            {
+                destProperties
+                    .FirstOrDefault(x => x.Name.Equals(prop.Name, StringComparison.OrdinalIgnoreCase))?
+                    .SetValue(dest, prop.GetValue(@this));
+            }
+            catch (Exception)
+            {
+                if (throwExtension)
+                {
+                    throw;
+                }
+            }
+        }
+        return dest;
+    }
+
+    [return: NotNullIfNotNull(nameof(@this))]
+    public static TDest? Copy<TSource, TDest>(TSource? @this)
+        where TSource : class
+        where TDest : class, new() => Copy<TSource, TDest>(@this, new());
+
+    [return: NotNullIfNotNull(nameof(@this))]
+    public static TType? Copy<TType>(TType? @this)
+        where TType : class, new() => Copy<TType, TType>(@this, new());
 }

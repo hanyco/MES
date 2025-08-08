@@ -14,7 +14,7 @@
             <TextBox
                 x:Name="RootPathBox"
                 Width="300"
-                Margin="0,0,5,0" LostFocus="RootPathBox_LostFocus" />
+                Margin="0,0,5,0" TextChanged="RootPathBox_TextChanged" Tag=""/>
             <Button
                 Content="..."
                 Width="30"

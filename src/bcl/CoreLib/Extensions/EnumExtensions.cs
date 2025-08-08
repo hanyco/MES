@@ -100,7 +100,7 @@ public static class EnumExtensions
             (TEnum)Enum.ToObject(typeof(TEnum), @this.Cast().ToInt() & ~item.Cast().ToInt());
     }
 
-    extension(ReflectionHelper)
+    extension(Reflection)
     {
         /// <summary>
         /// Gets the descriptions of the given enumerable items.

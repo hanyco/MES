@@ -62,7 +62,7 @@ public readonly struct PersianDateTime :
     /// Gets the day of week title.
     /// </summary>
     /// <value>The day of week title.</value>
-    public string DayOfWeekTitle => ReflectionHelper.GetItemDescription(this.DayOfWeek)!;
+    public string DayOfWeekTitle => Reflection.GetItemDescription(this.DayOfWeek)!;
 
     /// <summary>
     /// Gets the hour.
@@ -208,13 +208,13 @@ public readonly struct PersianDateTime :
     /// Gets the days of week names.
     /// </summary>
     /// <value>The month names.</value>
-    public static IEnumerable<string> DaysOfWeek => ReflectionHelper.GetDescriptions(Enum.GetItems<PersianDayOfWeek>())!;
+    public static IEnumerable<string> DaysOfWeek => Reflection.GetDescriptions(Enum.GetItems<PersianDayOfWeek>())!;
 
     /// <summary>
     /// Gets the month names.
     /// </summary>
     /// <value>The month names.</value>
-    public static IEnumerable<string> MonthNames => ReflectionHelper.GetDescriptions(Enum.GetItems<PersianMonth>())!;
+    public static IEnumerable<string> MonthNames => Reflection.GetDescriptions(Enum.GetItems<PersianMonth>())!;
 
     /// <summary>
     /// Gets a PersianDateTime object that is set to the current date and time on this computer, expressed as the local time.
