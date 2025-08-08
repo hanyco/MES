@@ -132,23 +132,7 @@ public partial class DtoManagementPage : UserControl
     {
         try
         {
-            if (this.DataContext is not DtoViewModel vm)
-            {
-                throw new ValidationException("No view model found.");
-            }
-
-            var dto = vm.ToEntity();
-            if (vm.Id is null or 0)
-            {
-                var id = await this._dtoService.Insert(dto).ThrowOnFail().ParseValue();
-                vm.Id = id;
-            }
-            else
-            {
-                _ = await this._dtoService.Update(vm.Id.Value, dto).ThrowOnFail();
-            }
-
-            TaskDialog.Info("DTO saved successfully.");
+            await this.SaveMetaDataToDb();
         }
         catch (Exception ex)
         {
@@ -156,49 +140,72 @@ public partial class DtoManagementPage : UserControl
         }
     }
 
-    private void SaveGeneratedCodesToDisk_Click(object sender, RoutedEventArgs e)
-        => this.SaveGeneratedCodesToDisk();
+    private async Task SaveMetaDataToDb()
+    {
+        if (this.DataContext is not DtoViewModel vm)
+        {
+            throw new ValidationException("No view model found.");
+        }
 
-    private void SaveGeneratedCodesToDisk()
+        var dto = vm.ToEntity();
+        if (vm.Id is null or 0)
+        {
+            var id = await this._dtoService.Insert(dto).ThrowOnFail().ParseValue();
+            vm.Id = id;
+        }
+        else
+        {
+            _ = await this._dtoService.Update(vm.Id.Value, dto).ThrowOnFail();
+        }
+
+        TaskDialog.Info("DTO saved successfully.");
+    }
+
+    private void SaveGeneratedCodesToDisk_Click(object sender, RoutedEventArgs e)
     {
         try
         {
-            var codes = this.GenerateCode();
-            string selectedPath;
-            if (this._settings?.Folders?.ApplicationDtosPath.IsNullOrEmpty() is not false)
-            {
-                (var dialogResult, selectedPath) = FolderBrowserDialog.Show();
-                if (dialogResult != DialogResult.OK)
-                {
-                    return;
-                }
-            }
-            else
-            {
-                selectedPath = this._settings.Folders.ApplicationDtosPath;
-            }
-
-            foreach (var code in codes.Compact())
-            {
-                var path = Path.Combine(selectedPath, code.FileName);
-                File.WriteAllText(path, code.Statement);
-            }
-            _ = TaskDialog.Create()
-                .WithIcon(TaskDialogStandardIcon.Information)
-                .WithInstructionText("Codes are saved.")
-                .WithCaption("Save code")
-                .AddOkButton()
-                .AddButton("openFolderButton", "Open destination _folder", (d, __) =>
-                {
-                    _ = Process.Start("explorer.exe", selectedPath);
-                    d.Close();
-                })
-                .Show();
+            this.SaveGeneratedCodesToDisk();
         }
         catch (Exception ex)
         {
             TaskDialog.Error(ex.GetBaseException().Message);
         }
+    }
+
+    private void SaveGeneratedCodesToDisk()
+    {
+        var codes = this.GenerateCode();
+        string selectedPath;
+        if (this._settings?.Folders?.ApplicationDtosPath.IsNullOrEmpty() is not false)
+        {
+            (var dialogResult, selectedPath) = FolderBrowserDialog.Show();
+            if (dialogResult != DialogResult.OK)
+            {
+                return;
+            }
+        }
+        else
+        {
+            selectedPath = this._settings.Folders.ApplicationDtosPath;
+        }
+
+        foreach (var code in codes.Compact())
+        {
+            var path = Path.Combine(selectedPath, code.FileName);
+            File.WriteAllText(path, code.Statement);
+        }
+        _ = TaskDialog.Create()
+            .WithIcon(TaskDialogStandardIcon.Information)
+            .WithInstructionText("Codes are saved.")
+            .WithCaption("Save code")
+            .AddOkButton()
+            .AddButton("openFolderButton", "Open destination _folder", (d, __) =>
+            {
+                _ = Process.Start("explorer.exe", selectedPath);
+                d.Close();
+            })
+            .Show();
     }
 
     private DtoViewModel MapDtoToViewModel(Dto dto)
