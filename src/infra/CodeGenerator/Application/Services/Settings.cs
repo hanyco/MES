@@ -1,12 +1,18 @@
-﻿using System.IO;
-
-namespace CodeGenerator.Application.Services;
+﻿namespace CodeGenerator.Application.Services;
 
 public sealed partial class Settings
 {
     public static Settings Default { get; internal set; } = default!;
     public string ConnectionString { get; init; } = default!;
-    public FolderStructure Folders { get; init; } = default!;
+    public FolderStructure Folders
+    {
+        get
+        {
+            field ??= new();
+            return field;
+        }
+        init;
+    }
 }
 
 public sealed partial class FolderStructure

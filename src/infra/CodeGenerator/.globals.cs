@@ -4,4 +4,6 @@ global using CodeGenerator.UI;
 
 global using Library.Extensions;
 
+global using Microsoft.WindowsAPICodePack.Dialogs;
+
 global using static Library.Coding.CodeHelper;

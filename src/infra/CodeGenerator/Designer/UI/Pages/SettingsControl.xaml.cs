@@ -7,16 +7,15 @@ namespace CodeGenerator.Designer.UI.Controls;
 
 public partial class SettingsControl : UserControl
 {
-    private readonly Settings _settings = Settings.Default;
+    private Settings _settings = default!;
     public SettingsControl() =>
         this.InitializeComponent();
 
     private void OnLoad(object sender, RoutedEventArgs e) =>
         this.LoadFromSettings();
 
-    private void OnSave(object sender, RoutedEventArgs e)
+    private async void OnSave(object sender, RoutedEventArgs e)
     {
-        this._settings.Folders.DefaultRoot = this.RootPathBox.Text;
         this._settings.Folders.PagesPath = this.PagesPathBox.Text;
         this._settings.Folders.ComponentsPath = this.ComponentsPathBox.Text;
         this._settings.Folders.ViewModelsPath = this.ViewModelsPathBox.Text;
@@ -24,14 +23,16 @@ public partial class SettingsControl : UserControl
         this._settings.Folders.ApplicationPath = this.ApplicationPathBox.Text;
         this._settings.Folders.ApplicationDtosPath = this.DtosPathBox.Text;
         this._settings.Folders.RepositoriesPath = this.RepositoriesPathBox.Text;
-        Settings.Configure(this._settings);
-        Settings.Save();
+        this._settings.Folders.DefaultRoot = this.RootPathBox.Text;
+        await Settings.SaveAsync();
+        this.LoadFromSettings();
+        TaskDialog.Info("Settings saved successfully.");
     }
 
     private void LoadFromSettings()
     {
         Settings.Load();
-        this.RootPathBox.Text = this._settings.Folders.DefaultRoot;
+        this._settings = Reflection.Copy(Settings.Default);
         this.PagesPathBox.Text = this._settings.Folders.PagesPath;
         this.ComponentsPathBox.Text = this._settings.Folders.ComponentsPath;
         this.ViewModelsPathBox.Text = this._settings.Folders.ViewModelsPath;
@@ -39,6 +40,7 @@ public partial class SettingsControl : UserControl
         this.ApplicationPathBox.Text = this._settings.Folders.ApplicationPath;
         this.DtosPathBox.Text = this._settings.Folders.ApplicationDtosPath;
         this.RepositoriesPathBox.Text = this._settings.Folders.RepositoriesPath;
+        this.RootPathBox.Text = this._settings.Folders.DefaultRoot;
     }
 
     private void OnBrowseRootPath(object sender, RoutedEventArgs e)

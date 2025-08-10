@@ -12,11 +12,11 @@ public static class SettingsExtension
         public static void Load() =>
             Settings.Configure(GetSettings());
 
-        public static void Save()
+        public static async Task SaveAsync()
         {
             var json = JsonSerializer.Serialize(Settings.Default);
             var path = Path.Combine(AppContext.BaseDirectory, _FileName);
-            File.WriteAllText(path, json);
+            await File.WriteAllTextAsync(path, json);
         }
 
         public static void Configure(string connectionString, FolderStructure? folders = null)
