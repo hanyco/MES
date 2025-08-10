@@ -6,6 +6,7 @@
         <Setter Property="Margin" Value="3" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
     </Style>
 
     <Style x:Key="ShortButton" TargetType="{x:Type Button}">
@@ -32,7 +33,7 @@
         <Setter Property="Margin" Value="2,1,2,1" />
     </Style>
     <Style x:Key="LongTextBox" TargetType="TextBox">
-        <Setter Property="MinWidth" Value="200" />
+        <Setter Property="MinWidth" Value="300" />
         <Setter Property="Height" Value="28" />
         <Setter Property="Margin" Value="2,1,2,1" />
     </Style>
