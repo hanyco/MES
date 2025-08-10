@@ -11,8 +11,11 @@ public partial class SettingsControl : UserControl
     public SettingsControl() =>
         this.InitializeComponent();
 
-    private void OnLoad(object sender, RoutedEventArgs e) =>
+    private void OnLoad(object sender, RoutedEventArgs e)
+    {
+        Settings.Load();
         this.LoadFromSettings();
+    }
 
     private async void OnSave(object sender, RoutedEventArgs e)
     {
@@ -25,13 +28,13 @@ public partial class SettingsControl : UserControl
         this._settings.Folders.RepositoriesPath = this.RepositoriesPathBox.Text;
         this._settings.Folders.DefaultRoot = this.RootPathBox.Text;
         await Settings.SaveAsync();
+        Settings.Load();
         this.LoadFromSettings();
         TaskDialog.Info("Settings saved successfully.");
     }
 
     private void LoadFromSettings()
     {
-        Settings.Load();
         this._settings = Reflection.Copy(Settings.Default);
         this.PagesPathBox.Text = this._settings.Folders.PagesPath;
         this.ComponentsPathBox.Text = this._settings.Folders.ComponentsPath;
@@ -113,5 +116,15 @@ public partial class SettingsControl : UserControl
         {
             this.RepositoriesPathBox.Text = path;
         }
+    }
+
+    private void OnReset(object sender, RoutedEventArgs e)
+    {
+        if (TaskDialog.AskWithWarning("Are you sure you want to reset settings?") != TaskDialogResult.Yes)
+        {
+            return;
+        }
+        Settings.Reset();
+        this.LoadFromSettings();
     }
 }

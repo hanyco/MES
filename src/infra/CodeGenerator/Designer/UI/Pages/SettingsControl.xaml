@@ -70,6 +70,7 @@
         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
             <Button Click="OnSave" Content="Save" />
             <Button Click="OnLoad" Content="Load" />
+            <Button Click="OnReset" Content="Reset"/>
         </StackPanel>
     </StackPanel>
 </UserControl>
