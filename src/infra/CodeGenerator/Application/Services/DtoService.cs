@@ -15,14 +15,16 @@ using Microsoft.Data.SqlClient;
 
 namespace CodeGenerator.Application.Services;
 
-internal sealed partial class DtoService(SqlConnection connection, ICodeGeneratorEngine<INamespace> codeGenerator) : IDtoService, IDisposable
+internal sealed partial class DtoService(SqlConnection connection, ICodeGeneratorEngine<INamespace> codeGenerator, IPropertyService propertyService) : IDtoService, IDisposable
 {
     private readonly ICodeGeneratorEngine<INamespace> _codeGenerator = codeGenerator;
     private readonly SqlConnection _connection = connection;
+    private readonly IPropertyService _propertyService = propertyService;
 
     [return: NotNull]
     public Task<IResult> Delete(long id, CancellationToken ct = default) => CatchResultAsync(async () =>
     {
+        await this._propertyService.DeleteByDtoId(id, ct).ThrowOnFail().End();
         _ = await this._connection.ExecuteAsync("DELETE FROM [infra].[Dto] WHERE Id = @Id", new { Id = id });
     });
 
