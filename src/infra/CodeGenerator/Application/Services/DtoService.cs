@@ -25,7 +25,7 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
     public Task<IResult> Delete(long id, CancellationToken ct = default) => CatchResultAsync(async () =>
     {
         _ = await this._connection.ExecuteAsync("DELETE FROM [infra].[Dto] WHERE Id = @Id", new { Id = id });
-        await this._propertyService.DeleteByDtoId(id, ct).ThrowOnFail().End();
+        await this._propertyService.DeleteByParentId(id, ct).ThrowOnFail().End();
     });
 
     public void Dispose() =>

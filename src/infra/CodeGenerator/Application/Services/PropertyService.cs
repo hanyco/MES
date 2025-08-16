@@ -1,4 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 
 using CodeGenerator.Application.Domain;
 
@@ -24,9 +24,9 @@ internal sealed partial class PropertyService(SqlConnection connection) : IPrope
     });
 
     [return: NotNull]
-    public Task<IResult> DeleteByDtoId(long dtoId, CancellationToken ct = default) => CatchResultAsync(async () =>
+    public Task<IResult> DeleteByParentId(long parentId, CancellationToken ct = default) => CatchResultAsync(async () =>
     {
-        _ = await this._connection.ExecuteAsync("DELETE FROM [infra].[Property] WHERE DtoId = @DtoId", new { DtoId = dtoId });
+        _ = await this._connection.ExecuteAsync("DELETE FROM [infra].[Property] WHERE ParentEntityId = @ParentEntityId", new { ParentEntityId = parentId });
     });
 
     [return: NotNull]
