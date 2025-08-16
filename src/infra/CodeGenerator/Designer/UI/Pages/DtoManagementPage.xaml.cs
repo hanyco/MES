@@ -49,16 +49,23 @@ public partial class DtoManagementPage : UserControl
 
     private void UpdateUiEnabledState()
     {
-        var isEnabled = this.DataContext is not null;
+        var isEnabled = this.DataContext is DtoViewModel;
+        this.SaveGeneratedCodesToDiskutton.IsEnabled = isEnabled;
         this.EntityDesignerGrid.IsEnabled = isEnabled;
+        this.GenerateCodeButton.IsEnabled = isEnabled;
+        this.SaveToDbButton.IsEnabled = isEnabled;
         this.CodesViewer.IsEnabled = isEnabled;
+
+        this.DtosListBox.IsEnabled = !isEnabled;
+        this.NewDtoButton.IsEnabled = !isEnabled;
+        this.EditDtoButton.IsEnabled = !isEnabled;
+        this.DeleteDtoButton.IsEnabled = !isEnabled;
     }
 
     private async void DtoManagementPage_Loaded(object sender, RoutedEventArgs e)
     {
         this.Loaded -= this.DtoManagementPage_Loaded;
         await this.LoadStaticViewModelAsync();
-        this.DataContext ??= new DtoViewModel();
     }
 
     private void GenerateCodeButton_Click(object sender, RoutedEventArgs e)
