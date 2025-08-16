@@ -65,7 +65,7 @@ public partial class DtoManagementPage : UserControl
     private async void DtoManagementPage_Loaded(object sender, RoutedEventArgs e)
     {
         this.Loaded -= this.DtoManagementPage_Loaded;
-        await this.LoadStaticViewModelAsync();
+        await this.LoadStaticViewModel();
     }
 
     private void GenerateCodeButton_Click(object sender, RoutedEventArgs e)
@@ -93,7 +93,7 @@ public partial class DtoManagementPage : UserControl
         return codeGenerationResult.Value;
     }
 
-    private async Task LoadStaticViewModelAsync()
+    private async Task LoadStaticViewModel()
     {
         var modules = await this._moduleService.GetAll().ParseValue().ToViewModel();
         var dataTypes = SqlType.GetSqlTypes().Select(x => x.SqlType.SqlTypeName);
@@ -154,8 +154,9 @@ public partial class DtoManagementPage : UserControl
 
         try
         {
-            _ = await this._dtoService.Delete(selected.Id.Value).ThrowOnFail();
+            await this._dtoService.Delete(selected.Id.Value).ThrowOnFail().End();
             _ = this.StaticViewModel?.Dtos.Remove(selected);
+            await this.LoadStaticViewModel();
             TaskDialog.Info("DTO deleted successfully.");
         }
         catch (Exception ex)
@@ -191,7 +192,7 @@ public partial class DtoManagementPage : UserControl
         }
         else
         {
-            _ = await this._dtoService.Update(vm.Id.Value, dto).ThrowOnFail();
+            await this._dtoService.Update(vm.Id.Value, dto).ThrowOnFail().End();
         }
 
         TaskDialog.Info("DTO saved successfully.");

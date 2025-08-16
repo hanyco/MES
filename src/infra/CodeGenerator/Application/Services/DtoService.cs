@@ -100,15 +100,15 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
 
         const string dtoSql = """
         INSERT INTO [infra].[Dto]
-          (Name, NameSpace, ModuleId, DbObjectId, Guid, Comment, IsParamsDto, IsResultDto, IsViewModel, IsList, BaseType)
-          VALUES (@Name, @NameSpace, @ModuleId, @DbObjectId, @Guid, @Comment, @IsParamsDto, @IsResultDto, @IsViewModel, @IsList, @BaseType);
+          (Name, NameSpace, ModuleId, DbObjectId, Comment, IsParamsDto, IsResultDto, IsViewModel, IsList, BaseType)
+          VALUES (@Name, @NameSpace, @ModuleId, @DbObjectId, @Comment, @IsParamsDto, @IsResultDto, @IsViewModel, @IsList, @BaseType);
         SELECT CAST(SCOPE_IDENTITY() AS bigint);
         """;
 
         const string propSql = """
         INSERT INTO [infra].[Property]
-          (ParentEntityId, PropertyType, TypeFullName, Name, HasSetter, HasGetter, IsList, IsNullable, Comment, DbObjectId, Guid)
-          VALUES (@ParentEntityId, @PropertyType, @TypeFullName, @Name, @HasSetter, @HasGetter, @IsList, @IsNullable, @Comment, @DbObjectId, @Guid);
+          (ParentEntityId, PropertyType, TypeFullName, Name, HasSetter, HasGetter, IsList, IsNullable, Comment, DbObjectId)
+          VALUES (@ParentEntityId, @PropertyType, @TypeFullName, @Name, @HasSetter, @HasGetter, @IsList, @IsNullable, @Comment, @DbObjectId);
         """;
 
         var wasClosed = this._connection.State != System.Data.ConnectionState.Open;
@@ -126,7 +126,6 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
                 NameSpace = dto.Namespace,
                 dto.ModuleId,
                 dto.DbObjectId,
-                dto.Guid,
                 dto.Comment,
                 dto.IsParamsDto,
                 dto.IsResultDto,
@@ -149,7 +148,6 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
                     prop.IsNullable,
                     prop.Comment,
                     prop.DbObjectId,
-                    prop.Guid,
                 }, trans);
             }
 
@@ -180,7 +178,6 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
           NameSpace = @NameSpace,
           ModuleId = @ModuleId,
           DbObjectId = @DbObjectId,
-          Guid = @Guid,
           Comment = @Comment,
           IsParamsDto = @IsParamsDto,
           IsResultDto = @IsResultDto,
@@ -193,8 +190,8 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
         const string deletePropSql = "DELETE FROM [infra].[Property] WHERE DtoId = @Id";
         const string propSql = """
         INSERT INTO [infra].[Property]
-          (ParentEntityId, PropertyType, TypeFullName, Name, HasSetter, HasGetter, IsList, IsNullable, Comment, DbObjectId, Guid, DtoId)
-          VALUES (@ParentEntityId, @PropertyType, @TypeFullName, @Name, @HasSetter, @HasGetter, @IsList, @IsNullable, @Comment, @DbObjectId, @Guid, @DtoId);
+          (ParentEntityId, PropertyType, TypeFullName, Name, HasSetter, HasGetter, IsList, IsNullable, Comment, DbObjectId, DtoId)
+          VALUES (@ParentEntityId, @PropertyType, @TypeFullName, @Name, @HasSetter, @HasGetter, @IsList, @IsNullable, @Comment, @DbObjectId, @DtoId);
         """;
 
         var wasClosed = this._connection.State != System.Data.ConnectionState.Open;
@@ -212,7 +209,6 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
                 NameSpace = dto.Namespace,
                 dto.ModuleId,
                 dto.DbObjectId,
-                dto.Guid,
                 dto.Comment,
                 dto.IsParamsDto,
                 dto.IsResultDto,
@@ -238,7 +234,6 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
                     prop.IsNullable,
                     prop.Comment,
                     prop.DbObjectId,
-                    prop.Guid,
                     DtoId = id
                 }, trans);
             }

@@ -4,7 +4,6 @@ public class Property
 {
     public string? Comment { get; set; }
     public string? DbObjectId { get; set; }
-    public Guid Guid { get; set; }
     public bool? HasGetter { get; set; }
     public bool? HasSetter { get; set; }
     public long Id { get; set; }

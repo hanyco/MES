@@ -5,7 +5,6 @@ public class Dto
     public string? BaseType { get; set; }
     public string? Comment { get; set; }
     public string? DbObjectId { get; set; }
-    public Guid Guid { get; set; }
     public long Id { get; set; }
     public bool? IsList { get; set; }
     public bool IsParamsDto { get; set; }
