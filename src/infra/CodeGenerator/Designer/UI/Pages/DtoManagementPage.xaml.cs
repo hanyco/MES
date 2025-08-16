@@ -6,7 +6,6 @@ using System.Windows.Controls;
 using CodeGenerator.Designer.UI.Dialogs;
 using CodeGenerator.Designer.UI.ViewModels;
 using CodeGenerator.UI.Dialogs;
-using Microsoft.WindowsAPICodePack.Dialogs;
 
 using DataLib.Extensions;
 using DataLib.SqlServer;
@@ -143,7 +142,7 @@ public partial class DtoManagementPage : UserControl
     {
         if (this.DtosListBox.SelectedItem is not DtoViewModel selected || selected.Id is null)
         {
-            TaskDialog.Info("Select a DTO first.");
+            TaskDialog.Warning("Select a DTO first.");
             return;
         }
 
