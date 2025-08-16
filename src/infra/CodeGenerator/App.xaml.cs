@@ -107,6 +107,7 @@ public partial class App : System.Windows.Application
                             .AddTransient<DtoManagementPage>()
                             .AddTransient<SettingsControl>();
 
+                        _ = services.AddTransient<IPropertyService, PropertyService>();
                         _ = services.AddTransient<IDtoService, DtoService>();
                         _ = services.AddTransient<ICodeGeneratorEngine<INamespace>, RoslynCodeGenerator>();
 
