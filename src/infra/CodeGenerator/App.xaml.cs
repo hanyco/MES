@@ -13,6 +13,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Threading.Tasks;
 
 namespace CodeGenerator;
 
@@ -46,7 +47,7 @@ public partial class App : System.Windows.Application
     {
         base.OnStartup(e);
 
-        this.SetupConfiguration();
+        await this.SetupConfiguration();
         await this.SetupServices();
         this.SetupLayout();
         this.ShowMainWindow();
@@ -68,18 +69,18 @@ public partial class App : System.Windows.Application
         this._currentTheme = dict;
     }
 
-    private void SetupConfiguration()
+    private async Task SetupConfiguration()
     {
         var builder = new ConfigurationBuilder()
                     .SetBasePath(AppContext.BaseDirectory)
                     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
         this._configuration = builder.Build();
-        Settings.Load();
+        await Settings.Load();
         var connection = this._configuration.GetConnectionString("DefaultConnection");
         if (string.IsNullOrWhiteSpace(Settings.Default.ConnectionString) && !string.IsNullOrWhiteSpace(connection))
         {
             Settings.Configure(connection);
-            Settings.SaveAsync();
+            Settings.Save();
         }
     }
 

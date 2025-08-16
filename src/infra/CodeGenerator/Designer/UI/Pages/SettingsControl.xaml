@@ -1,7 +1,8 @@
 ﻿<UserControl
     x:Class="CodeGenerator.Designer.UI.Controls.SettingsControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Loaded="OnLoad">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Loaded="OnLoad">
     <StackPanel Margin="10">
         <TextBlock Text="Root Path:" />
         <StackPanel Orientation="Horizontal">
@@ -70,7 +71,7 @@
         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
             <Button Click="OnSave" Content="Save" />
             <Button Click="OnLoad" Content="Load" />
-            <Button Click="OnReset" Content="Reset"/>
+            <Button Click="OnReset" Content="Reset" />
         </StackPanel>
     </StackPanel>
 </UserControl>

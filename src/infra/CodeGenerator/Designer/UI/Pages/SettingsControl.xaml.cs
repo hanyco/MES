@@ -8,16 +8,26 @@ namespace CodeGenerator.Designer.UI.Controls;
 public partial class SettingsControl : UserControl
 {
     private Settings _settings = default!;
+
     public SettingsControl() =>
         this.InitializeComponent();
 
-    private void OnLoad(object sender, RoutedEventArgs e)
+    private async void OnLoad(object sender, RoutedEventArgs e)
     {
-        Settings.Load();
+        await Settings.Load();
         this.LoadFromSettings();
     }
 
     private async void OnSave(object sender, RoutedEventArgs e)
+    {
+        this.SaveToSettings();
+        await Settings.Save();
+        await Settings.Load();
+        this.LoadFromSettings();
+        TaskDialog.Info("Settings saved successfully.");
+    }
+
+    private void SaveToSettings()
     {
         this._settings.Folders.PagesPath = this.PagesPathBox.Text;
         this._settings.Folders.ComponentsPath = this.ComponentsPathBox.Text;
@@ -27,10 +37,6 @@ public partial class SettingsControl : UserControl
         this._settings.Folders.ApplicationDtosPath = this.DtosPathBox.Text;
         this._settings.Folders.RepositoriesPath = this.RepositoriesPathBox.Text;
         this._settings.Folders.DefaultRoot = this.RootPathBox.Text;
-        await Settings.SaveAsync();
-        Settings.Load();
-        this.LoadFromSettings();
-        TaskDialog.Info("Settings saved successfully.");
     }
 
     private void LoadFromSettings()

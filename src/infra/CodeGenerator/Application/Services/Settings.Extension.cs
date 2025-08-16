@@ -9,10 +9,10 @@ public static class SettingsExtension
 
     extension(Settings)
     {
-        public static void Load() =>
-            Settings.Configure(GetSettings());
+        public static async Task Load()
+            => await Task.Run(() => Settings.Configure(GetSettings()));
 
-        public static async Task SaveAsync()
+        public static async Task Save()
         {
             var json = JsonSerializer.Serialize(Settings.Default);
             var path = Path.Combine(AppContext.BaseDirectory, _FileName);
