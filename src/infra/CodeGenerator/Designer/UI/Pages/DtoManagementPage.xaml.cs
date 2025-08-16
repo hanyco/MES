@@ -35,6 +35,7 @@ public partial class DtoManagementPage : UserControl
 
         this.DataContextChanged += this.DtoManagementPage_DataContextChanged;
         this.Loaded += this.DtoManagementPage_Loaded;
+        this.UpdateUiEnabledState();
     }
 
     public DtoManagementPageStaticViewModel StaticViewModel
@@ -44,7 +45,14 @@ public partial class DtoManagementPage : UserControl
     }
 
     private void DtoManagementPage_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e) =>
-        this.EntityDesignerGrid.IsEnabled = e.NewValue is not null;
+        this.UpdateUiEnabledState();
+
+    private void UpdateUiEnabledState()
+    {
+        var isEnabled = this.DataContext is not null;
+        this.EntityDesignerGrid.IsEnabled = isEnabled;
+        this.CodesViewer.IsEnabled = isEnabled;
+    }
 
     private async void DtoManagementPage_Loaded(object sender, RoutedEventArgs e)
     {
