@@ -19,7 +19,7 @@
             <ToolBar>
                 <Button Click="NewDtoButton_Click" Content="New…" x:Name="NewDtoButton"/>
                 <Button Click="EditDtoButton_Click" Content="Edit" x:Name="EditDtoButton"/>
-                <Button Content="Delete…" x:Name="DeleteDtoButton"/>
+                <Button Click="DeleteDtoButton_Click" Content="Delete…" x:Name="DeleteDtoButton"/>
                 <Separator />
                 <Button
                     Click="GenerateCodeButton_Click" x:Name="GenerateCodeButton"

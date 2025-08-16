@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using CodeGenerator.Designer.UI.Dialogs;
 using CodeGenerator.Designer.UI.ViewModels;
 using CodeGenerator.UI.Dialogs;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 using DataLib.Extensions;
 using DataLib.SqlServer;
@@ -131,6 +132,32 @@ public partial class DtoManagementPage : UserControl
             }
 
             this.DataContext = this.MapDtoToViewModel(dto);
+        }
+        catch (Exception ex)
+        {
+            TaskDialog.Error(ex);
+        }
+    }
+
+    private async void DeleteDtoButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (this.DtosListBox.SelectedItem is not DtoViewModel selected || selected.Id is null)
+        {
+            TaskDialog.Info("Select a DTO first.");
+            return;
+        }
+
+        var resp = TaskDialog.AskWithWarning($"Delete DTO '{selected.Name}'?", "Delete Confirmation");
+        if (resp != TaskDialogResult.Yes)
+        {
+            return;
+        }
+
+        try
+        {
+            _ = await this._dtoService.Delete(selected.Id.Value).ThrowOnFail();
+            _ = this.StaticViewModel?.Dtos.Remove(selected);
+            TaskDialog.Info("DTO deleted successfully.");
         }
         catch (Exception ex)
         {
