@@ -1,19 +1,4 @@
-﻿namespace CodeGenerator.Application.Services;
-
-public sealed partial class Settings
-{
-    public static Settings Default { get; internal set; } = default!;
-    public string ConnectionString { get; init; } = default!;
-    public FolderStructure Folders
-    {
-        get
-        {
-            field ??= new();
-            return field;
-        }
-        init;
-    }
-}
+﻿namespace CodeGenerator.Application.Settings;
 
 public sealed partial class FolderStructure
 {
@@ -34,16 +19,4 @@ public sealed partial class FolderStructure
     public string? ApplicationPath { get; set; }
     public string? ApplicationDtosPath { get; set; }
     public string? RepositoriesPath { get; set; }
-}
-
-public enum ProjectLayer
-{
-    None,
-    Page,
-    Component,
-    ViewModel,
-    Controller,
-    Application,
-    ApplicationModel,
-    Repository,
 }

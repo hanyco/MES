@@ -8,19 +8,6 @@ namespace CodeGenerator.Application.Domain;
 
 internal static class Extensions
 {
-    extension(Property)
-    {
-        [return: NotNull]
-        public static Property GetByTableField([DisallowNull]Field tableField) => new()
-        {
-            DbObjectId = tableField.ObjectId.ToString(),
-            Comment = tableField.Comment,
-            IsNullable = tableField.AllowNull,
-            Name = tableField.Name,
-            TypeFullName = tableField.Type
-        };
-    }
-
     [return: NotNullIfNotNull(nameof(model))]
     public static ModuleViewModel ToViewModel(this Module model) => new()
     {

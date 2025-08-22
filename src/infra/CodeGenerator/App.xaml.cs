@@ -1,6 +1,4 @@
 ﻿using System.Windows;
-
-using CodeGenerator.Application.Services;
 using CodeGenerator.Designer.UI.Pages;
 using CodeGenerator.Designer.UI.Controls;
 using Library.CodeGenLib;
@@ -14,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
+using CodeGenerator.Application.Settings;
 
 namespace CodeGenerator;
 

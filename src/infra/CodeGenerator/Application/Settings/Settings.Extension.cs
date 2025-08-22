@@ -1,7 +1,9 @@
 ﻿using System.IO;
 using System.Text.Json;
 
-namespace CodeGenerator.Application.Services;
+using CodeGenerator.Application.Settings;
+
+namespace CodeGenerator.Application.Settings;
 
 public static class SettingsExtension
 {

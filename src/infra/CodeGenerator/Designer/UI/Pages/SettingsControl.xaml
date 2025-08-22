@@ -55,7 +55,10 @@
         <TextBox x:Name="RepositoriesPathBox" Style="{StaticResource LongTextBox}" Grid.Row="7" Grid.Column="1" />
         <Button Click="OnBrowseRepositoriesPath" Content="..." Style="{StaticResource ShortButton}" Grid.Row="7" Grid.Column="2" />
 
-        <StackPanel Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" Orientation="Horizontal">
+        <TextBlock Text="Root Namespace:" Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" />
+        <TextBox x:Name="RootNamespaceBox" Style="{StaticResource LongTextBox}" Grid.Row="8" Grid.Column="1" />
+
+        <StackPanel Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" Orientation="Horizontal">
             <Button Click="OnSave" Content="Save" />
             <Button Click="OnLoad" Content="Load" />
             <Button Click="OnReset" Content="Reset" />

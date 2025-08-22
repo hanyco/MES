@@ -1,5 +1,7 @@
 ﻿using System.IO;
 
+using CodeGenerator.Application.Settings;
+
 using Library.CodeGenLib.Models;
 using Library.Exceptions;
 using Library.Resulting;
@@ -32,7 +34,7 @@ public static partial class CodeFileService
 
     private static string? GetPath(ProjectLayer layer)
     {
-        var folders = Settings.Default.Folders;
+        var folders = Settings.Settings.Default.Folders;
         var root = folders.DefaultRoot;
 
         var relative = layer switch

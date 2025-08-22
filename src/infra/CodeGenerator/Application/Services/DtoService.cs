@@ -1,7 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
+using CodeGenerator.Application.Settings;
+using CodeGenerator.Designer.UI.ViewModels;
+
 using Dapper;
 
+using DataLib;
 using DataLib.Extensions;
 
 using Library.CodeGenLib;
@@ -20,6 +24,15 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
     private readonly ICodeGeneratorEngine<INamespace> _codeGenerator = codeGenerator;
     private readonly SqlConnection _connection = connection;
     private readonly IPropertyService _propertyService = propertyService;
+
+    public DtoViewModel CrateByTable(Table table) => new()
+    {
+        Properties = new(table.Fields.Select(_propertyService.GetByTableField)),
+        Name = table.Name,
+        ObjectId = table.ObjectId,
+        Schema = table.Schema,
+        NameSpace = $"{Settings.Settings.Default.CodeConfigs.RootNameSpace}.Dto"
+    };
 
     [return: NotNull]
     public Task<IResult> Delete(long id, CancellationToken ct = default) => CatchResultAsync(async () =>
