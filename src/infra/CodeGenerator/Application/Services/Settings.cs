@@ -13,6 +13,8 @@ public sealed partial class Settings
         }
         init;
     }
+
+    public CodeConfigs CodeConfigs { get; set; } = new();
 }
 
 public sealed partial class FolderStructure
