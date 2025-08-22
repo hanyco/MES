@@ -4,6 +4,7 @@ using CodeGenerator.Application.Domain;
 
 using Dapper;
 
+using DataLib;
 using DataLib.Extensions;
 
 using Library.Coding;
@@ -99,4 +100,14 @@ internal sealed partial class PropertyService(SqlConnection connection) : IPrope
 
     public void Dispose() =>
         this._connection.Dispose();
+
+    [return: NotNull]
+    public Property GetByTableField([DisallowNull] Field tableField) => new()
+    {
+        DbObjectId = tableField.ObjectId.ToString(),
+        Comment = tableField.Comment,
+        IsNullable = tableField.AllowNull,
+        Name = tableField.Name,
+        TypeFullName = tableField.Type
+    };
 }

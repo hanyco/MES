@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-using CodeGenerator.Application.Services;
+using CodeGenerator.Application.Settings;
 using CodeGenerator.UI;
 
 using DataLib;

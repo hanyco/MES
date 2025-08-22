@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
+using CodeGenerator.Application.Settings;
 using CodeGenerator.UI.Dialogs;
 
 namespace CodeGenerator.Designer.UI.Controls;

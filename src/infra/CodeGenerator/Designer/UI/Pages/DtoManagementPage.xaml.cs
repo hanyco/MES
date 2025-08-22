@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
+using CodeGenerator.Application.Settings;
 using CodeGenerator.Designer.UI.Dialogs;
 using CodeGenerator.Designer.UI.ViewModels;
 using CodeGenerator.UI.Dialogs;
@@ -103,12 +104,12 @@ public partial class DtoManagementPage : UserControl
 
     private void NewDtoButton_Click(object sender, RoutedEventArgs e)
     {
-        var (isOk, value) = SelectTableDialog.Ask();
+        var (isOk, table) = SelectTableDialog.Ask();
         if (!isOk)
         {
             return;
         }
-        var model = DtoViewModel.CrateByTable(value);
+        var model = this._dtoService.CrateByTable(table);
 
         this.DataContext = model;
     }

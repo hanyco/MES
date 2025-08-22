@@ -1,4 +1,4 @@
-namespace CodeGenerator.Application.Services;
+﻿namespace CodeGenerator.Application.Settings;
 
 public sealed class CodeConfigs
 {

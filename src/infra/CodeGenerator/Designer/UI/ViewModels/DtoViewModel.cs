@@ -144,14 +144,6 @@ public sealed partial class DtoViewModel : ViewModelBase
 
     public IList<Property> SelectedProperties { get; } = new ObservableCollection<Property>();
 
-    public static DtoViewModel CrateByTable(Table table) => new()
-    {
-        Properties = new(table.Fields.Select(Property.GetByTableField)),
-        Name = table.Name,
-        ObjectId = table.ObjectId,
-        Schema = table.Schema,
-    };
-
     private void DeleteSelectedProperties()
     {
         if (this.SelectedProperties.Count == 0)

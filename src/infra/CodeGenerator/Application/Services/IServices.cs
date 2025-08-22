@@ -1,13 +1,10 @@
-﻿using CodeGenerator.Application.Domain;
-using Library.Resulting;
+﻿using CodeGenerator.Designer.UI.ViewModels;
+
+using DataLib;
 
 namespace CodeGenerator.Application.Services;
 
-public interface IDtoService : ICodeGenerator<Dto>, ICrudService<Dto>;
-
-public interface IPropertyService : ICrudService<Property>
+public interface IDtoService : ICodeGenerator<Dto>, ICrudService<Dto>
 {
-    Task<IResult> DeleteByParentId(long dtoId, CancellationToken ct = default);
+    DtoViewModel CrateByTable(Table table);
 }
-
-public interface IModuleService : IViewService<Module>;
