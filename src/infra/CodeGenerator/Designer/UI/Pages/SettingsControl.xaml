@@ -3,75 +3,62 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Loaded="OnLoad">
-    <StackPanel Margin="10">
-        <TextBlock Text="Root Path:" />
-        <StackPanel Orientation="Horizontal">
-            <TextBox x:Name="RootPathBox" Style="{StaticResource LongTextBox}" />
-            <Button
-                Click="OnBrowseRootPath"
-                Content="..."
-                Style="{StaticResource ShortButton}" />
-        </StackPanel>
-        <TextBlock Text="Pages Path:" />
-        <StackPanel Orientation="Horizontal">
-            <TextBox x:Name="PagesPathBox" Style="{StaticResource LongTextBox}" />
-            <Button
-                Click="OnBrowsePagesPath"
-                Content="..."
-                Style="{StaticResource ShortButton}" />
-        </StackPanel>
-        <TextBlock Text="Components Path:" />
-        <StackPanel Orientation="Horizontal">
-            <TextBox x:Name="ComponentsPathBox" Style="{StaticResource LongTextBox}" />
-            <Button
-                Click="OnBrowseComponentsPath"
-                Content="..."
-                Style="{StaticResource ShortButton}" />
-        </StackPanel>
-        <TextBlock Text="ViewModels Path:" />
-        <StackPanel Orientation="Horizontal">
-            <TextBox x:Name="ViewModelsPathBox" Style="{StaticResource LongTextBox}" />
-            <Button
-                Click="OnBrowseViewModelsPath"
-                Content="..."
-                Style="{StaticResource ShortButton}" />
-        </StackPanel>
-        <TextBlock Text="Controllers Path:" />
-        <StackPanel Orientation="Horizontal">
-            <TextBox x:Name="ControllersPathBox" Style="{StaticResource LongTextBox}" />
-            <Button
-                Click="OnBrowseControllersPath"
-                Content="..."
-                Style="{StaticResource ShortButton}" />
-        </StackPanel>
-        <TextBlock Text="Application Path:" />
-        <StackPanel Orientation="Horizontal">
-            <TextBox x:Name="ApplicationPathBox" Style="{StaticResource LongTextBox}" />
-            <Button
-                Click="OnBrowseApplicationPath"
-                Content="..."
-                Style="{StaticResource ShortButton}" />
-        </StackPanel>
-        <TextBlock Text="DTOs Path:" />
-        <StackPanel Orientation="Horizontal">
-            <TextBox x:Name="DtosPathBox" Style="{StaticResource LongTextBox}" />
-            <Button
-                Click="OnBrowseDtosPath"
-                Content="..."
-                Style="{StaticResource ShortButton}" />
-        </StackPanel>
-        <TextBlock Text="Repositories Path:" />
-        <StackPanel Orientation="Horizontal">
-            <TextBox x:Name="RepositoriesPathBox" Style="{StaticResource LongTextBox}" />
-            <Button
-                Click="OnBrowseRepositoriesPath"
-                Content="..."
-                Style="{StaticResource ShortButton}" />
-        </StackPanel>
-        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Text="Root Path:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" />
+        <TextBox x:Name="RootPathBox" Style="{StaticResource LongTextBox}" Grid.Row="0" Grid.Column="1" />
+        <Button Click="OnBrowseRootPath" Content="..." Style="{StaticResource ShortButton}" Grid.Row="0" Grid.Column="2" />
+
+        <TextBlock Text="Pages Path:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" />
+        <TextBox x:Name="PagesPathBox" Style="{StaticResource LongTextBox}" Grid.Row="1" Grid.Column="1" />
+        <Button Click="OnBrowsePagesPath" Content="..." Style="{StaticResource ShortButton}" Grid.Row="1" Grid.Column="2" />
+
+        <TextBlock Text="Components Path:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" />
+        <TextBox x:Name="ComponentsPathBox" Style="{StaticResource LongTextBox}" Grid.Row="2" Grid.Column="1" />
+        <Button Click="OnBrowseComponentsPath" Content="..." Style="{StaticResource ShortButton}" Grid.Row="2" Grid.Column="2" />
+
+        <TextBlock Text="ViewModels Path:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" />
+        <TextBox x:Name="ViewModelsPathBox" Style="{StaticResource LongTextBox}" Grid.Row="3" Grid.Column="1" />
+        <Button Click="OnBrowseViewModelsPath" Content="..." Style="{StaticResource ShortButton}" Grid.Row="3" Grid.Column="2" />
+
+        <TextBlock Text="Controllers Path:" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" />
+        <TextBox x:Name="ControllersPathBox" Style="{StaticResource LongTextBox}" Grid.Row="4" Grid.Column="1" />
+        <Button Click="OnBrowseControllersPath" Content="..." Style="{StaticResource ShortButton}" Grid.Row="4" Grid.Column="2" />
+
+        <TextBlock Text="Application Path:" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" />
+        <TextBox x:Name="ApplicationPathBox" Style="{StaticResource LongTextBox}" Grid.Row="5" Grid.Column="1" />
+        <Button Click="OnBrowseApplicationPath" Content="..." Style="{StaticResource ShortButton}" Grid.Row="5" Grid.Column="2" />
+
+        <TextBlock Text="DTOs Path:" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" />
+        <TextBox x:Name="DtosPathBox" Style="{StaticResource LongTextBox}" Grid.Row="6" Grid.Column="1" />
+        <Button Click="OnBrowseDtosPath" Content="..." Style="{StaticResource ShortButton}" Grid.Row="6" Grid.Column="2" />
+
+        <TextBlock Text="Repositories Path:" Grid.Row="7" Grid.Column="0" VerticalAlignment="Center" />
+        <TextBox x:Name="RepositoriesPathBox" Style="{StaticResource LongTextBox}" Grid.Row="7" Grid.Column="1" />
+        <Button Click="OnBrowseRepositoriesPath" Content="..." Style="{StaticResource ShortButton}" Grid.Row="7" Grid.Column="2" />
+
+        <StackPanel Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" Orientation="Horizontal">
             <Button Click="OnSave" Content="Save" />
             <Button Click="OnLoad" Content="Load" />
             <Button Click="OnReset" Content="Reset" />
         </StackPanel>
-    </StackPanel>
+    </Grid>
 </UserControl>
