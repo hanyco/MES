@@ -111,7 +111,14 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
     [return: NotNull]
     public Task<IResult<long>> Insert(Dto dto, CancellationToken ct = default) => CatchResultAsync(async () =>
     {
-        _ = this.Validate(dto);
+        this.Validate(dto).ThrowOnFail().End();
+
+        var duplicate = await this._connection.ExecuteScalarAsync<int>(
+            "SELECT COUNT(1) FROM [infra].[Dto] WHERE Name = @Name",
+            new { dto.Name },
+            cancellationToken: ct);
+
+        Check.MustBe(duplicate == 0, () => "Duplicate DTO name.");
 
         const string dtoSql = """
         INSERT INTO [infra].[Dto]
@@ -187,6 +194,14 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
     public Task<IResult> Update(long id, Dto dto, CancellationToken ct = default) => CatchResultAsync(async () =>
     {
         this.Validate(dto).ThrowOnFail().End();
+
+        var exists = await this._connection.ExecuteScalarAsync<int>(
+            "SELECT COUNT(1) FROM [infra].[Dto] WHERE Id = @Id",
+            new { Id = id },
+            cancellationToken: ct);
+
+        Check.MustBe(exists > 0, () => "DTO not found.");
+
         const string dtoSql = """
         UPDATE [infra].[Dto] SET
           Name = @Name,
