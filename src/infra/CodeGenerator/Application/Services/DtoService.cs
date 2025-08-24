@@ -115,8 +115,7 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
 
         var duplicate = await this._connection.ExecuteScalarAsync<int>(
             "SELECT COUNT(1) FROM [infra].[Dto] WHERE Name = @Name",
-            new { dto.Name },
-            cancellationToken: ct);
+            new { dto.Name });
 
         Check.MustBe(duplicate == 0, () => "Duplicate DTO name.");
 
@@ -197,8 +196,7 @@ internal sealed partial class DtoService(SqlConnection connection, ICodeGenerato
 
         var exists = await this._connection.ExecuteScalarAsync<int>(
             "SELECT COUNT(1) FROM [infra].[Dto] WHERE Id = @Id",
-            new { Id = id },
-            cancellationToken: ct);
+            new { Id = id });
 
         Check.MustBe(exists > 0, () => "DTO not found.");
 
